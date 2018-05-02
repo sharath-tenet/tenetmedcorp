@@ -1,0 +1,73 @@
+<div class="container">
+		
+		<h3 class="text-brandcolor ">BILL</h3>
+		<p>view and downlod your bills</p>
+	</div>
+<div class="container">
+  <div class="tenet-loader" *ngIf="loading['billDetails']" ><img src="./assets/images/monogram.svg"  /></div> 
+		<div style="border:1px solid #f05b25; padding:30px; margin-bottom:40px;">
+		<h4 class="text-brandcolor"><strong>BILL NO : {{billDetails[0].order_no}}</strong> </h4>
+		<h4 class="text-brandcolor" style="margin-bottom:30px;"><strong>NAME: {{partient_name}} </strong> </h4>
+		
+		<table class="table" style="width:100%">
+			<tbody><tr>
+				<!-- <th></th> -->
+				<th>Service Name</th>
+				<th>Test Code</th>
+				<th>Total Amount</th>
+				<th style="width: 55%;">Status</th>
+				<th>Actions</th>
+			</tr>
+				
+			<tr  *ngFor="let item of billDetails">
+				<!-- <td><input type="checkbox" name="" value=""></td> -->
+				<td>{{item.test_name}}</td>
+				<td class="text-center">{{item.test_code}}</td>
+				<td class="text-center">{{item.test_amount}}</td>
+				<td>
+					<ul class="status_ul">
+						<li>
+							<div>
+								<img *ngIf="item.test_status>=1" src="./assets/images/iconimages/bill/active/01.png">
+								<img *ngIf="item.test_status< 1" src="./assets/images/iconimages/bill/01.png">
+								<h5>Order Placed</h5>
+							</div>
+						</li>
+						<li>
+							<div>
+								<img *ngIf="item.test_status>=2" src="./assets/images/iconimages/bill/active/02.png">
+								<img *ngIf="item.test_status< 2" src="./assets/images/iconimages/bill/02.png">
+								<h5>Sampe collected</h5>
+							</div>
+						</li>
+						<li>
+							<div>
+								<img *ngIf="item.test_status>=3" src="./assets/images/iconimages/bill/active/03.png">
+								<img *ngIf="item.test_status< 3" src="./assets/images/iconimages/bill/03.png">
+								<h5>order in process</h5>
+							</div>
+						</li>
+						<li>
+							<div>
+								<img *ngIf="item.test_status>=5" src="./assets/images/iconimages/bill/active/04.png">
+								<img *ngIf="item.test_status< 5" src="./assets/images/iconimages/bill/04.png">
+								<h5>Report Genegated</h5>
+							</div>
+						</li>
+					</ul>
+				</td>
+				<td ><span *ngIf="(item.test_status>=6)" (click)="downloadReport(item.tid,billDetails[0].order_no)" style="cursor:pointer;"><img src="./assets/images/iconimages/bill/05.png" width="40px;"></span>	</td>
+			
+			</tr>
+			
+			
+		</tbody></table>
+    	</div>
+       
+       	
+        
+        
+         
+          
+     
+	</div>

@@ -1,0 +1,12 @@
+.error{
+    color: red;
+    font-size: 20px;
+}
+.search-bottom{
+    margin-top:0px;
+     margin-bottom:30px;
+}
+.search-top{
+    margin-top:30px; 
+    margin-bottom:0px;
+}

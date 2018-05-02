@@ -1,0 +1,1215 @@
+<div class="content" style="min-height:800px;">
+  <div class="container">
+    <div class="row" style="">
+      <div class="col-md-12">
+        <ul class="nav nav-tabs brand_nav_tabs">
+          <li class="active"><a data-toggle="tab" href="#profile">PROFILE</a>
+          </li>
+           <li><a data-toggle="tab" href="#changepassword">CHANGE PASSWORD</a>
+          <li><a #oh data-toggle="tab" href="#order_history">ORDER HISTORY</a>
+          </li>
+        </ul>
+         <div class="tenet-loader" *ngIf="loading['account']" ><img src="./assets/images/monogram.svg" /></div> 
+
+        <div class="tab-content">
+          <div id="profile" class="tab-pane in active">
+            <div class="row">
+              <div class="col-md-6">
+                
+                <table *ngIf="basicInfo" width="100%" class="profile_table" style="margin-top:100px;" >
+                  <tbody>
+                    <tr  *ngIf="locations.length==0">
+                      <td colspan="3">
+                        <h6  style="color:red">Please fill the form details below</h6>
+                      </td>
+                    </tr>
+                   <tr *ngIf="profileMsg">
+                      <td colspan="3">
+                        <strong class="form-text text-success">Profile updated.</strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="3">
+                        <h3 class="text-brandcolor" style="margin-top:2px;"><strong>Personal Details</strong></h3>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td width="15%">Name</td>
+                      <td width="7%" align="center" class="text-center">:</td>
+                      <td>
+                       <!--  <input class="theme form-control" value='{{(user.user_name != "") ? user.user_name : "N/A"}}' readonly="readonly"> -->
+                        <input class="theme form-control" value='{{(user.firstname != "") ? user.firstname : "N/A"}} {{(user.lastname != "") ? user.lastname : "N/A"}}' readonly="readonly">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td width="15%">Gender</td>
+                      <td width="7%" align="center" class="text-center">:</td>
+                      <td>
+                        <input class="theme form-control"  value='{{(user.gender != "") ? ((user.gender==1 ? "Male":"Female")) : "N/A"}}' readonly="readonly">
+                      </td>
+                    </tr>
+                     <tr>
+                      <td width="15%">DOB</td>
+                      <td width="7%" align="center" class="text-center">:</td>
+                      <td>
+                        <input class="theme form-control" value="{{user.user_dob }}" readonly="readonly">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td width="15%">Mobile</td>
+                      <td width="7%" align="center" class="text-center">:</td>
+                      <td>
+                        <input class="theme form-control" value='{{(user.user_phone != "")? user.user_phone : "N/A"}}' readonly="readonly">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td width="15%">Email</td>
+                      <td width="7%" align="center" class="text-center">:</td>
+                      <td>
+                        <input class="theme form-control" value='{{(user.user_email != "") ? user.user_email : "N/A"}}' readonly="readonly">
+                      </td>
+                    </tr>
+                   
+                    <!-- <tr *ngIf="defaultAddress.length==0">
+                      <td colspan="3">
+                        <h5 class="text-brandcolor" style="margin-top:2px;"><strong>Address</strong></h5>
+                      </td>
+                    </tr>
+                    <tr *ngIf="defaultAddress.length==0">
+                      <td width="15%">Door No</td>
+                      <td width="7%" align="center" class="text-center">:</td>
+                      <td *ngIf="defaultAddress.length > 0">
+                        
+                        <input class="theme form-control"  value='{{defaultAddress[0]}}'>
+                      </td>
+                    </tr>
+                    <tr *ngIf="defaultAddress.length==0">
+                      <td width="15%">Street</td>
+                      <td width="7%" align="center" class="text-center">:</td>
+                      <td *ngIf="defaultAddress.length > 0" >
+                        <input class="theme form-control" value='{{defaultAddress[1]}}'>
+                      </td>
+                    </tr>
+                    <tr *ngIf="defaultAddress.length==0">
+                      <td width="15%">Area</td>
+                      <td width="7%" align="center" class="text-center">:</td>
+                      <td *ngIf="defaultLocation.length > 0" >
+                        <input class="theme form-control" value="{{ defaultLocation[0].area}}">
+                      </td>
+                    </tr>
+                    <tr *ngIf="defaultAddress.length==0">
+                      <td width="15%">City</td>
+                      <td width="7%" align="center" class="text-center">:</td>
+                      <td *ngIf="defaultLocation.length > 0">
+                        <input  class="theme form-control" value="{{defaultLocation[0].city}}">
+                      </td>
+                    </tr> -->
+                    <tr>
+                      <td colspan="3">
+                          <div class="form-group text-center" style="margin:20px;" *ngIf="editBtn">
+                              <button class="btn btn-brand"  (click)="editInfo()">Edit</button>
+                              <!-- <button class="btn btn-default" type="submit">Save</button> -->
+                            </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+
+          <form *ngIf="editFlag" #uProfile="ngForm" novalidate (ngSubmit)="updateProfile(uProfile,uProfile.valid)" >
+                <input type="hidden" class="form-control" name="user_id" [(ngModel)] ="user.uid" [value]="user.uid"> 
+
+                <!-- <input type="hidden" class="form-control" name="user_loc_id"  [(ngModel)] ="loca.user_loc_id" [value]="defaultLocation[0].user_loc_id"> -->
+
+                <table width="100%" class="profile_table" style="margin-top:100px;">
+                  <tbody>
+                      <tr  *ngIf="defaultAddress.length==0">
+                          <td colspan="3">
+                            <h6  style="color:red">Please fill the form details below</h6>
+                          </td>
+                        </tr>
+                    <tr>
+                      <td colspan="3">
+                        <h3 class="text-brandcolor" style="margin-top:2px;"><strong>Personal Details</strong></h3>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td width="15%">Name</td>
+                      <td width="7%" align="center" class="text-center">:</td>
+                      <td>
+                        <input class="theme form-control" type="text" required name="first_name" [(ngModel)]="user.firstname" [value]="user.firstname" #first_name="ngModel" pattern="[a-zA-Z ]*" minlength="3">
+
+                        <div style="color:#fc6107"  *ngIf="first_name?.errors && (first_name.dirty || first_name.touched || uProfile.submitted)">
+                                <p *ngIf="first_name?.errors.required">
+                                    The First name is required
+                                </p>
+                               
+                                <p *ngIf="first_name?.errors.pattern">
+                                     The First name should only consist of alphabets
+                                </p>
+                                <p *ngIf="first_name?.errors.minlength">
+                                     The First Name must be at least 3 characters long.
+                                </p> 
+                        </div>
+                      </td>
+                      <td>
+                        <input class="theme form-control" type="text" required name="last_name" [(ngModel)]="user.lastname" [value]="user.lastname" #last_name="ngModel" pattern="[a-zA-Z ]*" minlength="3">
+
+                        <div style="color:#fc6107"  *ngIf="last_name?.errors && (last_name.dirty || last_name.touched || uProfile.submitted)">
+                                <p *ngIf="last_name?.errors.required">
+                                    The Last name is required
+                                </p>
+                               
+                                <p *ngIf="last_name?.errors.pattern">
+                                     The Last name should only consist of alphabets
+                                </p> 
+                                <p *ngIf="last_name?.errors.minlength">
+                                     The Last name must be at least 3 characters long.
+                                </p> 
+                        </div>
+                      </td>
+
+                    </tr>
+                    <tr>
+                      <td width="15%">Gender</td>
+                      <td width="7%" align="center" class="text-center">:</td>
+                      <td colspan="2">
+                  <div class="radio">
+                      <label><input  type="radio" required name="user_gender" value="1" ngModel #user_gender="ngModel" [(ngModel)]="user.gender" [value]="1" [checked]="user.user_gender ==1"/>Male</label>
+                     <label><input  type="radio" required name="user_gender" value="2" ngModel #user_gender="ngModel" [(ngModel)]="user.gender" [value]="2" [checked]="user.user_gender ==2"/>Female</label>
+
+                    <div style="color:#fc6107" *ngIf="user_gender?.errors && (user_gender.touched || uProfile.submitted)">
+                        <p *ngIf="user_gender?.errors.required">
+                            The Gender is required
+                        </p> 
+                    </div>
+                  </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td width="15%">DOB</td>
+                      <td width="7%" align="center" class="text-center">:</td>
+                      <td colspan="2">
+                        <!-- <input class="theme form-control" type="date" required name="user_dob" [ngModel] ="user.user_dob | date:'yyyy-MM-dd'" (ngModelChange)="user.user_dob = $event" #user_dob="ngModel"> -->
+                        <input class="form-control" style="float:none" placeholder="Select a date" ngx-mydatepicker name="user_dob"
+                        [(ngModel)]="model" [options]="myOptions"  (dateChanged)="user.user_dob = $event" #user_dob="ngx-mydatepicker"/>
+         
+                         <span class="input-group-btn">
+                             <button type="button" class="btn btn-default" (click)="user_dob.clearDate()">
+                                 <i class="glyphicon glyphicon-remove"></i>
+                             </button>
+                             <button type="button" class="btn btn-default" (click)="user_dob.toggleCalendar()">
+                                 <i class="glyphicon glyphicon-calendar"></i>
+                             </button>
+                         </span>
+                        <div style="color:#fc6107" *ngIf="user_dob?.errors && (user_dob.dirty || user_dob.touched || uProfile.submitted)">
+                          <p *ngIf="user_dob.errors.required">
+                              The Date of birth is required
+                          </p>
+
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td width="15%">Mobile</td>
+                      <td width="7%" align="center" class="text-center">:</td>
+                      <td colspan="2">
+                        <input class="theme form-control" type="text" required name="user_mobile" [(ngModel)]="user.user_phone" #user_mobile="ngModel" pattern="^[6-9][0-9]{9}$" minlength="10" maxlength="10">
+                        <div style="color:#fc6107" 
+                                    *ngIf="user_mobile?.errors && (user_mobile.dirty || user_mobile.touched || uProfile.submitted)">
+                            <p *ngIf="user_mobile?.errors.required">
+                                The Mobile number is required
+                            </p>
+                           
+                           <p *ngIf="user_mobile?.errors.pattern">
+                       Phone number should be only numbers and start with 6/7/8/9
+                  </p> 
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td width="15%">Email</td>
+                      <td width="7%" align="center" class="text-center">:</td>
+                      <td colspan="2">
+                        <input class="theme form-control" type="email" required name="user_email" [(ngModel)]="user.user_email" #user_email="ngModel" pattern="[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}">
+                        <div style="color:#fc6107" 
+                                *ngIf="user_email?.errors && (user_email.dirty || user_email.touched || uProfile.submitted || user_email.pattern)">
+                                          <p *ngIf="user_email?.errors.required">
+                                              The Email is required
+                                          </p>
+                                          
+                                          <p *ngIf="user_email?.errors.pattern">
+                                              Invalid email
+                                          </p>
+                          </div>
+                      </td>
+                    </tr>
+                     
+                    <tr *ngIf="fld">
+                      <td colspan="3">
+                        <h5 class="text-brandcolor" style="margin-top:2px;"><strong>Address</strong></h5>
+                      </td>
+                    </tr>
+                <tr *ngIf="fld">
+                   <td width="15%">address</td>
+                   <td width="7%" align="center" class="text-center">:</td>    
+                   <td colspan="2">
+                    <div class="radio">
+                        <label><input type="radio" name="title_id3" value="1" required #title_id3="ngModel" ngModel (click)="other('title')">Home</label>
+                        <label><input type="radio"  name="title_id3" value="2" required #title_id3="ngModel" ngModel (click)="other('title')">Office</label>
+                        <label><input type="radio" name="title_id3" value="3" required #title_id3="ngModel" ngModel (click)="other('other')">Other</label>
+                        <div style="color:#fc6107" 
+                                    *ngIf="title_id3?.errors && (title_id3.dirty || title_id3.touched || uProfile.submitted)">
+                                              <p *ngIf="title_id3?.errors.required">
+                                                  The Title is required
+                                              </p>
+                        </div>
+                   </div>
+                  </td>
+                </tr>
+                <tr *ngIf="fld">
+                <td width="15%" *ngIf="otherflag">Other</td>
+                   <td *ngIf="otherflag" width="7%" align="center" class="text-center">:</td>    
+                   <td colspan="2">
+                  <div *ngIf="otherflag" >
+                    <input type="text" class="form-control theme" placeholder="" name="other" required  #other="ngModel" ngModel>
+                    <div style="color:#fc6107" 
+                                      *ngIf="other?.errors && (other.dirty || other.touched || uProfile.submitted)">
+                                                <p *ngIf="other?.errors.required">
+                                                    The Other field is required
+                                                </p>
+                    </div>
+                   </div>
+                 </td>
+             </tr>
+
+               
+               
+                    <tr *ngIf="fld">
+                      <td width="15%">Door No</td>
+                      <td width="7%" align="center" class="text-center">:</td>
+                      <td colspan="2">
+                        <input type="text" class="theme form-control" required ngModel name="doorNo" #doorNo="ngModel" >
+                        <div style="color:#fc6107" *ngIf="doorNo?.errors && (doorNo.dirty || doorNo.touched || uProfile.submitted)">
+                                <p *ngIf="doorNo?.errors.required">
+                                    The Door Number is required
+                                </p>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr  *ngIf="fld">
+                      <td width="15%">Street Name</td>
+                      <td width="7%" align="center" class="text-center">:</td>
+                      <td colspan="2">
+                      <input type="text" class="form-control theme" required ngModel placeholder="Street Name" name="streetNo" #streetNo="ngModel">
+
+                      <div style="color:#fc6107" *ngIf="streetNo?.errors && (streetNo.dirty || streetNo.touched || uProfile.submitted)">
+                                  <p *ngIf="streetNo?.errors.required">
+                                      The Street Number is required
+                                  </p>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr *ngIf="fld">
+                      <td width="15%">City</td>
+                      <td width="7%" align="center" class="text-center">:</td>
+                      <td colspan="2">
+                        <select class="form-control theme" required name="city_id" ngModel #city_id="ngModel"  (change)="getAreaByCity($event)"><option value="">Select City</option><option *ngFor="let city of cities" value="{{city.city_id}}">{{city.city_desc}}</option>
+                          </select>
+                          <div style="color:#fc6107" *ngIf="city_id?.errors && (city_id.dirty || city_id.touched || uProfile.submitted)">
+                              <p *ngIf="city_id?.errors.required">
+                                  The City selection is required
+                              </p>
+                          </div>
+                      </td>
+                    </tr>
+                    <tr *ngIf="fld">
+                      <td width="15%">Area</td>
+                      <td width="7%" align="center" class="text-center">:</td>
+                      <td colspan="2">
+                       <select class="form-control theme" required name="area_id" ngModel #area_id="ngModel" ><option value="">Select Area</option><option *ngFor="let area of areas" value="{{area.area_id}}">{{area.area_name}}</option></select>
+                       <div style="color:#fc6107" *ngIf="area_id?.errors && (area_id.dirty || area_id.touched || uProfile.submitted)">
+                              <p *ngIf="area_id?.errors.required">
+                                  The Area selection is required
+                              </p>
+                          </div>
+                      </td>
+                    </tr>
+                    <!-- <tr>
+                      <td width="15%">Pincode</td>
+                      <td width="7%" align="center" class="text-center">:</td>
+                      <td>
+                        <input class="theme form-control" value="">
+                      </td>
+                    </tr> -->
+                    <tr></tr>
+                    <tr>
+                            <td colspan="3" >
+                                 <div class="form-group text-center" style="margin:20px;">
+                               <!--  <button _ngcontent-c1="" class="btn btn-brand" type="submit" (click)="editInfo()">Edit</button> -->
+                                <button class="btn btn-brand" type="submit">Save Changes</button>
+                              </div>
+                            </td>
+                          </tr> 
+                  </tbody>
+                </table>
+            </form>
+
+              </div>
+              <div class="col-md-6">
+              <!--   <div class="tenet-loader" *ngIf="loading['address']" ><img src="./assets/images/monogram.svg"  /></div> -->
+                <table width="100%" class="profile_table" style="margin-top:100px;">
+                  <tbody>
+                     <tr *ngIf="locations.length > 0">
+                      <td colspan="3">
+                        <h3 class="text-brandcolor" style="margin-top:2px;"><strong>Address </strong></h3>
+                      </td>
+                    </tr>
+                    <tr *ngFor="let loc of locations">
+                      <td *ngIf="locations.length > 0" ><div [ngSwitch]="loc.title_id">
+                                    <ng-template [ngSwitchCase]="0">
+                                    <div>Default Address</div>
+                                    </ng-template>
+                                    <ng-template [ngSwitchCase]="1">
+                                    <div>Home Address</div>
+                                    </ng-template>
+                                    <ng-template [ngSwitchCase]="2">
+                                    <div>Office Address</div>
+                                      </ng-template>
+                                      <ng-template [ngSwitchCase]="3">
+                                    <div>Other Address</div>
+                                      </ng-template>
+                                  </div>
+                      </td>
+                      <td *ngIf="locations.length >0" colspan="3"><address>{{loc.address}},<br>{{loc.area}},<br>{{loc.city}}.</address></td>
+
+                       <td *ngIf="locations.length > 0"><img src="./assets/images/iconimages/pencile.png" class="pull-right"  width="32px" height="32px"  style="margin:0px 0px 10px 0px;cursor: pointer;" data-toggle="modal" data-target="#edit_address" data-backdrop="" (click)=editFMAddress(loc.id,loc.user_loc_id)></td>
+                       <td *ngIf="locations.length > 0"><a href="javascript:void(0)" class="text-brandcolor" (click)="deleteAddress(loc)"><i _ngcontent-c0="" class="fa fa-trash"></i></a></td>
+                    </tr>
+                    <!-- <tr *ngIf="locations.length > 0">
+                        <td colspan="3">
+                          <h6 style="margin-top:2px;"><strong>You Have Added No Address</strong></h6>
+                        </td>
+                    </tr> -->
+                    <!-- <tr>
+                      <td>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</td>
+                    </tr> -->
+                   <!--  <tr>
+                      <td><strong>Address 2</strong>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer</td>
+                    </tr> -->
+                    <tr *ngIf="locations.length > 0">
+                      <td>
+                        <h5  style="cursor:pointer" data-toggle="modal" data-target="#add_address" data-backdrop=""><strong><i class="fa fa-plus"></i> Add New Address</strong></h5>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="3">
+                        <h3 class="text-brandcolor" style="margin-top:2px"><strong>Family Members</strong></h3>
+                      </td>
+                    </tr>
+                    <tr *ngFor="let mem of members">
+                      <td>
+                        <h5 class="text-brandcolor" style="margin-top:2px;"><strong>{{mem.firstname}} {{mem.lastname}}</strong></h5>
+                      </td>
+                      <td>{{mem.age}}</td>
+                      <td>{{(mem.gender != "") ? ((mem.gender==1 ? "Male":"Female")) : "N/A"}}</td>
+                      <td>{{mem.user_phone}}</td>
+                      <td><img src="./assets/images/iconimages/pencile.png" class="pull-right" width="32px" height="32px"  style="margin:0px 0px 10px 0px; cursor: pointer;" data-toggle="modal" data-target="#edit_family" data-backdrop="" (click)="editFMInfo(mem.uid)"></td>
+                      <td><a href="javascript:void(0)" class="text-brandcolor" (click)="deleteFM(mem)"><i _ngcontent-c0="" class="fa fa-trash"></i></a></td>
+                    </tr>
+                    <tr *ngIf="members.length==0">
+                        <td colspan="3">
+                          <h6 style="margin-top:2px;"><strong>You Have Added No Family Members</strong></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <h5 style="cursor: pointer;" data-toggle="modal" data-target="#add_family" data-backdrop=""><strong><i class="fa fa-plus"></i> Add family member</strong></h5>
+                      </td>
+                    </tr>
+                   
+                  </tbody>
+                </table>
+
+<!--  Add family deails  content-->
+<!-- <div id="add_family" class="modal theme_modal" role="dialog">
+  <div class="modal-dialog">
+    <form  #af="ngForm" novalidate (ngSubmit)="saveFamilyMembers(af,af.valid,user.uid)">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="btn modal_close_btn" data-dismiss="modal" #add_family (click)="reset(af)">&times;</button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+      <div class="col-md-12">
+      
+        <h4  class="titles text-left" style="font-weight:600">ADD FAMILY MEMBER</h4>
+          <div>
+          
+          </div>
+          <div class="form-group">
+                  <input class="form-control theme" placeholder="Name" name="user_name" required ngModel #user_name="ngModel" pattern="[a-zA-Z][a-zA-Z ]+"/>
+                  <div style="color:#fc6107" *ngIf="user_name?.errors && (user_name.dirty || user_name.touched || af.submitted ||  user_name.pattern)">
+                                  <p *ngIf="user_name?.errors.required">
+                                      The Username is required
+                                  </p>
+                                 
+                                  <p *ngIf="user_name?.errors.pattern">
+                                       The Username should only consist of alphabets
+                                  </p> 
+
+                   </div>
+
+          </div>
+            <div class="radio">
+              <label><input  type="radio" required name="user_gender" value="1" ngModel #user_gender="ngModel"/>Male</label>
+              <label><input  type="radio" required name="user_gender" value="2" ngModel #user_gender="ngModel"/>Female</label>
+              <div style="color:#fc6107" *ngIf="user_gender?.errors && (user_gender.touched || af.submitted)">
+                  <p *ngIf="user_gender?.errors.required">
+                      The Gender is required
+                  </p>    
+
+              </div>
+            </div>
+            <div class="form-group">
+              <input class="theme form-control" type="date" required ngModel name="user_dob"  #user_dob="ngModel">
+              <div style="color:#fc6107" *ngIf="user_dob?.errors && (user_dob.dirty || user_dob.touched || af.submitted || user_dob.pattern)">
+                    <p *ngIf="user_dob.errors.required">
+                        The Date of birth is required
+                    </p>
+
+              </div>
+            </div>
+            <div class="form-group">
+              <input class="form-control theme" placeholder="Phone Number" required name="user_mobile" ngModel #user_mobile="ngModel" pattern="[0-9]*" minlength="10" maxlength="10"/>
+              <div style="color:#fc6107" *ngIf="user_mobile?.errors && (user_mobile.dirty || user_mobile.touched || af.submitted || user_mobile.minlength || user_mobile.pattern)">
+                  <p *ngIf="user_mobile?.errors.required">
+                      The Phone Number is required
+                  </p>
+                   <p *ngIf="user_mobile?.errors.minlength">
+                        Phone number should be 10 digit
+                  </p>
+                  <p *ngIf="user_mobile?.errors.minlength">
+                       Phone number should be only numbers
+                  </p>
+
+              </div>
+            </div>
+            <div class="form-group">
+              <input placeholder="Email" class="theme form-control" type="email" required ngModel name="user_email" #user_email="ngModel" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$">
+              <div style="color:#fc6107" *ngIf="user_email?.errors && (user_email.dirty || user_email.touched || af.submitted || user_email.pattern)">
+                                  <p *ngIf="user_email?.errors.required">
+                                      The Email is required
+                                  </p>
+                                  
+                                  <p *ngIf="user_email?.errors.pattern">
+                                      Invalid email
+                                  </p>
+              </div>
+            </div>
+            
+             <strong  class="form-text text-success" *ngIf="fam">Family member added successfully</strong>
+          
+      </div>
+    </div>
+      </div>
+      <div class="modal-footer text-center" style="text-align:center">
+        <!- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
+    <!--<button type="submit" class="btn btn-brand">SAVE</button>
+      </div>
+    </div>
+  </form>
+  </div>
+</div> -->
+
+<div id="add_family" class="modal theme_modal" role="dialog">
+  <div class="modal-dialog">
+    <form  #af="ngForm" novalidate (ngSubmit)="saveFamilyMembers(af,af.valid,user.uid)">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="btn modal_close_btn" data-dismiss="modal" #add_family (click)="reset(af)">&times;</button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+      <div class="col-md-12">
+        <h4  class="titles text-left" style="font-weight:600">ADD FAMILY MEMBER</h4>
+          <div>
+          </div>
+          <div class="form-group">
+                  <input class="form-control theme" placeholder="First Name" name="firstName" required ngModel #firstName="ngModel" pattern="[a-zA-Z ]*" minlength="3"/>
+
+                  <div style="color:#fc6107" *ngIf="firstName?.errors && (firstName.dirty || firstName.touched || af.submitted ||  firstName.pattern)">
+                                  <p *ngIf="firstName?.errors.required">
+                                      The First Name is required
+                                  </p>
+                                  <p *ngIf="firstName?.errors.pattern">
+                                       The First Name should only consist of alphabets
+                                  </p>  
+                                  <p *ngIf="firstName?.errors.minlength">
+                                       The First Name must be at least 3 characters long.
+                                  </p> 
+
+                   </div>
+
+          </div>
+           <div class="form-group">
+                  <input class="form-control theme" placeholder="last Name" name="lastName" required ngModel #lastName="ngModel" pattern="[a-zA-Z ]*" minlength="3"/>
+                  <div style="color:#fc6107" *ngIf="lastName?.errors && (lastName.dirty || lastName.touched || af.submitted ||  lastName.pattern)">
+                                  <p *ngIf="lastName?.errors.required">
+                                      The last Name is required
+                                  </p>
+                                  <p *ngIf="lastName?.errors.pattern">
+                                       The last Name should only consist of alphabets
+                                  </p> 
+                                  <p *ngIf="lastName?.errors.minlength">
+                                       The last Name must be at least 3 characters long.
+                                  </p> 
+
+                   </div>
+
+          </div>
+            <div class="radio">
+              <label><input  type="radio" required name="user_gender" value="1" ngModel #user_gender="ngModel"/>Male</label>
+              <label><input  type="radio" required name="user_gender" value="2" ngModel #user_gender="ngModel"/>Female</label>
+              <div style="color:#fc6107" *ngIf="user_gender?.errors && (user_gender.touched || af.submitted)">
+                  <p *ngIf="user_gender?.errors.required">
+                      The Gender is required
+                  </p>    
+
+              </div>
+            </div>
+            <div class="form-group">
+              <input placeholder="Email" class="theme form-control" type="email" required ngModel name="user_email" #user_email="ngModel" pattern="[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}">
+              <div style="color:#fc6107" *ngIf="user_email?.errors && (user_email.dirty || user_email.touched || af.submitted || user_email.pattern)">
+                                  <p *ngIf="user_email?.errors.required">
+                                      The Email is required
+                                  </p>
+                                  
+                                  <p *ngIf="user_email?.errors.pattern">
+                                      Invalid email
+                                  </p>
+              </div>
+            </div>
+
+           <div class="form-group">
+              <!-- <input class="theme form-control" type="date" required ngModel name="user_dob"  #user_dob="ngModel" (change)="changeDate($event)"> -->
+               <input class="form-control" style="float:none" placeholder="Select a date" ngx-mydatepicker name="user_dob" required ngModel #user_dob="ngx-mydatepicker" [options]="myOptions1" (dateChanged)="onDateChanged($event)"/>
+         
+                         <span class="input-group-btn">
+                             <button type="button" class="btn btn-default" (click)="user_dob.clearDate()">
+                                 <i class="glyphicon glyphicon-remove"></i>
+                             </button>
+                             <button type="button" class="btn btn-default" (click)="user_dob.toggleCalendar()" >
+                                 <i class="glyphicon glyphicon-calendar"></i>
+                             </button>
+                         </span>
+              <div style="color:#fc6107" *ngIf="user_dob?.errors && (user_dob.dirty || user_dob.touched || af.submitted)">
+                    <p *ngIf="user_dob.errors.required">
+                        The Date of birth is required
+                    </p>
+
+              </div>
+            </div>
+
+            <div class="form-group" *ngIf="ph">
+              <input class="form-control theme" placeholder="Phone Number" name="user_mobile" ngModel #user_mobile="ngModel" pattern="^[6-9][0-9]{9}$" minlength="10" maxlength="10"/>
+              <div style="color:#fc6107" *ngIf="user_mobile?.errors && (user_mobile.dirty || user_mobile.touched || af.submitted || user_mobile.minlength || user_mobile.pattern)">
+                  <p *ngIf="user_mobile?.errors.required">
+                      The Phone Number is required
+                  </p>
+                   <p *ngIf="user_mobile?.errors.minlength">
+                        Phone number should be 10 digit
+                  </p>
+                   <p *ngIf="user_mobile?.errors.pattern">
+                       Phone number should be only numbers and start with 6/7/8/9
+                  </p>
+
+              </div>
+            </div>
+            
+
+            <div class="text-center" *ngIf="otp">
+              <input type="text" class="form-control theme otp_input" name="term1" ngModel #term1 ="ngModel"/>
+         
+             <input type="hidden" class="form-control theme" name="user_id" [(ngModel)] = "uid" ngModel #user_id="ngModel">
+          </div>
+
+
+             <strong  class="form-text text-success" *ngIf="fam">Family member added successfully</strong>
+          
+      </div>
+    </div>
+      </div>
+      <div class="modal-footer text-center" style="text-align:center">
+        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
+   <!--  <button type="submit" class="btn btn-brand">SAVE</button> #otp1-->
+         <button  type="submit"  #otpModel class="btn btn-brand"  data-toggle="modal"  data-backdrop="false">SAVE</button>
+        <!--  <button *ngIf="otpBtn" type="submit" class="btn btn-brand"  data-toggle="modal"  data-backdrop="false">SEND OTP</button>
+         <button *ngIf="vBtn" type="submit" class="btn btn-brand"  data-toggle="modal"  data-backdrop="false">Verify</button> -->
+      </div>
+    </div>
+  </form>
+  </div>
+</div>
+
+<!--otp verify-->
+<div id="otp_model" class="modal theme_modal" role="dialog">
+  <div class="modal-dialog">
+    <form  #votpForm="ngForm" novalidate (ngSubmit)="getMemberOtpVerification(votpForm,votpForm.valid, memId)">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="btn modal_close_btn" data-dismiss="modal" #otp_model (click)="reset1(votpForm)">&times;</button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+      <div class="col-md-12">
+          <div>
+          <h4 class="text-center text-bold" style="padding:15px; font-weight:600">A One Time Password has been sent to your registered mobile number ending with XX435. 
+          </h4>
+          </div>
+          <style>
+          input.form-control.theme.otp_input {
+            margin: 10px;
+            font-size: 20px;
+            height: 40px;
+            text-align: center;
+          }
+          </style>
+          <div class="text-center">
+            <div class="form-inline" style="width:300px;margin:0 auto;">
+               <input type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" class="form-control theme otp_input" name="term1" ngModel style="width:50px; float:left;" #term1 ="ngModel" minlength="1" maxlength="1" (keyup)="autoTab($event)" />
+              <input type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" class="form-control theme otp_input" name="term2" ngModel style="width:50px; float:left;" #term2 ="ngModel" minlength="1" maxlength="1" (keyup)="autoTab($event)"/>
+              <input type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" class="form-control theme otp_input" name="term3" ngModel style="width:50px; float:left;" #term3="ngModel" minlength="1" maxlength="1" (keyup)="autoTab($event)"/>
+              <input type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" class="form-control theme otp_input" name="term4" ngModel style="width:50px; float:left;" #term4 ="ngModel" minlength="1" maxlength="1" (keyup)="autoTab($event)"/>
+             <!--  <input type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" class="form-control theme otp_input" name="term5" ngModel style="width:50px; float:left;" #term5 ="ngModel" minlength="1" maxlength="1"/> -->
+              <div class="clearfix"></div>
+              <div class="clearfix"></div>
+            </div>
+          </div>
+
+          <!--  <input type="hidden" class="form-control theme" name="user_id" [(ngModel)] = "memId" ngModel #user_id="ngModel"> -->
+          
+      </div>
+    </div>
+      </div>
+      <div class="modal-footer text-center" style="text-align:center">
+        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
+    <!-- <button type="button" class="btn btn-brand">Resend OTP</button> -->
+    <button type="submit" class="btn btn-brand"  data-backdrop="false">Confirm</button>
+    </div>
+    </div>
+      </form> 
+  </div>
+</div>
+<!-- -->
+
+<!-- Edit family deails  content-->
+<div id="edit_family" class="modal theme_modal" role="dialog">
+  <div class="modal-dialog">
+    <form  #updatefm="ngForm" novalidate (ngSubmit)="updateFamilyMembers(updatefm,updatefm.valid,member.uid)">
+
+    <div class="modal-content" [ngStyle]="{'border-radius': '20px',
+    'border': '1.5px solid #f05b25'}">
+      <div class="modal-header">
+        <button class="btn modal_close_btn" data-dismiss="modal" #edit_family>&times;</button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+      <div class="col-md-12">
+      
+        <h4  class="titles text-left" style="font-weight:600">EDIT FAMILY MEMBER</h4>
+          <div>
+          </div>
+          <div class="form-group">
+                  <input class="form-control theme" placeholder="First Name" name="firstName1" required ngModel #firstName1="ngModel" [(ngModel)]="member.firstname" pattern="[a-zA-Z ]*" minlength="3"/>
+                  <div style="color:#fc6107" 
+                                *ngIf="firstName1?.errors && (firstName1.dirty || firstName1.touched || updatefm.submitted ||  firstName1.pattern)">
+                                  <p *ngIf="firstName1?.errors.required">
+                                      The First name is required
+                                  </p>
+                                 
+                                  <p *ngIf="firstName1?.errors.pattern">
+                                       The First name should only consist of alphabets
+                                  </p> 
+                                  <p *ngIf="firstName1?.errors.minlength">
+                                       The First name must be at least 3 characters long.
+                                  </p> 
+
+                   </div>
+          </div>
+           <div class="form-group">
+                  <input class="form-control theme" placeholder="Last Name" name="lastName1" required ngModel #lastName1="ngModel" [(ngModel)]="member.lastname" pattern="[a-zA-Z ]*" minlength="3"/>
+                  <div style="color:#fc6107" 
+                                *ngIf="lastName1?.errors && (lastName1.dirty || lastName1.touched || updatefm.submitted ||  lastName1.pattern)">
+                                  <p *ngIf="lastName1?.errors.required">
+                                      The Last Name is required
+                                  </p>
+                                 
+                                  <p *ngIf="lastName1?.errors.pattern">
+                                       The Last Name should only consist of alphabets
+                                  </p> 
+                                  <p *ngIf="lastName1?.errors.minlength">
+                                       The Last Name must be at least 3 characters long.
+                                  </p> 
+
+                   </div>
+          </div>
+            <div class="radio">
+              <label><input  type="radio" required name="user_gender1" value="1" ngModel #user_gender1="ngModel" [(ngModel)]="member.gender" [value]="1" [checked]="member.gender ==1"/>Male</label>
+              <label><input  type="radio" required name="user_gender1" value="2" ngModel #user_gender1="ngModel" [(ngModel)]="member.gender" [value]="2" [checked]="member.gender ==2"/>Female</label>
+
+              <div style="color:#fc6107" 
+                                *ngIf="user_gender1?.errors && (user_gender1.touched || updatefm.submitted)">
+                                  <p *ngIf="user_gender1?.errors.required">
+                                      The Gender is required
+                                  </p>    
+
+              </div>
+            </div>
+            <!-- <div class="form-group">
+              <input class="theme form-control" [ngModel] ="member.user_dob | date:'yyyy-MM-dd'" (ngModelChange)="member.user_dob = $event"  type="date" required name="user_dob1" #user_dob1="ngModel"/>
+              <div style="color:#fc6107" 
+                                *ngIf="user_dob1?.errors && (user_dob1.dirty || user_dob1.touched || updatefm.submitted)">
+                                  <p *ngIf="user_dob1.errors.required">
+                                      The Date of birth is required
+                                  </p>
+
+              </div>
+            </div> -->
+            <div class="form-group">
+              <!-- <input class="theme form-control" [ngModel] ="member.user_dob | date:'yyyy-MM-dd'" (ngModelChange)="member.user_dob = $event"  type="date" required name="user_dob1" #user_dob1="ngModel"/> -->
+              <input class="form-control" style="float:none" placeholder="Select a date" ngx-mydatepicker name="user_dob1"  [(ngModel)]="model1" [options]="myOptions1"  (dateChanged)="onDateChanged($event)" #user_dob1="ngx-mydatepicker" readonly="true" />
+
+          
+                         <span class="input-group-btn">
+                             <button type="button" class="btn btn-default" (click)="user_dob1.clearDate()">
+                                 <i class="glyphicon glyphicon-remove"></i>
+                             </button>
+                             <button type="button" class="btn btn-default" (click)="user_dob1.toggleCalendar()" >
+                                 <i class="glyphicon glyphicon-calendar"></i>
+                             </button>
+                         </span>
+
+              <div style="color:#fc6107" 
+                                *ngIf="user_dob1?.errors && (user_dob1.dirty || user_dob1.touched || updatefm.submitted)">
+                                  <p *ngIf="user_dob1.errors.required">
+                                      The Date of birth is required
+                                  </p>
+
+              </div>
+            </div>
+            <div class="form-group" *ngIf="member.user_phone">
+              <input class="form-control theme" placeholder="Phone Number"  name="user_mobile1" ngModel #user_mobile1="ngModel" [(ngModel)]="member.user_phone" pattern="^[6-9][0-9]{9}$" minlength="10" maxlength="10" />
+              <div style="color:#fc6107" 
+                                *ngIf="user_mobile1?.errors && (user_mobile1.dirty || user_mobile1.touched || updatefm.submitted)">
+                                  <p *ngIf="user_mobile1?.errors.required">
+                                      The Phone Number is required
+                                  </p>
+                                 
+                                   <p *ngIf="user_mobile?.errors.pattern">
+                                      Phone number should be only numbers and start with 6/7/8/9
+                                   </p>
+              </div>
+
+            </div>
+            <div class="form-group">
+              <input placeholder="Email" class="theme form-control" [(ngModel)]="member.user_email" type="email" required ngModel name="user_email1" #user_email1="ngModel" pattern="[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}">
+              <div style="color:#fc6107" 
+                                *ngIf="user_email1?.errors && (user_email1.dirty || user_email1.touched || updatefm.submitted || user_email1.pattern)">
+                                  <p *ngIf="user_email1?.errors.required">
+                                      The Email is required
+                                  </p>
+                                  
+                                  <p *ngIf="user_email1?.errors.pattern">
+                                      Invalid email
+                                  </p>
+              </div>
+            </div>
+      </div>
+    </div>
+      </div>
+      <div class="modal-footer text-center" style="text-align:center">
+        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
+    <button type="submit" class="btn btn-brand">SAVE</button>
+      </div>
+    </div>
+  </form>
+  </div>
+</div>
+
+<!--Add address -->
+<div id="add_address" class="modal theme_modal in" role="dialog">
+  <div class="modal-dialog">
+  <!-- <form #uaf="ngForm" novalidate (ngSubmit)="addUserAddress(uaf.value,user.uid)"> -->
+    <form #uaf="ngForm" novalidate (ngSubmit)="addUserAddress(uaf,uaf.valid,user.uid)">
+    <div class="modal-content">
+      <div class="modal-header">
+       <button class="btn modal_close_btn" data-dismiss="modal" #add_address (click)="reset(uaf)">&times;</button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+      <div class="col-md-12">
+       
+        <h4 class="titles text-left" style="font-weight:600">ADD ADDRESS</h4>
+            <div class="radio col-md-6">
+              <label><input type="radio" name="title_id" value="1" required #title_id="ngModel" ngModel (click)="other('title')">Home</label>
+              <label><input type="radio" name="title_id" value="2" required #title_id="ngModel" ngModel (click)="other('title')">Office</label>
+              <label><input type="radio" name="title_id" value="3" required #title_id="ngModel" ngModel (click)="other('other')">Other</label>
+              <div style="color:#fc6107" *ngIf="title_id?.errors && (title_id.dirty || title_id.touched || uaf.submitted)">
+                  <p *ngIf="title_id?.errors.required">
+                      The Title selection is required
+                  </p>
+              </div>
+            </div>
+           <div *ngIf="otherflag" class="col-md-6" >
+                    <input type="text" class="form-control theme" placeholder="" name="other" required  #other="ngModel" ngModel>
+                    <div style="color:#fc6107" 
+                                      *ngIf="other?.errors && (other.dirty || other.touched || uProfile.submitted)">
+                                                <p *ngIf="other?.errors.required">
+                                                    The Other field is required
+                                                </p>
+                    </div>
+            </div>
+            <div class="form-group">
+              <input class="form-control theme" name="doorNo" required #doorNo="ngModel" ngModel required placeholder="Door No">
+              <div style="color:#fc6107" *ngIf="doorNo?.errors && (doorNo.dirty || doorNo.touched || uaf.submitted)">
+                    <p *ngIf="doorNo?.errors.required">
+                        The Door No. is required
+                    </p>
+              </div>
+            </div>
+            <div class="form-group">
+              <input class="form-control theme" name="streetNo"  required #streetNo="ngModel" ngModel placeholder="Street Name">
+              <div style="color:#fc6107" *ngIf="streetNo?.errors && (streetNo.dirty || streetNo.touched || uaf.submitted)">
+                    <p *ngIf="streetNo?.errors.required">
+                        The Street No. is required
+                    </p>
+              </div>
+            </div>
+            <div class="form-group">
+              <select class="form-control theme" required name="city_id" ngModel #city_id="ngModel" (change)="getAreaByCity($event)"><option value="" selected>Select City</option><option *ngFor="let city of cities" value="{{city.city_id}}">{{city.city_desc}}</option>
+              </select>
+              <div style="color:#fc6107" *ngIf="city_id?.errors && (city_id.dirty || city_id.touched || uaf.submitted)">
+                    <p *ngIf="city_id?.errors.required">
+                        The City selection is required
+                    </p>
+              </div>
+            </div>
+            <div class="form-group">
+               <select class="form-control theme" required name="area_id" ngModel #area_id="ngModel"><option value="" selected>Select Area</option><option *ngFor="let area of areas" value="{{area.area_id}}">{{area.area_name}}</option></select>
+               <div style="color:#fc6107" *ngIf="area_id?.errors && (area_id.dirty || area_id.touched || uaf.submitted)">
+                    <p *ngIf="area_id?.errors.required">
+                        The Area selection is required
+                    </p>
+              </div>
+            </div>
+            <!-- <div class="form-group">
+              <input class="form-control theme" placeholder="Pincode" required name="pincode" ngModel #pincode="ngModel" pattern="[0-9]*" minlength="6" maxlength="6">
+              <div style="color:#fc6107" *ngIf="pincode?.errors && (pincode.dirty || pincode.touched ||  pincode.pattern || uaf.submitted)">
+                    <p *ngIf="pincode?.errors.required">
+                        The Pincode is required
+                    </p>
+                    
+                    <p *ngIf="pincode?.errors.pattern">
+                       Pincode should be only numbers
+                    </p>
+              </div>
+            </div> -->
+
+            <strong  class="form-text text-success" *ngIf="ms5">User new address added successfuly.</strong>                           
+     
+      </div>
+    </div>
+      </div>
+      <div class="modal-footer text-center" style="text-align:center">
+        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
+    <button type="submit" class="btn btn-brand">Save</button>
+      </div>
+    </div>
+    </form>
+  </div>
+</div>
+
+<!--Edit address -->
+<div  id="edit_address" class="modal theme_modal" role="dialog">
+  <div class="modal-dialog">
+    <form #updateAddressForm="ngForm" novalidate (ngSubmit)="updateUserAddress(updateAddressForm,updateAddressForm.valid,user.uid)">
+    <div class="modal-content">
+      <div class="modal-header">
+       <button class="btn modal_close_btn" data-dismiss="modal" #edit_address>&times;</button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+      <div class="col-md-12">
+        <input type="hidden" class="form-control" name="user_loc_id"  [(ngModel)] ="location.user_loc_id" [value]="location.user_loc_id">
+
+        <h4 class="titles text-left" style="font-weight:600">Edit ADDRESS</h4>
+            <div class="radio col-md-6">
+              <label><input type="radio" [(ngModel)]="location.title_id" [value]="1" [checked]="location.title_id ==1" name="title_id1" value="1" required #title_id1="ngModel" ngModel (click)="editOther('title')">Home</label>
+              <label><input type="radio" [(ngModel)]="location.title_id" [value]="2" [checked]="location.title_id ==2" name="title_id1" value="2" required #title_id1="ngModel" ngModel (click)="editOther('title')">Office</label>
+              <label><input type="radio" [(ngModel)]="location.title_id" [value]="3" [checked]="location.title_id ==3" name="title_id1" value="3" required #title_id1="ngModel" ngModel (click)="editOther('other')">Other</label>
+              <div style="color:#fc6107" 
+                          *ngIf="title_id1?.errors && (title_id1.dirty || title_id1.touched || updateAddressForm.submitted)">
+                                    <p *ngIf="title_id1?.errors.required">
+                                        The Title is required
+                                    </p>
+              </div>
+            </div>
+            <div *ngIf="location.title_id ==3" class="col-md-6">
+                    <input type="text" class="form-control theme" placeholder="" name="other1" required  #other1="ngModel" ngModel [(ngModel)]="location.other">
+                    <div style="color:#fc6107" 
+                                      *ngIf="other1?.errors && (other1.dirty || other1.touched || uProfile.submitted)">
+                                                <p *ngIf="other1?.errors.required">
+                                                    The Other field is required
+                                                </p>
+                    </div>
+            </div>
+
+            <div class="form-group" >
+              <input class="form-control theme"  name="doorNo1" required #doorNo1="ngModel" ngModel required placeholder="Door No" [(ngModel)]="location.hno">
+              <div style="color:#fc6107" *ngIf="doorNo1?.errors && (doorNo1.dirty || doorNo1.touched || uaf.submitted)">
+                    <p *ngIf="doorNo1?.errors.required">
+                        The Door No. is required
+                    </p>
+              </div>
+            </div>
+            <div class="form-group">
+              <input class="form-control theme"  name="streetNo1"  required #streetNo1="ngModel" ngModel placeholder="Street Name" [(ngModel)]="location.street">
+               <div style="color:#fc6107" *ngIf="streetNo1?.errors && (streetNo1.dirty || streetNo1.touched || uaf.submitted)">
+                    <p *ngIf="streetNo1?.errors.required">
+                        The Street No. is required
+                    </p>
+              </div>
+            </div>
+            <div class="form-group">
+              <select class="form-control theme"   [(ngModel)]="location.city_id" required name="city_id1" ngModel #city_id1="ngModel" (change)="getAreaByCity($event)"><option value="">Select City</option><option *ngFor="let city of cities" value="{{city.city_id}}">{{city.city_desc}}</option>
+              </select>
+              <div style="color:#fc6107" *ngIf="city_id1?.errors && (city_id1.dirty || city_id1.touched || updateAddressForm.submitted)">
+                  <p *ngIf="city_id1?.errors.required">
+                      The City selection is required
+                  </p>
+              </div>
+            </div>
+
+            <div class="form-group">
+               <select class="form-control theme" [(ngModel)]="location.area_id" required name="area_id1" ngModel #area_id1="ngModel"><option value="">Select Area</option><option *ngFor="let area of areas" value="{{area.area_id}}">{{area.area_name}}</option></select>
+               <div style="color:#fc6107" 
+                                  *ngIf="area_id1?.errors && (area_id1.dirty || area_id1.touched || updateAddressForm.submitted)">
+                    <p *ngIf="area_id?.errors.required">
+                        The Area name selection is required
+                    </p>
+               </div>
+
+            </div>
+            <!-- <div class="form-group">
+              <input class="form-control theme" placeholder="Pincode" required name="pincode1" ngModel #pincode1="ngModel" pattern="[0-9]*" minlength="6" maxlength="6">
+              <div style="color:#fc6107" *ngIf="pincode1?.errors && (pincode1.dirty || pincode1.touched ||  pincode1.pattern || updateAddressForm.submitted)">
+                    <p *ngIf="pincode1?.errors.required">
+                        The Pincode is required
+                    </p>
+                    
+                    <p *ngIf="pincode1?.errors.pattern">
+                       Pincode should be only numbers
+                    </p>
+              </div>
+
+          </div> -->                          
+        
+      </div>
+    </div>
+      </div>
+      <div class="modal-footer text-center" style="text-align:center">
+        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
+    <button type="submit" class="btn btn-brand">Save</button>
+      </div>
+    </div>
+    </form>
+  </div>
+</div>
+<!-- edit_address -->
+
+              </div>
+              
+            </div>
+          </div>
+          <div id="order_history" class="tab-pane">
+            <div class="row" style="margin-top:100px">
+              <div class="col-md-2 "></div>
+              <div class="col-md-8">
+                <div class="form-group" style="">
+                  <div class="input-group search_input-group">
+                    <input type="text" class="form-control input-lg" placeholder="Search by test name,bill number,name..." aria-describedby="basic-addon2" #oHsearch (keyup.enter)="ser(oHsearch.value)"> <span class="input-group-addon" id="basic-addon2" style="background-color:#fff; border:0px;"> 
+                    <span><i class="fa fa-circle" style="color:#EEEEED ; font-size: 50px;margin-top: -7px;"></i></span>
+                    <div style="font-size: 35px;margin-top: -42px; color:#f05b25" (click)="ser(oHsearch.value)"><i class="fa fa-search"></i>
+                    </div>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <!-- <div class="col-md-2">
+                <select class="form-control theme" style="margin-top:10px;">
+                  <option>Last Month</option>
+                  <option>This Month</option>
+                </select>
+              </div> -->
+              <div class="col-md-12">
+                <table class="table">
+                  <thead>
+                    <tr class="text-brandcolor">
+                      <th>CUSTOMER NAME</th>
+                      <th>TEST NAME(s)</th>
+                      <th>Ordered Date and Time</th>
+                      <th>Bill Number</th>
+                      <th>Action</th>
+                      
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let bill of myFinalizedOrders2| paginate: config; let i = index">
+                      <td>{{bill.customer_name}}</td>
+                      <td>{{bill.test_name}}...</td>
+                      <td>{{bill.order_date}}</td>
+                      <td>{{bill.bill_no}}</td>
+                      <!-- <td>30<sup>th</sup> Jan 11.30 AM</td> -->
+                      <td><a href="javascript:void(0)" (click)="getBillDetails(bill.bill_no)">View Details</a></td>
+                    </tr>
+                    <tr *ngIf="myFinalizedOrders?.length==0">
+                        <td colspan="5">You Have Made No Tests Yet</td>
+                    </tr>
+                   
+                    
+                  </tbody>
+                </table>
+                <pagination-template class="col-md-12 text-center" #p="paginationApi"
+                [id]="config.id"
+                (pageChange)="config.currentPage = $event" *ngIf="myFinalizedOrders?.length>config.itemsPerPage">
+                    
+                    <div class="w3-bar pagination_theme">
+                        <span  [class.disabled]="p.isFirstPage()">
+                                <a class="w3-button" *ngIf="!p.isFirstPage()" (click)="p.previous()">&lt;</a>
+                        </span>
+                        <span *ngFor="let page of p.pages" [class.current]="p.getCurrent() === page.value">
+                                <a class="w3-button " (click)="p.setCurrent(page.value)" *ngIf="p.getCurrent() !== page.value">
+                                    <span>{{ page.label }}</span>
+                                </a>
+                                <span *ngIf="p.getCurrent() === page.value">
+                                    <a class="w3-button current"><span>{{ page.label }}</span></a>
+                                </span>
+                            </span>
+                          
+                  
+                          <span class="pagination-next" [class.disabled]="p.isLastPage()">
+                                <a class="w3-button" *ngIf="!p.isLastPage()" (click)="p.next()"> > </a>
+                            </span>
+                        </div>
+                    </pagination-template>
+               
+              </div>
+            
+            </div>
+            <div id="billDetails" class="row">
+                <div class="tenet-loader" *ngIf="loading['billDetails']" ><img src="./assets/images/monogram.svg"  /></div>
+                <div class="tenet-loader" *ngIf="loading['reportDownload']" ><img src="./assets/images/monogram.svg"  /></div>
+              <div *ngIf="billDetails.length > 0" table="col-md-12">
+                  <div  class="form-group text-right">
+                      <!-- <button class="btn btn-brand" title="This is only available before sample is collected" (click)="addMore(billDetails[0].order_no)">Add More Services to This Bill*</button> -->
+                      <button class="btn btn-brand" title="This is only available after all the services are approved" (click)="downloadReport('',billDetails[0].order_no)">Dowload All Available Reports*</button>
+                    </div>
+                  <div id="patientDetails">
+                      <table>
+                        <tr><th>Bill. No. :</th><th>{{billDetails[0].order_no}}</th></tr>
+                        <tr><th>Name :</th><td>{{partient_name}}</td></tr>
+                        <!-- <tr><th>Age :</th><td>29M</td></tr> -->
+                        <tr><th>Status :</th><td>Active</td></tr>
+                        
+                      </table>
+                    </div>
+                    
+                  <table class="table">
+                  <th>Test Name</th><th>Test Code</th><th>Service Amount</th><th>Status</th><th>Actions</th>
+                  <tr *ngFor="let item of billDetails">
+                    <td>{{item.test_name}}</td><td>{{item.test_code}}</td><td>{{item.test_amount}}</td><td>{{item.test_status}}</td><td><span *ngIf="(item.test_status=='Bill Done')"><a href="javascript:void(0)" (click)="deleteService(billDetails[0].order_id,item.tid,billDetails[0].order_no)"><i class="fa fa-trash-o text-brandcolor"></i></a></span><span *ngIf="(item.test_status=='Approved')"><a  (click)="downloadReport(item.tid,billDetails[0].order_no)"><i title="Download the report" class="fa fa-arrow-down"></i></a></span><span *ngIf="((item.test_status!=='Approved')&&(item.test_status!=='Bill Done'))">Processing</span></td>
+                  </tr>
+                </table>
+              </div>
+            
+            </div>
+            <div class="text-center">
+                <h4 class="text-brandcolor"><strong>Please reach out to us on 86880 86880 if you want to modify or cancel your order.</strong></h4>
+              </div>
+          </div>
+          <div id="changepassword" class="tab-pane">
+                      <div class="row" style="margin-top:100px">
+                        <div class="col-md-4">
+                          </div>
+                          <p *ngIf="pwc==1" class="sub_heading-brand ft-10px m-b-15">Password Changed Successfully</p>
+                          <p *ngIf="pwc==2" class="sub_heading-brand ft-10px m-b-15">Invalid User/Current Password</p>
+                          <p *ngIf="pwc==4" class="sub_heading-brand ft-10px m-b-15">Invalid old password</p>
+                          <p *ngIf="pwc==3" class="sub_heading-brand ft-10px m-b-15">Old and new passwords must be different</p>
+                          <form #cp="ngForm" novalidate (ngSubmit)="changePassword(cp,cp.valid,user.uid)">
+                             <!--  <input type="hidden" name="user_id" [(ngModel)]="user.uid" value="{{user.uid}}"> -->
+                              <div class="col-md-4">
+                                  <div class="form-group">
+                                      <input ngModel name="oldpassword" #oldpassword="ngModel" id="oldpassword" class="form-control theme" type="password"  placeholder="Old Password" required/>
+
+                                        <div style="color:#fc6107" 
+                                        *ngIf="oldpassword?.errors && (oldpassword.dirty || oldpassword.touched || cp.submitted)">
+                                          <p *ngIf="oldpassword?.errors.required">
+                                              The Old password is required
+                                          </p>
+                                        </div>
+
+                                  </div>
+                                  <div class="form-group">
+                                      <input class="form-control theme" type="password" placeholder="New Password" required name="newpassword" ngModel #newpassword="ngModel" minlength="6"/>
+
+                                       <div style="color:#fc6107" 
+                                *ngIf="newpassword?.errors && (newpassword.dirty || newpassword.touched || newpassword.minlength || cp.submitted)">
+                                          <p *ngIf="newpassword?.errors.required">
+                                              The New password is required
+                                          </p>
+                                          <p *ngIf="newpassword?.errors.minlength">
+                                           The Password must be at least 5 characters long.
+                                          </p>
+                                </div>
+
+                                  </div>
+                                  <div class="form-group">
+                                      <input class="form-control theme" type="password" class="form-control theme" placeholder="Confirm Password"  validateEqual="newpassword" required name="cpassword" ngModel #cpassword="ngModel" />
+
+                                  <div style="color:#fc6107" 
+                                  *ngIf="cpassword?.errors && (cpassword.dirty || cpassword.touched || cp.submitted)">
+                                    <p *ngIf="cpassword?.errors.required">
+                                        The Confirm password is required
+                                    </p>
+                                  </div>
+
+                                  </div>
+                                  <div [hidden]="cpassword.valid || cpassword.pristine" style="color:red">
+                                      Passwords did not match
+                                  </div>
+
+                                  <div class="form-group text-right">
+                                      <button class="btn btn-default" type="submit">Save</button>
+                                      <button class="btn btn-brand" type="submit" type="reset" [disabled]="cp.pristine">Cancel</button>
+                                  </div>
+                              </div>
+                          </form>           
+                      </div>
+                  </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

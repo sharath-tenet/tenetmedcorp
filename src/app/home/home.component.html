@@ -1,0 +1,687 @@
+<div class="content" style="min-height:800px;">
+    <!-- <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="text-center" style="padding-bottom:20px;color: #f05b25;">Watch what makes Tenet work <img src="./assets/images/iconimages/playbutton.png" height="75" style="margin-left:10px;"/></h2>
+            </div>
+        </div>
+    </div> -->
+    <div class="container-fluid" style="padding:0">
+        <div class="row">
+            <div class="col-md-12" style="position:relative">
+                <div class="slider_images">
+                    <owl-carousel #maincaro [options]="{items: 1, dots: false, navigation: true ,loop:true,autoplay:true,autoplayTimeout:2000}" [items]="images"   [carouselClasses]="['owl-theme', 'row', 'sliding','slider_images']">
+                            <div class="item" *ngFor="let image of images;let i = index">
+                                <div class="thumbnail-image" >
+                                  <img src="./assets/images/{{image}}"/>
+                                </div>
+                                
+                            </div>
+                            
+                   </owl-carousel>
+                    
+                </div>
+                <div class="navigations_div" style="">
+                    <div class="prev pull-left">
+                        <img src="./assets/images/iconimages/leftarrow.png" />
+                    </div>
+                    <div class="next pull-right">
+                        <img src="./assets/images/iconimages/rightarrow.png"/>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+
+                <div class="navigations_div" style="">
+                <div class="prev pull-left">
+                        <a href="javascript:void(0)" (click)="movescaro(maincaro,'left')"><img src="./assets/images/iconimages/leftarrow.png" /></a>
+                </div>
+                <div class="next pull-right">
+                        <a href="javascript:void(0)" (click)="movescaro(maincaro,'right')"><img src="./assets/images/iconimages/rightarrow.png"/></a>
+                </div>
+                <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+       <div class="row" style="margin-top:30px; margin-bottom:0px;">
+            <div class="col-md-12 text-center">
+                <div class="form-group" style="margin: 40px 100px;">
+                    <div class="input-group search_input-group">
+                      <input #searchString type="text" class="form-control input-lg dropdown-toggle" data-toggle="dropdown" placeholder="Search for Pathology Tests, Scans, MRI, CT etc." aria-describedby="basic-addon2" aria-expanded="true" [formControl]="searchTerm" (keyup.enter)="searchBasedOnString(searchTerm.value)" [(ngModel)]=filterKey>
+                    <div class="dropdown-menu search_dropdown" style="width:100%;max-height:250px;overflow-y:auto;    z-index: 1999;">
+                        <ul class="search_ul" >
+                               
+                            <li class="heading" *ngIf="searchResult.length > 0"><i class="fa fa-history"></i> Tests Related to {{searchTerm.value}}</li>
+                            <li *ngFor="let item of searchResult"><a (click)="select(item.test_name,'test')">{{item.test_name}}</a></li>
+                            
+                            <li class="heading" *ngIf="((_packagesSearchResult.length > 0)&&(mpckgshow===true))"><i class="fa fa-history"></i> Packages Related to {{searchTerm.value}}</li>
+                            <li *ngFor="let item of _packagesSearchResult"><a (click)="select(item.package_name,'package')">{{item.package_name}}</a></li>
+
+                            <li class="heading" *ngIf="((_packagesSearchResult.length ==0) && (searchResult.length==0) &&(searchString.value===''))">Popular Tests</li>
+                            <li *ngFor="let test of getPopularTests(searchString.value)" (click)="select(test,'test')">{{test}}</li>
+
+                        </ul>
+                      </div>
+
+                      <span class="input-group-addon" id="basic-addon2" style="background-color:#fff; border:0px;"  (click)="searchBasedOnString(searchTerm.value)"> 
+                            <span><i class="fa fa-circle" style="color:#EEEEED ; font-size: 50px;margin-top: -7px;"></i></span>
+                            <div style="font-size: 35px;margin-top: -42px; color:#f05b25"><i class="fa fa-search"></i></div>
+                              
+                      </span>
+                    </div>
+                    <!-- <div class="suggestions" *ngIf="searchResult.length > 0">
+                                <div *ngFor="let item of searchResult">
+                                    <div>
+                                        <a (click)="select(item.test_name,'test')">{{item.test_name}}</a>
+                                    </div>
+                                </div>
+                    </div>
+                    <div class="suggestions" *ngIf="((_packages.length > 0)&&(mpckgshow===true))">
+                        <div *ngFor="let item of _packages">
+                            <div>
+                                <a (click)="select(item.package_name,'package')">{{item.package_name}}</a>
+                            </div>
+                        </div>
+                    </div> -->
+
+                </div>
+            </div>  
+        </div>
+        <hr>
+        <div class="row" style="padding:30px 0;">
+            <div class="col-md-6 text-center " style="padding:20px">
+                 <button class="btn btn-brand btn-lg home_btn" (click)="getBookAnAppointment()" style="height: 70px;padding: 0 50px;">Book a test</button>
+  
+            </div>
+            <div class="col-md-6 text-center left-border-brandcolor-light-2px" style="padding:20px">
+                    <!-- tokenSet -->
+                <span *ngIf="tokenSet"><button class="btn btn-brand btn-lg home_btn" (click)="redir('./account/order-history')" style="text-align:center;height: 70px;padding: 0 50px;">Check Report <br> Status</button></span>  
+                <span *ngIf="!tokenSet"><button class="btn btn-brand btn-lg home_btn" data-toggle="modal" data-target="#book_modal" data-backdrop="false" style="text-align:center;height: 70px;padding: 0 50px;">Check Report <br> Status</button></span>  
+            </div>
+     </div>
+
+     <div id="book_modal" class="modal theme_modal" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="btn modal_close_btn"  data-dismiss="modal">&times;</button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                    <form #lf="ngForm" novalidate (ngSubmit)="loginSubmit(lf,lf.valid)">
+                        <div class="form-group">
+                            
+                             <input type="text" class="form-control theme"  placeholder="Enter TIN Number or Mobile number" name="phone" ngModel  required #phone="ngModel">
+
+                              <div style="color:#fc6107" 
+                                *ngIf="phone?.errors && (phone.dirty || phone.touched || lf.submitted)">
+                                      <p *ngIf="phone?.errors.required">
+                                          The TIN number/Phone Number is required
+                                      </p>
+                              </div>
+                        </div>
+                         <div class="form-group">
+                             
+                              <input type="password" class="form-control theme"  placeholder="Password*" name="password1" ngModel  required #password1="ngModel">
+
+                              <div style="color:#fc6107" 
+                            *ngIf="password1?.errors && (password1.dirty || password1.touched || lf.submitted || password1.minlength)">
+                                <p *ngIf="password1?.errors.required">
+                                    The Password is required
+                                </p>
+                              
+                            </div>
+
+                         </div>
+                     <div class="form-group">
+                        <div id="recaptcha-container"></div>
+                     </div>
+                    <div class="form-group">
+                      <h5 class="titles text-left" style="font-weight:600; display:inline-block" data-toggle="modal" data-target="#forget_password_modal" data-backdrop="false">
+                      <span style="margin-top:15px">Forgot Password?</span>
+                      </h5>
+                    <button type="submit" class="btn btn-brand pull-right" >Submit</button>
+                    </div>
+            
+                  </form> 
+                
+            </div>
+        </div>
+      </div>
+      <!-- <div class="modal-footer"> -->
+        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
+        <!-- <button type="button" class="btn btn-brand">Submit</button> -->
+      <!-- </div> -->
+    </div>
+    
+
+  </div>
+</div>
+
+
+<!-- forget password content-->
+<div id="forget_password_modal" class="modal theme_modal" role="dialog">
+  <div class="modal-dialog">
+    <form #forgotForm="ngForm" novalidate (ngSubmit)="getForgotPassword(forgotForm,forgotForm.valid)">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="btn modal_close_btn"  data-dismiss="modal" (click)="reset(forgotForm)" #forget_password_modal >&times;</button>
+        <h4 class="modal-title"></h4>
+         <h4 class="modal-title"><strong class="form-text text-success" *ngIf="sotp">OTP sent successfully</strong></h4>
+        <h4 class="modal-title"><strong class="form-text text-success" *ngIf="fotp">Failed to sent otp</strong></h4>
+      </div>
+      <div class="modal-body">
+    <div class="row">
+      <div class="col-md-12">
+        <h4 class="titles text-left" style="font-weight:600">Forgot Password? </h4>
+          <div>
+          <p class="text-center text-bold" style="padding:15px; font-weight:600" > Please enter your Registered Phone number.</p>
+          </div>
+         <div class="form-group">
+            <input class="form-control theme" ngModel required name="Mobile" #Mobile="ngModel" placeholder="Phone number" pattern="[0-9]*" minlength="10" maxlength="10"/>
+
+             <div style="color:#fc6107" *ngIf="Mobile?.errors && (Mobile.dirty || Mobile.touched || forgotForm.submitted )">
+                                  <p *ngIf="Mobile?.errors.required">
+                                      The Mobile Number is required
+                                  </p>
+                                  <p *ngIf="Mobile?.errors.minlength">
+                                        Mobile number should be 10 digit
+                                  </p>
+                                  <p *ngIf="Mobile?.errors.pattern">
+                                       Mobile number should be only numbers
+                                  </p>
+
+                </div>
+         </div>
+      </div>
+    </div>
+      </div>
+      <div class="modal-footer">
+        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
+   <!--  <button type="submit" class="btn btn-brand" data-toggle="modal" data-target="#otp_Forgotpassword_modal" data-backdrop="false">Send OTP</button> -->
+  <!--  <button type="submit" class="btn btn-brand" data-toggle="modal" data-target="#otp_modal1" data-backdrop="false">Send OTP</button> -->
+  <button  type="submit" #otpM class="btn btn-brand"  data-toggle="modal"  data-backdrop="false">Send OTP</button>
+ 
+      </div>
+    </div>
+  </form> 
+  </div>
+</div>
+<!--Forgot password content -->
+
+<!-- otp modal for login-->
+<div  id="otp_modal1" class="modal theme_modal" role="dialog">
+  <div class="modal-dialog">
+    <!-- otp content-->
+  <form #otpf1="ngForm" novalidate (ngSubmit)="UpdatePasswordByOTP1(otpf1,otpf1.valid,uid);">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="btn modal_close_btn" data-dismiss="modal" #otp_modal1 (click)="reset1(otpf1)">&times;</button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+      <div class="col-md-12">
+       
+          <div>
+            <h4 class="text-center text-bold" style="padding:15px; font-weight:600">A One Time Password has been sent to your registered mobile number ending with XX435. <br>
+            Please enter the OTP to change password.
+            </h4>
+             <h5 class="text-center text-bold"><strong  class="form-text text-danger" *ngIf="ivotp">Invalid OTP</strong></h5>
+          </div>
+         
+          <div class="text-center">
+            <div class="form-inline" style="width:300px;margin:0 auto;">
+              <input type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" class="form-control theme otp_input" name="term1" ngModel #term1 ="ngModel" style="width:50px; float:left;" (keyup)="autoTab($event)"/>
+              <input type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" class="form-control theme otp_input" name="term2" ngModel style="width:50px; float:left;" #term2 ="ngModel" (keyup)="autoTab($event)"/>
+              <input type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" class="form-control theme otp_input" name="term3" ngModel style="width:50px; float:left;" #term3="ngModel" (keyup)="autoTab($event)"/>
+              <input type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" class="form-control theme otp_input" name="term4" ngModel style="width:50px; float:left;" #term4 ="ngModel" (keyup)="autoTab($event)"/>
+              <!-- <input type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" class="form-control theme otp_input" name="term5" ngModel style="width:50px; float:left;" #term5 ="ngModel" (keyup)="autoTab($event)"/> -->
+
+              <div class="clearfix"></div>
+            </div>
+          </div>
+
+         <!--  <input type="hidden" class="form-control theme" name="user_id" [(ngModel)] = "uid" ngModel #user_id="ngModel"> -->
+
+       <!--    <input type="text" class="form-control theme" name="Mobile" [(ngModel)] = "phoneNumber" ngModel #Mobile="ngModel">{{phoneNumber}} -->
+          
+          <h4 class="titles" style="font-weight:600">SET PASSWORD</h4>
+              <div class="form-group">
+                <input type="password" class="form-control theme"  placeholder="Password*" minlength="6" name="pwd1" ngModel  required #pwd1="ngModel">
+                <div style="color:#fc6107" 
+                            *ngIf="pwd1?.errors && (pwd1.dirty || pwd1.touched || otpf1.submitted || pwd1.minlength)">
+                              <p *ngIf="pwd1?.errors.required">
+                                  The Password is required
+                              </p>
+                               <p *ngIf="pwd1?.errors.minlength">
+                                   The Password must be at least 5 characters long.
+                              </p>
+                </div>
+              </div>
+              <div class="form-group">
+                    <input type="password" class="form-control theme" placeholder="Confirm Password" required 
+                         validateEqual="pwd1"
+                        name="cpwd1" ngModel
+                         #cpwd1="ngModel" (keyup)="autoTab2($event, pwd1.value.length )" >
+
+                           <div [hidden]="cpwd1.valid || cpwd1.pristine" style="color:#fc6107">
+                            Passwords did not match
+                           </div>
+                           <div style="color:#fc6107" 
+                            *ngIf="cpwd1.errors && (cpwd1.dirty || cpwd1.touched || otpf1.submitted)">
+                              <p *ngIf="cpwd1?.errors.required">
+                                  The Confirm password is required
+                              </p>
+                           </div>
+
+              </div> 
+       
+      </div>
+    </div>
+      </div>
+      <div class="modal-footer">
+        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
+    <button type="submit" #save1 class="btn btn-brand" >Save</button>
+    <button type="button" class="btn btn-brand" (click)="resendOTP(phneNo)">Resend OTP</button>
+      </div>
+    </div>
+     </form> 
+  </div>
+</div>
+        <hr>
+        <!-- <div class="row" style="padding:20px 0px;">
+            <div class="col-md-6">
+                <h2 class="titles"><img src="./assets/images/iconimages/teneticon.png" class="pull-left" height="35" style="margin:0px 9px 9px 0px; " />YOUR HEALTH IS YOUR RESPONSIBILITY IS SCRAPED.</h2>
+            </div>
+            <div class="col-md-6">
+                <p>Tenet diagnostics brings to you a comprehensive range of all diagnostic modalities under one name. With a combination of Quality, Accuracy, Technology and Convenience, we aim to provide you with results that matter to prevent impending ailments to your body that stem from our lifestyles today.
+</p>
+<p>Being responsible about health allows you to take preventive measures and make sound health a priority. </p>
+<p>Afterall, when it is about your health, <span class="bold-font text-brandcolor">It’s good to know.</span> 
+</p>
+            </div>
+        </div>
+        <hr> -->
+        <div class="row" style="padding:20px 0px;">
+            <div class="col-md-7">
+                <h2 class="titles" style="margin-bottom:15px;"><img src="./assets/images/iconimages/teneticon.png" class="pull-left" height="35" style="margin:0px 10px 10px 0px; " />OUR FACILITIES</h2>
+                <div class="row" style="margin-left:35px">
+                    <div class="col-xs-6">
+                            <p class="sub_heading">PATHOLOGY</p>
+                            <ul class="list-ul-default">
+                                <li>Clinical Biochemistry</li>
+                                <li>Hematology</li>
+                                <li>Clinical pathology</li>
+                                <li>Microbiology</li>
+                                <li>Immunology</li>
+                                <li>Cytology</li>
+                                <li>Histopathology</li>
+                                <li>Molecular Biology</li>
+                                <li>Cytogenetics</li>
+                            </ul>
+                            <p class="sub_heading">CARDIOLOGY</p>
+                            <ul class="list-ul-default">
+                                <li>ECG</li>
+                                <li>TMT</li>
+                                <li>2D ECHO</li>
+                            </ul>
+                        
+                    </div>
+                   <div class="col-xs-6">
+                        <p class="sub_heading">RADIOLOGY</p>
+                        <ul class="list-ul-default">
+                            <li>High Resolution Ultrasound</li>
+                            <li>X-Ray</li>
+                            <li>Bone Mineral densitometry (BMD)</li>
+                            <li>Mammogram</li>
+                            <li>Pulmonary Function Test (PFT)</li>
+                        </ul>
+                        <p class="sub_heading">IMAGING</p>
+                        <ul class="list-ul-default">
+                            <li>MRI-3T/1.5T</li>
+                            <li>MDCT</li>
+                        </ul>
+                      
+                        
+                    </div>
+                </div>
+                
+            </div>
+            <div class="col-md-5 presentaion_wrapper" style="position:relative">
+                <div class="presentation_slider">
+                  
+                   <owl-carousel #smallcaro   [options]="{items: 1, dots: false, navigation: false,loop:true,autoplay:true,autoplayTimeout:2000}" [items]="images1"   [carouselClasses]="['owl-theme', 'row', 'sliding']">
+                 <div class="item" *ngFor="let img of images1;let i = index">
+                     <div class="thumbnail-image">
+                         <img src="./assets/images/{{img}}"/>
+                     </div>
+                 </div>
+               </owl-carousel>
+                </div>
+                <div class="navigations_div" style="">
+                    <div class="prev pull-left">
+                        <img src="./assets/images/iconimages/leftarrow.png" (click)="movescaro(smallcaro,'left')" />
+                    </div>
+                    <div class="next pull-right">
+                        <img src="./assets/images/iconimages/rightarrow.png" (click)="movescaro(smallcaro,'right')"/>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+            
+        </div>
+        <hr>
+        <div class="row" style="padding:20px 0px;">
+            <div class="col-md-5">
+                <h2 class="titles"><img src="./assets/images/iconimages/teneticon.png" class="pull-left" height="35" style="margin:0px 10px 10px 0px; " />OUR NETWORK</h2>
+            </div>
+            <div class="col-md-7">
+                <p style="margin-top:18px;">Keeping your diagnostic needs in mind, Tenet offers a range of facilities and services to make diagnostics
+                        and reporting as convenient as possible for your lifestyle. After all, our job is to make your life a little bit
+                        easier. 
+</p>
+
+            </div>
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="image_holder">
+                            <img src="./assets/images/iconimages/networkimages/1.png" width="100%"/>
+                        </div>
+                        <div class="info text-center">
+                            <h4 class="text-center text-brandcolor">TENET<br>HUB</h4>
+                            <p style="color:#1a1a1a">Imaging, Radiology &amp; Pathology</p>
+                            <div class="line_separater" style=""></div>
+                            <p>360° DIAGNOSTICS .</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="image_holder">
+                            <img src="./assets/images/iconimages/networkimages/2.png" width="100%"/>
+                        </div>
+                        <div class="info text-center">
+                            <h4 class="text-center text-brandcolor">TENET<br>PRO</h4>
+                            <p style="color:#1a1a1a">Radiology & Pathology</p>
+                            <div class="line_separater" style=""></div>
+                            <p>EXPERTS IN RADIOLOGY &amp; PATHOLOGY.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="image_holder">
+                            <img src="./assets/images/iconimages/networkimages/3.png" width="100%"/>
+                        </div>
+                        <div class="info text-center">
+                            <h4 class="text-center text-brandcolor">TENET<br>EXPRESS</h4>
+                            <p style="color:#1a1a1a">Pathology</p>
+                            <div class="line_separater" style=""></div>
+                            <p>QUICK &amp; RESPONSIVE.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="image_holder">
+                            <img src="./assets/images/iconimages/networkimages/4.png" width="100%"/>
+                        </div>
+                        <div class="info text-center">
+                            <h4 class="text-center text-brandcolor">TENET<br>DOORSTEP</h4>
+                            <p style="color:#1a1a1a">Pathology</p>
+                            <div class="line_separater" style=""></div>
+                            <p>EASY &amp; CONVENIENT. At your doorstep.</p>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+        </div>
+        <hr>
+        <div class="row" style="padding:20px 0;">
+            <div class="col-md-12">
+                <h2 class="titles" style="margin-bottom:30px;"><img src="./assets/images/iconimages/teneticon.png" class="pull-left" height="35" style="margin:0px 10px 10px 0px; " />OUR PACKAGES</h2>
+            </div>
+            <div class="col-md-12">
+                <ul class="nav nav-tabs brand_nav_tabs">
+                  <li class="active"><a data-toggle="tab" href="#home">FEATURED</a></li>
+                  <li><a data-toggle="tab" href="#spclpckgs">SPECIAL OFFERS</a></li>
+                  <li><a data-toggle="tab" href="#allpckgs">ALL PACKAGES</a></li>
+                </ul>
+                
+                <div class="tab-content">
+                  <div id="home" class="tab-pane in active">
+                    <div class="row">
+                        <ngx-loading [show]="loading['packages']"></ngx-loading>
+                        <div class="col-md-12 package_slider_wrapper"  *ngIf="_packages?.length > 0" style="position:relative; padding:50px">
+                            <div class="package_slider">
+                                <owl-carousel #packcaro   [options]="{items: 3, dots: false, navigation: false,loop:true,autoplay:false}"   [carouselClasses]="['owl-theme', 'row', 'sliding']">
+                                
+                                <div class="package_container" *ngFor="let pckg of _packages">
+                                        <div class="col-md-12">
+                                            <h4 class="titles " style="font-weight:600;cursor:pointer !important"  (click)="select(pckg.package_name,'package')"><img src="./assets/images/iconimages/bag.png" class="pull-left" style="margin: -6px 01px 01px 0px;width: 30px !important;" />
+                                                {{pckg.package_name}}</h4>
+                                        </div>
+                                        
+                                        
+                                        <div class="package_info">
+                                            <ul>
+                                                <li>MRP:Rs.{{pckg.package_price}}</li>
+                                                <li>Package Offer-Price:Rs.{{pckg.package_price}}</li>
+                                                <li>Number Of Parameters</li>
+                                            </ul>
+                                            <a  href="javascript:void(0)" class="pull-right text-brandcolor" style="cursor:pointer !important"  (click)="select(pckg.package_name,'package')">Know More</a>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        <div class="package_price">
+                                            <h4><i class="fa fa-rupee"></i> {{pckg.package_price}}</h4>
+                                        </div>
+                                        <div class="package_cart"> 
+                                                <button *ngIf="!isadded(pckg.id)" class="btn btn-brand btn-sm" (click)="addPackageCart(pckg)"><img src="./assets/images/iconimages/carticon.png"/> ADD TO CART</button>
+                                                <button *ngIf="isadded(pckg.id)" class="btn btn-brand btn-sm" ><img src="./assets/images/iconimages/carticon.png"/> ADDED</button>
+                                                <div style=" float:  right;  width: 60px;    padding-left: 7px;">
+                                                      <div class="input-group" style="    border:  0;">
+                                                      <span *ngIf="getTestQuant(pckg.id)>1" class="input-group-addon" style="padding: 0; border:  0; background-color:transparent;  padding-right: 5px;cursor: pointer;" (click)="testQuantMinus(pckg.id)">-</span>
+                                                        <input type="text" class="form-control theme" value="{{getTestQuant(pckg.id)}}" style="    width: 40px;  padding:  0;    text-align:  center;    font-size:  13px;    height:  30px;" readonly="true">
+                                                        <span class="input-group-addon" style="   padding: 0; padding-left: 5px;   border: 0;    background-color: transparent;cursor: pointer;" (click)="testQuantPlus(pckg.id)"> + </span>
+                                                      
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                    </div>
+                                 
+                                
+                                 
+                                </owl-carousel>
+                            </div> 
+                            <div class="navigations_div" style="padding:0">
+                                <div class="prev pull-left">
+                                    <img src="./assets/images/iconimages/leftarrow.png" (click)="movescaro(packcaro,'left')"/>
+                                </div>
+                                <div class="next pull-right">
+                                    <img src="./assets/images/iconimages/rightarrow.png" (click)="movescaro(packcaro,'right')"/>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                  <div id="spclpckgs" class="tab-pane ">
+                        <h3>Sorry</h3>
+                        <p>Currently,No Special packages available.</p>
+                  </div>
+                  <div id="allpckgs" class="tab-pane ">
+                        <div class="row">
+                                <div class="tenet-loader" *ngIf="loading['service']" ><img src="./assets/images/monogram.svg"  /></div> 
+                                <div class="col-md-12 package_slider_wrapper"  *ngIf="_packages?.length > 0" style="position:relative; padding:50px">
+                                    <div class="package_slider">
+                                        <owl-carousel #packcaro   [options]="{items: 3, dots: false, navigation: false,loop:true,autoplay:false}"   [carouselClasses]="['owl-theme', 'row', 'sliding']">
+                                        <div class="package_container" *ngFor="let pckg of _packages">
+                                            <div class="col-md-12">
+                                                <h4 class="titles " style="font-weight:600;cursor:pointer !important"  (click)="select(pckg.package_name,'package')"><img src="./assets/images/iconimages/bag.png" class="pull-left" style="margin: -6px 01px 01px 0px;width: 30px !important;" />
+                                                    {{pckg.package_name}}</h4>
+                                            </div>
+                                            
+                                            
+                                            <div class="package_info">
+                                                <ul>
+                                                    <li>MRP:Rs.{{pckg.package_price}}</li>
+                                                    <li>Package Offer-Price:Rs.{{pckg.package_price}}</li>
+                                                    <li>Number Of Parameters</li>
+                                                </ul>
+                                                <a  href="javascript:void(0)" class="pull-right text-brandcolor" style="cursor:pointer !important"  (click)="select(pckg.package_name,'package')">Know More</a>
+                                                <div class="clearfix"></div>
+                                            </div>
+                                            <div class="package_price">
+                                                <h4><i class="fa fa-rupee"></i> {{pckg.package_price}}</h4>
+                                            </div>
+                                            <div class="package_cart"> 
+                                                    <button *ngIf="!isadded(pckg.id)" class="btn btn-brand btn-sm" (click)="addPackageCart(pckg)"><img src="./assets/images/iconimages/carticon.png"/> ADD TO CART</button>
+                                                    <button *ngIf="isadded(pckg.id)" class="btn btn-brand btn-sm" ><img src="./assets/images/iconimages/carticon.png"/> ADDED</button>
+                                                    <div style=" float:  right;  width: 60px;    padding-left: 7px;">
+                                                          <div class="input-group" style="    border:  0;">
+                                                          <span *ngIf="getTestQuant(pckg.id)>1" class="input-group-addon" style="padding: 0; border:  0; background-color:transparent;  padding-right: 5px;cursor: pointer;" (click)="testQuantMinus(pckg.id)">-</span>
+                                                            <input type="text" class="form-control theme" value="{{getTestQuant(pckg.id)}}" style="    width: 40px;  padding:  0;    text-align:  center;    font-size:  13px;    height:  30px;" readonly="true">
+                                                            <span class="input-group-addon" style="   padding: 0; padding-left: 5px;   border: 0;    background-color: transparent;cursor: pointer;" (click)="testQuantPlus(pckg.id)"> + </span>
+                                                          
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                        </div>
+                                         
+                                        
+                                         
+                                        </owl-carousel>
+                                    </div> 
+                                    <div class="navigations_div" style="padding:0">
+                                        <div class="prev pull-left">
+                                            <img src="./assets/images/iconimages/leftarrow.png" (click)="movescaro(packcaro,'left')"/>
+                                        </div>
+                                        <div class="next pull-right">
+                                            <img src="./assets/images/iconimages/rightarrow.png" (click)="movescaro(packcaro,'right')"/>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </div>
+                            </div>
+                  </div>
+                </div>
+
+
+            </div>
+        </div>
+        
+        <div class="row" style="padding:20px 0;">
+            <div class="col-md-12">
+                <h2 class="titles" style="margin-bottom:30px;"><img src="./assets/images/iconimages/teneticon.png" class="pull-left" height="35" style="margin:0px 10px 10px 0px; " />TESTIMONIAL</h2>
+            </div>
+            <div class="col-md-12 testimonial_slider_wrapper">
+                <div class="testimonals_slider" style="padding:0 170px;">
+                    <owl-carousel #packcaro1  [options]="{items: 1, dots: false, navigation: false,loop:true,autoplay:false}"   [carouselClasses]="['owl-theme', 'row', 'sliding']">
+                    <div class="testimonial_containter">
+                        <div class="pull-left" style="font-size: 50px;"><i class="fa fa-quote-left"></i></div>
+                        <div class="text">
+                         <p >I've had diabetes for more than 30 years, that lead to issues with my BP as well. Since I needed to get regular tests done to monitor my sugar & BP, travelling became a problem. But thanks to Tenet Express, I can get tested as and when required, without wasting time in commute.</p>
+                         <div class="user_details">
+                            <div class="img_holder">
+                                <img src="./assets/images/iconimages/profileimage.png"/>
+                                
+                            </div>
+                            <div class="info">
+                                <h5>Pawan</h5>
+                                <p>Hyderabad</p>
+                             </div>
+                             <div class="clearfix"></div>
+                         </div>
+                        </div>
+                        <div class="pull-right" style="font-size: 50px; margin-top:2%"><i class="fa fa-quote-right"></i></div>
+                    </div>
+                    <div class="testimonial_containter">
+                        <div class="pull-left" style="font-size: 50px;"><i class="fa fa-quote-left"></i></div>
+                        <div class="text">
+                         <p >One of my patients sustained multiple fractures, including major injuries to the skull. Time is of essence in cases like these and with Tenet's cutting-edge tech and quick turnaround times, I could assess and diagnose the optimum treatment for my patient!</p>
+                         <div class="user_details">
+                            <div class="img_holder">
+                                <img src="./assets/images/iconimages/profileimage.png"/>
+                                
+                            </div>
+                            <div class="info">
+                                <h5>Praveen</h5>
+                                <p>Hyderabad</p>
+                             </div>
+                             <div class="clearfix"></div>
+                         </div>
+                        </div>
+                        <div class="pull-right" style="font-size: 50px; margin-top:2%"><i class="fa fa-quote-right"></i></div>
+                    </div>
+                    <div class="testimonial_containter">
+                        <div class="pull-left" style="font-size: 50px;"><i class="fa fa-quote-left"></i></div>
+                        <div class="text">
+                         <p >After years of trying, my husband and I were elated to find out that we were pregnant! Anticipating a difficult pregnancy, I wanted the best prenatal care... And got just that! The staff at Tenet were patient and caring, expertly answering every question we threw at them</p>
+                         <div class="user_details">
+                            <div class="img_holder">
+                                <img src="./assets/images/iconimages/profileimage.png"/>
+                                
+                            </div>
+                            <div class="info">
+                                <h5>Dayakar</h5>
+                                <p>Hyderabad</p>
+                             </div>
+                             <div class="clearfix"></div>
+                         </div>
+                        </div>
+                        <div class="pull-right" style="font-size: 50px; margin-top:2%"><i class="fa fa-quote-right"></i></div>
+                    </div>
+                    <div class="testimonial_containter">
+                        <div class="pull-left" style="font-size: 50px;"><i class="fa fa-quote-left"></i></div>
+                        <div class="text">
+                         <p >I've been practicing medicine for more than 25 years and look forward to partnering with a diagnostic unit as dynamic as Tenet. With a wide range of reports that focus on attention to detail, I can send my patients to Tenet knowing that they will be looked after by certified and reliable personnel.</p>
+                         <div class="user_details">
+                            <div class="img_holder">
+                                <img src="./assets/images/iconimages/profileimage.png"/>
+                                
+                            </div>
+                            <div class="info">
+                                <h5>Sunandha</h5>
+                                <p>Hyderabad</p>
+                             </div>
+                             <div class="clearfix"></div>
+                         </div>
+                        </div>
+                        <div class="pull-right" style="font-size: 50px; margin-top:2%"><i class="fa fa-quote-right"></i></div>
+                    </div>
+                    <div class="testimonial_containter">
+                        <div class="pull-left" style="font-size: 50px;"><i class="fa fa-quote-left"></i></div>
+                        <div class="text">
+                         <p >Mira has had acute asthma since she was an infant. But hospitals can be scary for a child and every time we went for a test or scan, she would cry. Until her first visit to Tenet that is... Now she looks forward to meeting Ravi uncle and Geetha aunty, her consulting doctor and technician, every month!</p>
+                         <div class="user_details">
+                            <div class="img_holder">
+                                <img src="./assets/images/iconimages/profileimage.png"/>
+                                
+                            </div>
+                            <div class="info">
+                                <h5>Sandeep Kumar</h5>
+                                <p>Hyderabad</p>
+                             </div>
+                             <div class="clearfix"></div>
+                         </div>
+                        </div>
+                        <div class="pull-right" style="font-size: 50px; margin-top:2%"><i class="fa fa-quote-right"></i></div>
+                    </div>
+                   
+                </owl-carousel>
+                </div>
+                <div class="navigations_div" style="padding:0">
+                                <div class="prev pull-left">
+                                    <img src="./assets/images/iconimages/leftarrow.png" (click)="movescaro(packcaro1,'left')"/>
+                                </div>
+                                <div class="next pull-right">
+                                    <img src="./assets/images/iconimages/rightarrow.png" (click)="movescaro(packcaro1,'left')"/>
+                                </div>
+                                <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+     </div>
+</div>

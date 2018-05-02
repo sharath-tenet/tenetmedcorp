@@ -1,0 +1,493 @@
+<!-- <div class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="container">
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <a href="../" class="navbar-brand">TENET</a>
+        <ul class="nav navbar-nav">
+          <li  class="nav-item">
+            <a routerLink="home">Home</a>
+          </li>
+          <li  class="nav-item">
+            <a routerLink="home" >Find A Lab</a>
+          </li>
+          <li  class="nav-item">
+            <a routerLink="contactus" >Contact Us</a>
+          </li>
+         </ul>
+       <ul class="nav navbar-nav ml-auto">
+           <li><a href="javascript:void(0)" >Built With Bootstrap</a></li> 
+          <li  class="nav-item" [ngClass]="{lg:isLoggedIn==true}"><a href="javascript:void(0)" (click)="toLogin()">Account Login</a></li>
+          <li  class="nav-item" [ngClass]="{lg:isLoggedIn==false}"><a href="javascript:void(0)" (click)="toLogout()">Logout</a></li>
+          <li  class="nav-item" [ngClass]="{lg:isLoggedIn==false}"><a href="javascript:void(0)" (click)="profile()">Profile</a></li>
+        </ul>
+
+      </div>
+    </div>
+  </div> -->
+  <div class="loading_backdrop" [ngStyle]="{'display':locdrpdown ? 'block' : 'none' }"></div>
+<header>
+<nav class="navbar navbar-default header_nav ">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" routerLink="home">
+        <img src="./assets/images/tenet-logo.png" width="180"/>
+    
+      </a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" >
+      <ul class="nav navbar-nav" style="margin-top: 30px;">
+        <!-- href="ourofferings.php" -->
+    <li class="submenu_li" [ngClass]="{'active' :currentUrl=='book','open':pop['book']}">
+      <a class="dropown_menu dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)" (mouseenter)="pop['packages']=false;pop['book']=true">OUR TEST<span class="caret"></span></a>
+      <div class="dropdown-menu nav_sub_menu" style="width:750px; z-index:1100" (mouseleave)="pop['book']=false">
+          <div class="row" style="margin:0">
+          
+          <div class="col-md-4" tabindex="-1" style="    border-right: 1px solid #c1c1c1;">
+            <div>
+                <!-- <img class="menu_image" src="./assets/images/iconimages/set2/1.png"/> -->
+              <ul class="menu_list_ul">
+                <li class="list_heading"><a href="javascript:void(0)" (click)="select('HEART','organ')">HEART</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Apolipoprotein A1, Serum','test')">Apolipoprotein A1, Serum</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Apolipoprotein B, Serum','test')">Apolipoprotein B, Serum</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Troponin I, Serum','test')">Troponin I, Serum</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Troponin T, Serum','test')">Troponin T, Serum</a></li>
+                <!-- <li><a href="javascript:void(0)">CK-MB</a></li> -->
+                <li class="link_more"><a href="javascript:void(0)" (click)="select('HEART','organ')">More..</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <!-- <img class="menu_image" src="./assets/images/iconimages/set2/1.png"/> -->
+              <ul class="menu_list_ul">
+                <li class="list_heading"><a href="javascript:void(0)" (click)="select('ADERNAL GLAND','organ')">ADERNAL GLAND</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Adrenocorticotropic Hormone (ACTH), EDTA Plasma','test')">Adrenocorticotropic Hormone (ACTH), EDTA Plasma</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Cortisol (Evening ), Serum','test')">Cortisol (Evening ), Serum</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Cortisol (Morning), Serum','test')">Cortisol (Morning), Serum</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Dehydroepiandro Sterone Sulphate (DHEAS), Serum','test')">Dehydroepiandro Sterone Sulphate (DHEAS), Serum</a></li>
+                <!-- <li><a href="javascript:void(0)">Creatifirt Clereance</a></li> -->
+                <li class="link_more"><a href="javascript:void(0)" (click)="select('ADERNAL GLAND','organ')">More..</a></li>
+              </ul>
+            </div>
+            <div>
+                <!-- <img class="menu_image" src="./assets/images/iconimages/set2/1.png"/> -->
+              <ul class="menu_list_ul">
+                <li class="list_heading"><a href="javascript:void(0)" (click)="select('LIVER','organ')">LIVER</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Alanine Aminotransferase (ALT/SGPT), Serum','test')">Alanine Aminotransferase (ALT/SGPT), Serum</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Alkaline Phosphatase (ALP), Serum','test')">Alkaline Phosphatase (ALP), Serum</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Amylase, Serum','test')">Amylase, Serum</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Aspartate Aminotransferase (AST/SGOT), Serum','test')">Aspartate Aminotransferase (AST/SGOT), Serum</a></li>
+                <!-- <li><a href="javascript:void(0)">Creatifirt Clereance</a></li> -->
+                <li class="link_more"><a href="javascript:void(0)" (click)="select('LIVER','organ')">More..</a></li>
+              </ul>
+            </div>  
+            <div>
+              <!-- <img class="menu_image" src="./assets/images/iconimages/set2/1.png"/> -->
+              <ul class="menu_list_ul">
+                <li class="list_heading"><a href="javascript:void(0)" (click)="select('KIDNEY','organ')">KIDNEY</a></li>
+                <li><a href="javascript:void(0)" (click)="select('C3 Complement, Serum','test')">C3 Complement, Serum</a></li>
+                <li><a href="javascript:void(0)" (click)="select('C4 Complement, Serum','test')">C4 Complement, Serum</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Creatinine, Serum','test')">Creatinine, Serum</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Urea, Serum','test')">Urea, Serum</a></li>
+                <!-- <li><a href="javascript:void(0)">Creatifirt Clereance</a></li> -->
+                <li class="link_more"><a href="javascript:void(0)" (click)="select('KIDNEY','organ')">More..</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-4" style="    border-right: 1px solid #c1c1c1;">
+            <div>
+            
+              <ul class="menu_list_ul">
+                <li class="list_heading"><a href="javascript:void(0)" (click)="select('Disorders of Bone','cond')">Disorders of Bone</a></li>
+                <li><a href="javascript:void(0)" (click)="select('1, 25-Dihydroxy Vitamin D, Serum','test')">1, 25-Dihydroxy Vitamin D, Serum</a></li>
+                <li><a href="javascript:void(0)" (click)="select('25 - Hydroxy Vitamin D, Serum','test')">25 - Hydroxy Vitamin D, Serum</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Phosphorus, Serum','test')">Phosphorus, Serum</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Parathyroid Hormone Intact (PTHi), Serum','test')">Parathyroid Hormone Intact (PTHi), Serum</a></li>
+               <!-- <li><a href="javascript:void(0)">Lorem Ipsum</a></li>-->
+                <!--<li><a href="javascript:void(0)">Lorem Ipsum</a></li>-->
+                <li class="link_more"><a href="javascript:void(0)" (click)="select('Disorders of Bone','cond')">More..</a></li>
+              </ul>
+            </div>  
+            <div>
+              
+              <ul class="menu_list_ul">
+                <li class="list_heading"><a href="javascript:void(0)" (click)="select('Disorders of Kidney','cond')">Disorders of Kidney</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Creatinine, Serum','test')">Creatinine, Serum</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Blood Urea Nitrogen (BUN), Serum','test')">Blood Urea Nitrogen (BUN), Serum</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Urea, Serum','test')">Urea, Serum</a></li>
+				<li><a href="javascript:void(0)" (click)="select('Protein / Creatinine Ratio, Spot Urine','test')">Protein / Creatinine Ratio, Spot Urine</a></li>
+                <li class="link_more"><a href="javascript:void(0)" (click)="select('Disorders of Kidney','cond')">More..</a></li>
+              </ul>
+            </div>
+           <div> 
+              <ul class="menu_list_ul">
+                <li class="list_heading"><a href="javascript:void(0)" (click)="select('Disorders of Liver','cond')">Disorders of Liver</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Liver Function Test (LFT), Serum','test')">Liver Function Test (LFT), Serum</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Hepatitis B Surface Antigen (HbsAg) Rapid, Serum','test')">Hepatitis B Surface Antigen (HbsAg) Rapid, Serum</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Hepatitis C Antibody (Anti-HCV), Serum','test')">Hepatitis C Antibody (Anti-HCV), Serum</a></li>
+				<li><a href="javascript:void(0)" (click)="select('Ammonia, EDTA Whole Blood','test')">Ammonia, EDTA Whole Blood</a></li>
+                <li class="link_more"><a href="javascript:void(0)" (click)="select('Disorders of Liver','cond')">More..</a></li>
+              </ul>
+            </div>  
+            <div>
+              
+              <ul class="menu_list_ul">
+                <li class="list_heading"><a href="javascript:void(0)" (click)="select('Infections','cond')">Infections</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Culture And Sensitivity, Urine','test')">Culture And Sensitivity, Urine</a></li>
+                <li><a href="javascript:void(0)" (click)="select('TLC (Total Leucocyte Count), Fluid','test')">TLC (Total Leucocyte Count), Fluid</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Differential Leucocyte Count (DLC), EDTA Whole Blood','test')">Differential Leucocyte Count (DLC), EDTA Whole Blood</a></li>
+				<li><a href="javascript:void(0)" (click)="select('Platelet Count, EDTA Whole Blood','test')">Platelet Count, EDTA Whole Blood</a></li>
+                <li class="link_more"><a href="javascript:void(0)" (click)="select('Infections','cond')">More..</a></li>
+              </ul>
+            </div>
+              
+          </div>
+          <div class="col-md-4">
+            <div>
+            
+              <ul class="menu_list_ul">
+                <li class="list_heading"><a href="javascript:void(0)" (click)="select('CARDIOLOGY','spl')">CARDIOLOGY</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Lipid Profile, Serum','test')">Lipid Profile, Serum</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Triglycerides (Tgl), Serum','test')">Triglycerides (Tgl), Serum</a></li>
+                <li><a href="javascript:void(0)" (click)="select('CPK (MB), Serum','test')">CPK (MB), Serum</a></li>
+				<li><a href="javascript:void(0)" (click)="select('Homocysteine, Serums','test')">Homocysteine, Serums</a></li>
+                <li class="link_more"><a href="javascript:void(0)" (click)="select('CARDIOLOGY','spl')">More..</a></li>
+              </ul>
+            </div>  
+            <div>
+              
+              <ul class="menu_list_ul">
+                <li class="list_heading"><a href="javascript:void(0)" (click)="select('DIABETOLOGY','spl')">DIABETOLOGY</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Glucose Fasting (FBS),  Sodium Flouride Plasma','test')">Glucose Fasting (FBS),  Sodium Flouride Plasma</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Glucose Post Prandial (PPBS), Sodium Flouride Plasma','test')">Glucose Post Prandial (PPBS), Sodium Flouride Plasma</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Glucose Random (RBS), Sodium Flouride Plasma','test')">Glucose Random (RBS), Sodium Flouride Plasma</a></li>
+				<li><a href="javascript:void(0)" (click)="select('Glycosylated Hemoglobin (HbA1C), EDTA Whole Blood','test')">Glycosylated Hemoglobin (HbA1C), EDTA Whole Blood</a></li>
+                <li class="link_more"><a href="javascript:void(0)" (click)="select('DIABETOLOGY','spl')">More..</a></li>
+              </ul>
+            </div>
+            <div>
+            
+              <ul class="menu_list_ul">
+                <li class="list_heading"><a href="javascript:void(0)" (click)="select('ENDOCRINOLOGY','spl')">ENDOCRINOLOGY</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Thyroid Profile (T3,T4,TSH), Serum','test')">Thyroid Profile (T3,T4,TSH), Serum</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Thyroid Stimulating Hormone (TSH) Ultrasensitive, Serum','test')">Thyroid Stimulating Hormone (TSH) Ultrasensitive, Serum </a></li>
+                <li><a href="javascript:void(0)" (click)="select('Thyroid Antibodies (TG & TPO), Serum','test')">Thyroid Antibodies (TG & TPO), Serum</a></li>
+				<li><a href="javascript:void(0)" (click)="select('Dehydroepiandrosterone (DHEA), Serum','test')">Dehydroepiandrosterone (DHEA), Serum</a></li>
+				<li class="link_more"><a href="javascript:void(0)" (click)="select('ENDOCRINOLOGY','spl')">More..</a></li>
+              </ul>
+            </div>  
+            <div>
+              
+              <ul class="menu_list_ul">
+                <li class="list_heading"><a href="javascript:void(0)" (click)="select('GYNECOLOGY','spl')">GYNECOLOGY</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Follicle Stimulating Hormone (FSH), Serum','test')">Follicle Stimulating Hormone (FSH), Serum</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Luteinizing Hormone (LH), Serum','test')">Luteinizing Hormone (LH), Serum</a></li>
+                <li><a href="javascript:void(0)" (click)="select('Prolactin, Serum','test')">Prolactin, Serum</a></li>
+				<li><a href="javascript:void(0)" (click)="select('Estradiol (E2), Serum','test')">Estradiol (E2), Serum</a></li>
+                <li class="link_more"><a href="javascript:void(0)" (click)="select('GYNECOLOGY','spl')">More..</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          
+          </div>
+          <div class="row">
+          <div class="col-md-12">
+            <h5 class="text-brandcolor text-center"><a class="text-brandcolor " routerLink="book">VIEW ALL TESTS</a></h5>
+          </div>
+          </div>
+        </div>    
+    </li>
+    <li class="submenu_li" [ngClass]="{'active' :currentUrl=='packages','open':pop['packages']}">
+      <a class="test dropdown-toggle" href="javascript:void(0)" (mouseenter)="pop['book']=false;pop['packages']=true">OUR PACKAGES<span class="caret"></span></a>
+      <!-- <div class="dropdown-menu nav_sub_menu" style="width: 500px; z-index: 1100; display: none;" (mouseleave)="pop['packages']=false">
+          <div class="row" style="margin:0">
+            <div class="col-md-6">
+              <ul class="menu_list_ul">
+                  <li><a href="#">HEALTHY MAN PACKAGE</a></li>
+                  <li><a href="#">HEALTHY WOMEN PACKAGE	</a></li>
+                  <li><a href="#">WHOLE BODY PACKAGE - MEN	</a></li>
+                  <li><a href="#">WHOLE BODY PACKAGE - WOMEN</a></li>
+                  <li><a href="#">HEALTHY HEART PACKAGE</a></li>	
+                  <li><a href="#">DIABETES PROFILE	</a></li>	
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <ul class="menu_list_ul">
+                  <li><a href="#">CANCER SCREENING - MEN</a></li>
+                  <li><a href="#">CANCER SCREENING - WOMEN</a></li>
+                  <li><a href="#">TENET HEALTH INSTANT</a></li>
+                  <li><a href="#">TENET HEALTH SWIFT</a></li>
+                  <li><a href="#">TENET HEALTH ABSOLUTE</a></li>
+                  <li><a href="#">TENET HEALTH DIRECT</a></li>
+              </ul>
+            </div>
+          </div>
+        </div> -->
+      <div class="dropdown-menu ">
+          <div class=" nav_sub_menu" style="width: 500px; z-index: 1100;" (mouseleave)="pop=[];pop['packages']=false;">
+              <div class="row" style="margin:0">
+                <div class="col-md-6">
+                  <ul class="menu_list_ul">
+                      <li><a href="javascript:void(0)" (click)="select('HEALTHY MAN PACKAGE','package')">HEALTHY MAN PACKAGE</a></li>
+                      <li><a href="javascript:void(0)" (click)="select('HEALTHY WOMEN PACKAGE','package')">HEALTHY WOMEN PACKAGE	</a></li>
+                      <li><a href="javascript:void(0)" (click)="select('WHOLE BODY PACKAGE - MEN  ','package')">WHOLE BODY PACKAGE - MEN	</a></li>
+                      <li><a href="javascript:void(0)" (click)="select('WHOLE BODY PACKAGE - WOMEN','package')">WHOLE BODY PACKAGE - WOMEN</a></li>
+                      <li><a href="javascript:void(0)" (click)="select('HEALTHY HEART PACKAGE','package')">HEALTHY HEART PACKAGE</a></li>	
+                      <li><a href="javascript:void(0)" (click)="select('DIABETES PROFILE','package')">DIABETES PROFILE	</a></li>	
+                  </ul>
+                </div>
+                <div class="col-md-6">
+                  <ul class="menu_list_ul">
+                      <li><a href="javascript:void(0)" (click)="select('CANCER SCREENING - MEN','package')">CANCER SCREENING - MEN</a></li>
+                      <li><a href="javascript:void(0)" (click)="select('CANCER SCREENING - WOMEN','package')">CANCER SCREENING - WOMEN</a></li>
+                      <li><a href="javascript:void(0)" (click)="select('TENET HEALTH INSTANT','package')">TENET HEALTH INSTANT</a></li>
+                      <li><a href="javascript:void(0)" (click)="select('TENET HEALTH SWIFT','package')">TENET HEALTH SWIFT</a></li>
+                      <li><a href="javascript:void(0)" (click)="select('TENET HEALTH ABSOLUTE','package')">TENET HEALTH ABSOLUTE</a></li>
+                      <li><a href="javascript:void(0)" (click)="select('TENET HEALTH DIRECT','package')">TENET HEALTH DIRECT</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+    
+      </div>   
+    </li> 
+
+    <!--<li class=""><a href="ournetworks.php">OUR NETWORKS</a></li>
+    <li class=""><a href="ourfacilities.php">OUR FACILITIES</a></li>
+    <li class=""><a href="index.php">ABOUT US</a></li>
+    <li class=""><a href="javascript:void(0)">OUR BLOG</a></li> -->
+          <li class=""  [ngClass]="currentUrl=='network'? 'active' :''"><a routerLink="network">OUR NETWORK</a></li>
+          <li class=""  [ngClass]="currentUrl=='our-facilities'? 'active' :''"><a routerLink="our-facilities">OUR FACILITIES</a></li>
+          <!-- <li class=""><a routerLink="packages">OUR PACKAGES</a></li> -->
+          <li class=""  [ngClass]="currentUrl=='about-us'? 'active' :''"><a routerLink="about-us">ABOUT US</a></li>
+          <!-- <li class=""><a href="javascript:void(0)">OUR BLOG</a></li> -->
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+      <li  class="nav-item" [ngClass]="{lg:isLoggedIn==true}"><a href="javascript:void(0)" (click)="toLogin()"><i class="fa fa-user-circle"></i> LOGIN</a></li>
+          <li>
+          <!-- <a href="javascript:void(0)"><i class="far fa-user-circle"></i> LOGIN</a> -->
+          <a href="javascript:void(0)" class="dropdown-toggle " [ngClass]="{lg:isLoggedIn==false}" type="button" data-toggle="dropdown"><i class="fa fa-user-circle"></i> {{user.firstname}} {{user.lastname}}</a>
+          <ul class="dropdown-menu sub_menu">
+            <!-- <li><a routerLink="order-history">Order History</a></li> -->
+            <li><a (click)="profile()">My Profile</a></li>
+            <li><a (click)="toLogout()">Logout</a></li>
+            <!-- <li><a href="javascript:void(0)"></a></li> -->
+          </ul> 
+        </li>
+        <li><a routerLink="contactus"><i class="fa fa-phone"></i> Contact Us</a></li>
+        <!-- <li>
+            <a href="javascript:void(0)" class="dropdown-toggle" [ngClass]="{lg:isLoggedIn==false}" type="button" data-toggle="dropdown"><i class="fa fa-google-wallet"></i></a>
+              <ul class="dropdown-menu sub_menu">
+                
+                <li><a routerLink="wallet">My Wallet</a></li>
+               
+              </ul>
+         </li> -->
+
+      <li  class="{{getCartDropDown()}}" [ngClass]="getTestForCart()?.length > 0? 'active' :''">
+       <a class="dropown_menu dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)" type="button" (mouseenter)="crtDrpDown='open'" ><i class="fa fa-cart-plus"></i> <span *ngIf="(getTestForCart()?.length > 0)" >({{getTestForCart()?.length}})</span> CART</a>
+
+<div class="dropdown-menu" style="min-height:100px; min-width:360px; padding:15px;">
+   <h5 class="text-brandcolor" style="margin:0; margin-bottom:15px; font-weight:600">My Cart <span *ngIf="(getTestForCart()?.length > 0)">({{getTestForCart()?.length}})</span></h5>
+
+   <div class="cart_list_container" style="min-height:100px; outline: none; 
+    height: 110px;overflow-y: scroll;overflow-x: hidden;" tabindex="1" >
+      <div class="row" style="margin:0" *ngFor="let item of getTestForCart()">
+         <div class="col-xs-6" style="padding-right:0">
+            <span style="width: 100%;    height: 20px;    display: -webkit-box;    -webkit-line-clamp: 1; -webkit-box-orient: vertical;
+               overflow: hidden;">{{item.test_name}}</span>
+         </div>
+         <div class="col-xs-2 text-center" style="padding:0">
+            <small><i class="fa fa-rupee"></i></small> {{item.test_finalpr}}
+         </div>
+         <div class="col-xs-2" style="padding:0">
+            <div style="width: 100%;margin:  0 auto; margin-top:2px;">
+               <div class="input-group" style="border:  0;/* margin:  0 auto; */">
+                  <span *ngIf="item.quant>1" class="input-group-addon" style="padding: 0;border:  0;background-color:transparent;padding-right: 5px;font-size: 15px;" (click)="getRemoveTestCart(item)">
+                  -
+                  </span>
+                  <input type="text" class="form-control theme" value="{{item.quant}}" style="padding:  0;text-align:  center;font-size: 13px;height: 18px;" readonly="true">
+                  <span class="input-group-addon" style="padding: 0;padding-left: 5px;border: 0;background-color: transparent;font-size: 15px;" (click)="getAddTestCart(item)">
+                  +
+                  </span>
+               </div>
+               <!-- /input-group -->
+            </div>
+         </div>
+         <div class="col-xs-1 text-right">
+            <a class="text-brandcolor" (click)="deleteCartItem(user.user_id,item.tid)"><i class="fa fa-trash"></i></a>
+         </div>
+      </div>
+      <div class="row" style="margin:0" *ngFor="let pckg of pckgs">
+         <div class="col-xs-6" style="padding-right:0">
+            <span style="width: 100%;    height: 20px;    display: -webkit-box;    -webkit-line-clamp: 1; -webkit-box-orient: vertical;
+               overflow: hidden;">{{pckg.package_name}}</span>
+         </div>
+         <div class="col-xs-2 text-center" style="padding:0">
+            <small><i class="fa fa-rupee"></i></small>{{pckg.package_finalpr}}
+         </div>
+         <div class="col-xs-2" style="padding:0">
+            <div style="width: 100%;margin:  0 auto; margin-top:2px;">
+               <div class="input-group" style="border:  0;/* margin:  0 auto; */">
+                  <span *ngIf="item.quant>1" class="input-group-addon" style="padding: 0;border:  0;background-color:transparent;padding-right: 5px;font-size: 15px;" (click)="getRemoveTestCart(item)">
+                  -
+                  </span>
+                  <input type="text" class="form-control theme" value="{{item.quant}}" style="padding:  0;text-align:  center;font-size: 13px;height: 18px;" readonly="true">
+                  <span class="input-group-addon" style="padding: 0;padding-left: 5px;border: 0;background-color: transparent;font-size: 15px;" (click)="getAddTestCart(item)">
+                  +
+                  </span>
+               </div>
+               <!-- /input-group -->
+            </div>
+         </div>
+         <div class="col-xs-1 text-right">
+            <a class="text-brandcolor" (click)="deleteCartItem(user.user_id,pckg.id)"><i class="far fa-trash-alt"></i></a>
+         </div>
+      </div>
+      <div class="row" style="margin:0" *ngIf="tests.length>0">
+         <div class="col-xs-6" style="padding-right:0">
+            <span style="width: 100%;    height: 20px;    display: -webkit-box;    -webkit-line-clamp: 1; -webkit-box-orient: vertical;
+               overflow: hidden;">Home Visit Charges</span>
+         </div>
+         <div class="col-xs-2 text-center" style="padding:0">
+            <small><i class="fa fa-rupee"></i></small> {{hvc}}
+         </div>
+         <div class="col-xs-6" style="padding-right:0">
+            <span style="width: 100%;    height: 20px;    display: -webkit-box;    -webkit-line-clamp: 1; -webkit-box-orient: vertical;
+               overflow: hidden;">Collection Charges</span>
+         </div>
+         <div class="col-xs-2 text-center" style="padding:0">
+            <small><i class="fa fa-rupee"></i></small> {{colc}}
+         </div>
+         <div class="col-xs-6" style="padding-right:0">
+            <b><span style="width: 100%;    height: 20px;    display: -webkit-box;    -webkit-line-clamp: 1; -webkit-box-orient: vertical;
+               overflow: hidden;">Total Payable</span></b>
+         </div>
+         <div class="col-xs-2 text-center" style="padding:0">
+            <small><i class="fa fa-rupee"></i></small> <b>{{tot+hvc+colc}}</b>
+         </div>
+      </div>
+      <div class="row" *ngIf="tests.length==0">
+         <div class="text-center" style="padding:0"><span class="sub_heading-brand ft-16px m-b-15">"Knowing Your Health Is <br>Half The Cure!!"</span><br><span><a href="./book">Add Tests to your cart</a></span></div>
+      </div>
+   </div>
+   <!-- Packages -->               
+   <div class="form-group text-right" style="padding:15px 0;">   
+      <button class="btn btn-brand btn-sm" type="submit" (click)="checkOut()">CHECKOUT</button>
+   </div>
+
+  <!--  <div *ngIf="tests.length>0" id="ascrail2000" class="nicescroll-rails nicescroll-rails-vr" style="width: 12px; z-index: 1000; background: rgb(238, 238, 238); cursor: default; position: absolute; top: 46px; left: 332px; height: 115px; opacity: 0.5; display: block;"><div class="nicescroll-cursors" style="position: relative; top: 1px; float: right; width: 10px; height: 113px; background-color: rgb(240, 91, 37); border: 1px solid rgb(255, 255, 255); background-clip: padding-box; border-radius: 5px;"></div></div> -->
+
+</div>
+
+      </li>
+
+    <li role="separator" style="float:none" class="divider"></li>
+    <li style="float:none; display:inline-block;z-index:4">
+        <div style="display:inline-block; width:250px;">
+          <div class="input-group">
+            <input type="text" class="form-control theme location_inpt" placeholder="Location" aria-describedby="basic-addon2" value="{{loctxt}}" (click)="locdrpdown=true" readonly="true">
+            <ul *ngIf="locdrpdown" class="dropdown-menu location_dropdown" style="left: 0px; display: block;">
+              <li><a href="javascript:void(0)" (click)="setLocation('Hyderabad')">Hyderabad</a></li>
+              <li><a href="javascript:void(0)" (click)="setLocation('Banglore')">Banglore</a></li>
+              <!-- <li><a href="javascript:void(0)" (click)="setLocation('Mumbai')">Mumbai</a></li> -->
+            </ul>
+            <span class="input-group-addon" style="border:0" id="basic-addon2"> <span [ngStyle]="{'display':locdrpdown ? '' : 'none' }" style="color:#f05b25">Location</span> <i class="fa fa-map-marker"></i></span>
+          </div>
+          
+        </div>
+      </li>
+         <!-- <li style="float:none; display:inline-block">
+      <div style="display:inline-block; width:150px;">
+        <div class="input-group"> 
+          <div class="input-group-addon" style="border:0" id="basic-addon2">
+            <select class="form-control theme" value="{{city_name}}" (change)="setLocation($event.target)">
+              <option value="">Select City</option>
+              <option value="Hyderabad" [ngValue]="Hyderabad">Hyderabad</option>
+              <option value="Banglore"  [ngValue]="Banglore">Banglore</option>
+            </select> 
+             <span style="font-size:18px;"><i class="fa fa-map-marker"></i></span>
+          </div>
+        </div>
+      </div>
+    </li> -->
+      </ul>
+      
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</header>
+    <!-- <hr> -->
+  <div class="">
+      
+      <router-outlet></router-outlet>
+      
+    </div>
+
+   <!-- <p><strong>{{idleState}}</strong></p> -->
+     <!-- <p *ngIf="lastPing"><small>Last keepalive ping <strong title="{{lastPing | date: 'medium'}}">{{lastPing | amTimeAgo}}</strong></small></p> -->
+    <!-- <button md-raised-button color="primary" (click)="reset()" *ngIf="timedOut">Restart</button> -->
+
+    <!-- <div class="footer">
+      <div  class="footer-left"><a href="javascipt:void(0)">Privacy Statement and Terms of Use</a><br>
+      © 2017 Center for Excellence Medical Sciences® Holdings. All Rights Reserved.
+      </div>
+      <div class="pull-right"><a href="javascript:void(0)">Notice of Nondiscrimination</a></div>
+    </div> -->
+    <footer>
+  <div class="container">
+      <div class="row">
+          <div class="col-md-8">
+              <h4 class=""><strong>A Unit of Center for Excellence in Medical Services Private Limited </strong></h4>
+                <ul class="footer_nav_links_ul">
+                <!--   <li class=""><a >ABOUT US</a></li> -->
+                <li class=""><a routerLink="book">OUR TESTS</a></li>
+                <li class=""><a routerLink="book/packages">OUR PACKAGES</a></li>
+                <li class=""><a routerLink="network">OUR NETWORK</a></li>
+                <li Class=""><a routerLink="our-facilities">OUR FACILITIES</a></li>
+                <!-- <li><a>OUR BLOG</a></li> -->
+                <li class=""><a routerLink="contactus">CONTACT US</a></li>
+                <li class=""><a routerLink="tnc">T&C</a></li>
+                <li class=""><a routerLink="refund-cancel">REFUND & CANCELLATION</a></li>
+                <li class=""><a routerLink="privacy-policy">PRIVACY POLICY</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4 text-right">
+              <ul class="social_link_ul">
+                <li><a href="https://www.linkedin.com/company/tenetmedcorp/" target="_blank"><img src="./assets/images/iconimages/linkedinicon.png"></a></li>
+                    <li><a href="https://www.facebook.com/tenetmedcorp" target="_blank"><img src="./assets/images/iconimages/facebookicon.png"></a></li>
+                    <li><a href="	https://twitter.com/TenetMedCorp" target="_blank"><img src="./assets/images/iconimages/twittericon.png"></a></li>
+                    <li><a href="https://www.instagram.com/tenetmedcorp/" target="_blank"><img src="./assets/images/iconimages/instagramicon.png"></a></li>
+                    
+                  </ul>
+            </div>
+        </div>
+        <hr style="margin: 0; border-top:1px solid #f05b25">
+        <div class="row">
+            <div class="col-md-12">
+                <p>© 2018 Tenet Diagnostics. All rights reserved.</p>
+            </div>
+         </div>
+    </div>
+</footer>
+
+
+            
+        
+
+            
+
+
+
+
+  
