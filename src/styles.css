@@ -50,3 +50,11 @@
   border-color: #f05b25 !important;
 
 } */
+.slider_images .owl-dots{
+  position: absolute;
+  width: 100%;
+  bottom: -10px;
+} 
+.slider_images.owl-theme .owl-dots .owl-dot span {
+  background: #76767661;
+}

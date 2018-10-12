@@ -1,1 +1,1 @@
-ng serve --port 7777 --host 192.168.0.169 --open
+ng serve --port 7777 --host 172.19.0.169 --open

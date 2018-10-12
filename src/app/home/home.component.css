@@ -153,14 +153,35 @@ background-color:#eee;
 }
 
 .navigations_div img{
-	width:35%;
+	/* width:35%; */
 }
 
-.slider_images .owl-controls{
+/*.slider_images .owl-controls{
 position: absolute;
 width: 100%;
 bottom: 0;
+}*/
+.slider_coursel_content .navigations_div img{
+	width:20px;
 }
+.slider_coursel_content .navigations_div .prev{
+	display: inline-block;
+    
+    float:left;
+    padding-left: 70px;
+}
+.slider_coursel_content .navigations_div .next{
+	display: inline-block;
+    float:right;
+    text-align:  right;
+    
+}
+.slider_images .owl-controls {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+}
+
 .slider_images.owl-theme .owl-dots .owl-dot.active span, .owl-theme .owl-dots .owl-dot:hover span {
     background: #f05b25;
 }
@@ -181,7 +202,7 @@ padding: 0 3%;
 .presentaion_wrapper .navigations_div img{
 	width:20%
 }
-.testimonial_containter .fas.fa-quote-left,.testimonial_containter .fas.fa-quote-right{
+.testimonial_containter .fa.fa-quote-left,.testimonial_containter .fa.fa-quote-right{
 	color:#f05b25;
 }
 a{
@@ -201,4 +222,11 @@ input.form-control.theme.otp_input {
             font-size: 20px;
             height: 40px;
             text-align: center;
-          }
+		  }
+		  .owl-carousel .owl-item {
+		    width: 620px !important; 
+			/* margin-right: 150px; */
+		  }
+
+
+		

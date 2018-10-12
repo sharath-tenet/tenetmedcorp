@@ -6,9 +6,11 @@
 	border-right:1px solid #afafaf;
 	margin-top:15px;
 	margin-bottom:15px;
+	min-height: 300px;
+	
 }
-.package_row .col-md-4:last-child{
-	border:0;
+.package_row .col-md-4:nth-child(3n+3){
+	border-right:0;
 }
 .my-pagination  .ngx-pagination .current {
 	background: #f05b25 ;
@@ -18,8 +20,8 @@
 	margin:15px;
 }
 .pagination_theme a.w3-button{
-	padding:8px 13px;
-	font-size:16px;
+	padding: 5px 8px;
+    font-size: 15px;
 	color:#777777;
 	font-weight:600;
 }

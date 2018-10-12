@@ -1,0 +1,1 @@
+importScripts('https://cdn.convertifier.com/js/ConvertifierSDKWorker.js');

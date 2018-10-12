@@ -5,10 +5,12 @@
 <meta name="GENERATOR" content="Evrsoft First Page">
 </head>
 <body>
-	<h1>Merchant Check Out Page</h1>
+	<h1>
+		Please Wait While your transaction is processiong
+	</h1>
 	<pre>
 	</pre>
-	<form #payform method="POST" action="http://pay.tenetmedcorp.com/pgRedirect.php" >
+	<form #payform method="POST" action="http://pay.tenetmedcorp.com/pgRedirect.php" *ngIf="transtoken==null">
 		<table border="1">
 			<tbody>
 				<tr>

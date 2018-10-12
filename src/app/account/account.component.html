@@ -5,8 +5,9 @@
         <ul class="nav nav-tabs brand_nav_tabs">
           <li class="active"><a data-toggle="tab" href="#profile">PROFILE</a>
           </li>
-           <li><a data-toggle="tab" href="#changepassword">CHANGE PASSWORD</a>
-          <li><a #oh data-toggle="tab" href="#order_history">ORDER HISTORY</a>
+           <!-- <li><a data-toggle="tab" href="#changepassword">CHANGE PASSWORD</a> -->
+            <li><a data-toggle="tab" href="#report_access">REPORT ACCESS</a>
+            <li><a #oh data-toggle="tab" href="#order_history">ORDER HISTORY</a>
           </li>
         </ul>
          <div class="tenet-loader" *ngIf="loading['account']" ><img src="./assets/images/monogram.svg" /></div> 
@@ -20,12 +21,13 @@
                   <tbody>
                     <tr  *ngIf="locations.length==0">
                       <td colspan="3">
-                        <h6  style="color:red">Please fill the form details below</h6>
+                        <h6  style="color:red">Fields marked with the * are mandatory </h6>
                       </td>
                     </tr>
                    <tr *ngIf="profileMsg">
                       <td colspan="3">
-                        <strong class="form-text text-success">Profile updated.</strong>
+                        <!-- <strong class="form-text text-success">Profile updated.</strong> -->
+                        <strong class="form-text text-success">Your profile has been updated successfully. You are one step closer to better health. </strong>
                       </td>
                     </tr>
                     <tr>
@@ -35,36 +37,37 @@
                     </tr>
                     <tr>
                       <td width="15%">Name</td>
-                      <td width="7%" align="center" class="text-center">:</td>
+                      <td width="7%" align="center" class="text-center">:&#10033;</td>
                       <td>
                        <!--  <input class="theme form-control" value='{{(user.user_name != "") ? user.user_name : "N/A"}}' readonly="readonly"> -->
-                        <input class="theme form-control" value='{{(user.firstname != "") ? user.firstname : "N/A"}} {{(user.lastname != "") ? user.lastname : "N/A"}}' readonly="readonly">
+                        <input class="theme form-control" value='{{(user.firstname != "") ? user.firstname : "N/A"}} {{(user.lastname != "") ? user.lastname : "N/A"}}' readonly="readonly" style="text-transform:uppercase">
                       </td>
                     </tr>
                     <tr>
                       <td width="15%">Gender</td>
-                      <td width="7%" align="center" class="text-center">:</td>
+                      <td width="7%" align="center" class="text-center">:&#10033;</td>
                       <td>
                         <input class="theme form-control"  value='{{(user.gender != "") ? ((user.gender==1 ? "Male":"Female")) : "N/A"}}' readonly="readonly">
                       </td>
                     </tr>
                      <tr>
                       <td width="15%">DOB</td>
-                      <td width="7%" align="center" class="text-center">:</td>
+                      <td width="7%" align="center" class="text-center">:&#10033;</td>
                       <td>
                         <input class="theme form-control" value="{{user.user_dob }}" readonly="readonly">
                       </td>
                     </tr>
                     <tr>
                       <td width="15%">Mobile</td>
-                      <td width="7%" align="center" class="text-center">:</td>
+                      <td width="7%" align="center" class="text-center">:&#10033;</td>
                       <td>
                         <input class="theme form-control" value='{{(user.user_phone != "")? user.user_phone : "N/A"}}' readonly="readonly">
+                        <img class="pull-right" (click)="currentUpdatingUser(user.uid)" data-backdrop="true" data-target="#update_mobile" data-toggle="modal" height="32px" src="./assets/images/iconimages/pencile.png" style="cursor: pointer;" width="32px">
                       </td>
                     </tr>
                     <tr>
                       <td width="15%">Email</td>
-                      <td width="7%" align="center" class="text-center">:</td>
+                      <td width="7%" align="center" class="text-center">:&#10033;</td>
                       <td>
                         <input class="theme form-control" value='{{(user.user_email != "") ? user.user_email : "N/A"}}' readonly="readonly">
                       </td>
@@ -116,16 +119,16 @@
                 </table>
 
 
-          <form *ngIf="editFlag" #uProfile="ngForm" novalidate (ngSubmit)="updateProfile(uProfile,uProfile.valid)" >
-                <input type="hidden" class="form-control" name="user_id" [(ngModel)] ="user.uid" [value]="user.uid"> 
+          <form *ngIf="editFlag" #uProfile="ngForm" novalidate (ngSubmit)="updateProfile(uProfile,uProfile.valid,user.uid)" >
+               <!--  <input type="hidden" class="form-control" name="user_id" [(ngModel)] ="user.uid" [value]="user.uid">  -->
 
                 <!-- <input type="hidden" class="form-control" name="user_loc_id"  [(ngModel)] ="loca.user_loc_id" [value]="defaultLocation[0].user_loc_id"> -->
 
                 <table width="100%" class="profile_table" style="margin-top:100px;">
                   <tbody>
-                      <tr  *ngIf="defaultAddress.length==0">
+                      <tr  *ngIf="locations.length==0">
                           <td colspan="3">
-                            <h6  style="color:red">Please fill the form details below</h6>
+                            <h6  style="color:red">Fields marked with the * are mandatory </h6>
                           </td>
                         </tr>
                     <tr>
@@ -135,9 +138,9 @@
                     </tr>
                     <tr>
                       <td width="15%">Name</td>
-                      <td width="7%" align="center" class="text-center">:</td>
+                      <td width="7%" align="center" class="text-center">:&#10033;</td>
                       <td>
-                        <input class="theme form-control" type="text" required name="first_name" [(ngModel)]="user.firstname" [value]="user.firstname" #first_name="ngModel" pattern="[a-zA-Z ]*" minlength="3">
+                        <input class="theme form-control" type="text" required name="first_name" [(ngModel)]="user.firstname" [value]="user.firstname" #first_name="ngModel" pattern="[a-zA-Z ]*" minlength="3" style="text-transform:uppercase">
 
                         <div style="color:#fc6107"  *ngIf="first_name?.errors && (first_name.dirty || first_name.touched || uProfile.submitted)">
                                 <p *ngIf="first_name?.errors.required">
@@ -153,7 +156,7 @@
                         </div>
                       </td>
                       <td>
-                        <input class="theme form-control" type="text" required name="last_name" [(ngModel)]="user.lastname" [value]="user.lastname" #last_name="ngModel" pattern="[a-zA-Z ]*" minlength="3">
+                        <input class="theme form-control" type="text" required name="last_name" [(ngModel)]="user.lastname" [value]="user.lastname" #last_name="ngModel" pattern="[a-zA-Z ]*" minlength="3"  style="text-transform:uppercase">
 
                         <div style="color:#fc6107"  *ngIf="last_name?.errors && (last_name.dirty || last_name.touched || uProfile.submitted)">
                                 <p *ngIf="last_name?.errors.required">
@@ -172,7 +175,7 @@
                     </tr>
                     <tr>
                       <td width="15%">Gender</td>
-                      <td width="7%" align="center" class="text-center">:</td>
+                      <td width="7%" align="center" class="text-center">:&#10033;</td>
                       <td colspan="2">
                   <div class="radio">
                       <label><input  type="radio" required name="user_gender" value="1" ngModel #user_gender="ngModel" [(ngModel)]="user.gender" [value]="1" [checked]="user.user_gender ==1"/>Male</label>
@@ -188,10 +191,10 @@
                     </tr>
                     <tr>
                       <td width="15%">DOB</td>
-                      <td width="7%" align="center" class="text-center">:</td>
+                      <td width="7%" align="center" class="text-center">:&#10033;</td>
                       <td colspan="2">
                         <!-- <input class="theme form-control" type="date" required name="user_dob" [ngModel] ="user.user_dob | date:'yyyy-MM-dd'" (ngModelChange)="user.user_dob = $event" #user_dob="ngModel"> -->
-                        <input class="form-control" style="float:none" placeholder="Select a date" ngx-mydatepicker name="user_dob"
+                        <input class="form-control" style="float:none" placeholder="Select a date" ngx-mydatepicker name="user_dob"  readonly="true"
                         [(ngModel)]="model" [options]="myOptions"  (dateChanged)="user.user_dob = $event" #user_dob="ngx-mydatepicker"/>
          
                          <span class="input-group-btn">
@@ -212,9 +215,9 @@
                     </tr>
                     <tr>
                       <td width="15%">Mobile</td>
-                      <td width="7%" align="center" class="text-center">:</td>
+                      <td width="7%" align="center" class="text-center">:&#10033;</td>
                       <td colspan="2">
-                        <input class="theme form-control" type="text" required name="user_mobile" [(ngModel)]="user.user_phone" #user_mobile="ngModel" pattern="^[6-9][0-9]{9}$" minlength="10" maxlength="10">
+                        <input class="theme form-control" type="text" required name="user_mobile" [(ngModel)]="user.user_phone" #user_mobile="ngModel" pattern="^[6-9][0-9]{9}$" minlength="10" maxlength="10" readonly="true">
                         <div style="color:#fc6107" 
                                     *ngIf="user_mobile?.errors && (user_mobile.dirty || user_mobile.touched || uProfile.submitted)">
                             <p *ngIf="user_mobile?.errors.required">
@@ -229,7 +232,7 @@
                     </tr>
                     <tr>
                       <td width="15%">Email</td>
-                      <td width="7%" align="center" class="text-center">:</td>
+                      <td width="7%" align="center" class="text-center">:&#10033;</td>
                       <td colspan="2">
                         <input class="theme form-control" type="email" required name="user_email" [(ngModel)]="user.user_email" #user_email="ngModel" pattern="[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}">
                         <div style="color:#fc6107" 
@@ -252,7 +255,7 @@
                     </tr>
                 <tr *ngIf="fld">
                    <td width="15%">address</td>
-                   <td width="7%" align="center" class="text-center">:</td>    
+                   <td width="7%" align="center" class="text-center">:&#10033;</td>    
                    <td colspan="2">
                     <div class="radio">
                         <label><input type="radio" name="title_id3" value="1" required #title_id3="ngModel" ngModel (click)="other('title')">Home</label>
@@ -269,7 +272,7 @@
                 </tr>
                 <tr *ngIf="fld">
                 <td width="15%" *ngIf="otherflag">Other</td>
-                   <td *ngIf="otherflag" width="7%" align="center" class="text-center">:</td>    
+                   <td *ngIf="otherflag" width="7%" align="center" class="text-center">:&#10033;</td>    
                    <td colspan="2">
                   <div *ngIf="otherflag" >
                     <input type="text" class="form-control theme" placeholder="" name="other" required  #other="ngModel" ngModel>
@@ -287,7 +290,7 @@
                
                     <tr *ngIf="fld">
                       <td width="15%">Door No</td>
-                      <td width="7%" align="center" class="text-center">:</td>
+                      <td width="7%" align="center" class="text-center">:&#10033;</td>
                       <td colspan="2">
                         <input type="text" class="theme form-control" required ngModel name="doorNo" #doorNo="ngModel" >
                         <div style="color:#fc6107" *ngIf="doorNo?.errors && (doorNo.dirty || doorNo.touched || uProfile.submitted)">
@@ -299,7 +302,7 @@
                     </tr>
                     <tr  *ngIf="fld">
                       <td width="15%">Street Name</td>
-                      <td width="7%" align="center" class="text-center">:</td>
+                      <td width="7%" align="center" class="text-center">:&#10033;</td>
                       <td colspan="2">
                       <input type="text" class="form-control theme" required ngModel placeholder="Street Name" name="streetNo" #streetNo="ngModel">
 
@@ -312,7 +315,7 @@
                     </tr>
                     <tr *ngIf="fld">
                       <td width="15%">City</td>
-                      <td width="7%" align="center" class="text-center">:</td>
+                      <td width="7%" align="center" class="text-center">:&#10033;</td>
                       <td colspan="2">
                         <select class="form-control theme" required name="city_id" ngModel #city_id="ngModel"  (change)="getAreaByCity($event)"><option value="">Select City</option><option *ngFor="let city of cities" value="{{city.city_id}}">{{city.city_desc}}</option>
                           </select>
@@ -325,7 +328,7 @@
                     </tr>
                     <tr *ngIf="fld">
                       <td width="15%">Area</td>
-                      <td width="7%" align="center" class="text-center">:</td>
+                      <td width="7%" align="center" class="text-center">:&#10033;</td>
                       <td colspan="2">
                        <select class="form-control theme" required name="area_id" ngModel #area_id="ngModel" ><option value="">Select Area</option><option *ngFor="let area of areas" value="{{area.area_id}}">{{area.area_name}}</option></select>
                        <div style="color:#fc6107" *ngIf="area_id?.errors && (area_id.dirty || area_id.touched || uProfile.submitted)">
@@ -361,8 +364,9 @@
                 <table width="100%" class="profile_table" style="margin-top:100px;">
                   <tbody>
                      <tr *ngIf="locations.length > 0">
-                      <td colspan="3">
-                        <h3 class="text-brandcolor" style="margin-top:2px;"><strong>Address </strong></h3>
+                      <td colspan="5">
+                        <h3 class="text-brandcolor" style="margin-top:2px;"><strong>Address </strong></h3><h5>
+                        Good Health starts from your home. Add address to get samples collected from home, option to get reports delivered at home or office.</h5>
                       </td>
                     </tr>
                     <tr *ngFor="let loc of locations">
@@ -403,17 +407,17 @@
                     </tr> -->
                     <tr *ngIf="locations.length > 0">
                       <td>
-                        <h5  style="cursor:pointer" data-toggle="modal" data-target="#add_address" data-backdrop=""><strong><i class="fa fa-plus"></i> Add New Address</strong></h5>
+                        <h5  style="cursor:pointer" data-toggle="modal" data-target="#add_address" data-backdrop="" ><strong><i class="fa fa-plus"></i> Add New Address</strong></h5>
                       </td>
                     </tr>
                     <tr>
-                      <td colspan="3">
-                        <h3 class="text-brandcolor" style="margin-top:2px"><strong>Family Members</strong></h3>
+                      <td colspan="5">
+                        <h3 class="text-brandcolor" style="margin-top:2px"><strong>Family Members</strong></h3> <h5 style="margin-top:2px;">You can add a family member to your Tenet profile, this allows them to access the features of Tenet Diagnostics as well. Welcome to the Tenet family!</h5>
                       </td>
                     </tr>
                     <tr *ngFor="let mem of members">
                       <td>
-                        <h5 class="text-brandcolor" style="margin-top:2px;"><strong>{{mem.firstname}} {{mem.lastname}}</strong></h5>
+                        <h5 class="text-brandcolor" style="margin-top:2px;"><strong>{{mem.firstname | uppercase}} {{mem.lastname | uppercase}}</strong></h5>
                       </td>
                       <td>{{mem.age}}</td>
                       <td>{{(mem.gender != "") ? ((mem.gender==1 ? "Male":"Female")) : "N/A"}}</td>
@@ -423,11 +427,13 @@
                     </tr>
                     <tr *ngIf="members.length==0">
                         <td colspan="3">
-                          <h6 style="margin-top:2px;"><strong>You Have Added No Family Members</strong></h6>
+                          <!-- <h6 style="margin-top:2px;"><strong>You Have Added No Family Members</strong></h6> -->
+                         <!--  <h6 style="margin-top:2px;"><strong>You can add a family member to your Tenet profile, this allows you to access test reports of your family members under one profile.</strong></h6> --> 
                         </td>
                     </tr>
                     <tr>
                       <td>
+
                         <h5 style="cursor: pointer;" data-toggle="modal" data-target="#add_family" data-backdrop=""><strong><i class="fa fa-plus"></i> Add family member</strong></h5>
                       </td>
                     </tr>
@@ -542,7 +548,7 @@
           <div>
           </div>
           <div class="form-group">
-                  <input class="form-control theme" placeholder="First Name" name="firstName" required ngModel #firstName="ngModel" pattern="[a-zA-Z ]*" minlength="3"/>
+                  <input class="form-control theme" placeholder="First Name*" name="firstName" required ngModel #firstName="ngModel" pattern="[a-zA-Z ]*" minlength="3"  style="text-transform:uppercase"/>
 
                   <div style="color:#fc6107" *ngIf="firstName?.errors && (firstName.dirty || firstName.touched || af.submitted ||  firstName.pattern)">
                                   <p *ngIf="firstName?.errors.required">
@@ -559,7 +565,7 @@
 
           </div>
            <div class="form-group">
-                  <input class="form-control theme" placeholder="last Name" name="lastName" required ngModel #lastName="ngModel" pattern="[a-zA-Z ]*" minlength="3"/>
+                  <input class="form-control theme" placeholder="last Name*" name="lastName" required ngModel #lastName="ngModel" pattern="[a-zA-Z ]*" minlength="3"  style="text-transform:uppercase"/>
                   <div style="color:#fc6107" *ngIf="lastName?.errors && (lastName.dirty || lastName.touched || af.submitted ||  lastName.pattern)">
                                   <p *ngIf="lastName?.errors.required">
                                       The last Name is required
@@ -584,7 +590,7 @@
 
               </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" *ngIf="ph">
               <input placeholder="Email" class="theme form-control" type="email" required ngModel name="user_email" #user_email="ngModel" pattern="[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}">
               <div style="color:#fc6107" *ngIf="user_email?.errors && (user_email.dirty || user_email.touched || af.submitted || user_email.pattern)">
                                   <p *ngIf="user_email?.errors.required">
@@ -599,7 +605,7 @@
 
            <div class="form-group">
               <!-- <input class="theme form-control" type="date" required ngModel name="user_dob"  #user_dob="ngModel" (change)="changeDate($event)"> -->
-               <input class="form-control" style="float:none" placeholder="Select a date" ngx-mydatepicker name="user_dob" required ngModel #user_dob="ngx-mydatepicker" [options]="myOptions1" (dateChanged)="onDateChanged($event)"/>
+               <input class="form-control" style="float:none" placeholder="Select a date*" ngx-mydatepicker name="user_dob" required ngModel #user_dob="ngx-mydatepicker" [options]="myOptions1" (dateChanged)="onDateChanged($event)"/>
          
                          <span class="input-group-btn">
                              <button type="button" class="btn btn-default" (click)="user_dob.clearDate()">
@@ -649,7 +655,98 @@
       <div class="modal-footer text-center" style="text-align:center">
         <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
    <!--  <button type="submit" class="btn btn-brand">SAVE</button> #otp1-->
-         <button  type="submit"  #otpModel class="btn btn-brand"  data-toggle="modal"  data-backdrop="false">SAVE</button>
+        <!--  <button  type="submit"  #otpModel class="btn btn-brand"  data-toggle="modal"  data-backdrop="false">SAVE</button> -->
+
+         <button  type="submit"  #otpModel class="btn btn-brand"  data-toggle="modal"  data-backdrop="false" [disabled]="!af.valid">SAVE</button>
+        <!--  <button *ngIf="otpBtn" type="submit" class="btn btn-brand"  data-toggle="modal"  data-backdrop="false">SEND OTP</button>
+         <button *ngIf="vBtn" type="submit" class="btn btn-brand"  data-toggle="modal"  data-backdrop="false">Verify</button> -->
+      </div>
+    </div>
+  </form>
+  </div>
+</div>
+<!---mobile number change-->
+<!-- update_mobile -->
+<!--otp verify-->
+<div id="update_mobile"  data-backdrop="true" class="modal theme_modal" role="dialog">
+  <div class="modal-dialog">
+    <form  #af2="ngForm" novalidate (ngSubmit)="updateMobileGetOtp(af2,af2.valid,user.uid)">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="btn modal_close_btn" #btn1 data-dismiss="modal" (click)="resett(af2)">&times;</button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+      <div class="col-md-12">
+        <h4  class="titles text-left" style="font-weight:600">UPDATE MOBILE NUMBER</h4>
+          <div>
+          </div>
+          <div class="form-group">
+            <input type="text" style="display:none;" [(ngModel)]="cuid" #userid="ngModel" name="userid">
+
+            <input class="form-control theme" placeholder="Old Phone Number" type="text" required name="user_old_mobile1" [(ngModel)]="user.user_phone" #user_old_mobile1="ngModel" pattern="^[6-9][0-9]{9}$" minlength="10" maxlength="10" readonly="true"/>
+
+            <div style="color:#fc6107" *ngIf="user_old_mobile1?.errors && (user_old_mobile1.dirty || user_old_mobile1.touched || af2.submitted || user_old_mobile1.minlength || user_old_mobile1.pattern)">
+                <p *ngIf="user_old_mobile1?.errors.required">
+                    The Phone Number is required
+                </p>
+                 <p *ngIf="user_old_mobile1?.errors.minlength">
+                      Phone number should be 10 digit
+                </p>
+                 <p *ngIf="user_old_mobile1?.errors.pattern">
+                     Phone number should be only numbers and start with 6/7/8/9
+                </p>
+
+            </div>
+          </div>
+          <div class="form-group">
+            <input class="form-control theme" placeholder="New Phone Number" type="text" required name="user_new_mobile1" ngModel #user_new_mobile1="ngModel" pattern="^[6-9][0-9]{9}$" minlength="10" maxlength="10"/>
+            <div style="color:#fc6107" *ngIf="user_new_mobile1?.errors && (user_new_mobile1.dirty || user_new_mobile1.touched || af2.submitted || user_new_mobile1.minlength || user_new_mobile1.pattern)">
+                <p *ngIf="user_new_mobile1?.errors.required">
+                    The Phone Number is required
+                </p>
+                 <p *ngIf="user_new_mobile1?.errors.minlength">
+                      Phone number should be 10 digit
+                </p>
+                 <p *ngIf="user_new_mobile1?.errors.pattern">
+                     Phone number should be only numbers and start with 6/7/8/9
+                </p>
+
+            </div>
+
+            <!-- <div style="color:#fc6107" *ngIf="user_new_mobile1?.errors && (user_new_mobile1.dirty || user_new_mobile1.touched || af2.submitted || user_new_mobile1.minlength || user_new_mobile1.pattern)">
+                <p *ngIf="user_new_mobile1?.errors.required" #errorMsg>
+                    The Phone Number is required
+                </p>
+                 <p *ngIf="user_new_mobile1?.errors.minlength">
+                      Phone number should be 10 digit
+                </p>
+                 <p *ngIf="user_new_mobile1?.errors.pattern">
+                     Phone number should be only numbers and start with 6/7/8/9
+                </p>
+
+            </div> -->
+          </div>
+          
+            
+            
+            <div class="text-center" *ngIf="otp">
+              <input type="text" class="form-control theme otp_input" name="term1" ngModel #term1 ="ngModel"/>
+         
+             <input type="hidden" class="form-control theme" name="user_id" [(ngModel)] = "uid" ngModel #user_id="ngModel">
+          </div>
+
+
+             <strong  class="form-text text-success" *ngIf="fam">Family member added successfully</strong>
+          
+      </div>
+    </div>
+      </div>
+      <div class="modal-footer text-center" style="text-align:center">
+        <button type="button" style="display:none;" #muotp class="btn btn-default"  data-backdrop="true" data-target="#update_mobile_verify" data-toggle="modal">Close</button>
+   <!--  <button type="submit" class="btn btn-brand">SAVE</button> #otp1-->
+         <button  type="submit"  class="btn btn-brand"  data-toggle="modal"  data-backdrop="false">GET OTP</button>
         <!--  <button *ngIf="otpBtn" type="submit" class="btn btn-brand"  data-toggle="modal"  data-backdrop="false">SEND OTP</button>
          <button *ngIf="vBtn" type="submit" class="btn btn-brand"  data-toggle="modal"  data-backdrop="false">Verify</button> -->
       </div>
@@ -658,7 +755,167 @@
   </div>
 </div>
 
-<!--otp verify-->
+<div id="update_mobile_verify"  data-backdrop="true" class="modal theme_modal" role="dialog">
+    <div class="modal-dialog">
+      <form  #af3="ngForm" novalidate (ngSubmit)="updateMobileOtpVerify(af3,af3.valid,user.uid)">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="btn modal_close_btn" #btn2 data-dismiss="modal" (click)="reset(af3)">&times;</button>
+          <h4 class="modal-title"></h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+          <div class="col-md-12">
+              <div>
+              <h4 class="titles" style="font-weight:600">Verify OTP</h4>
+              </div> 
+              <h4 class="text-center text-bold" style="padding:15px; font-weight:600">
+                An OTP has been sent to {{getPhoneSubStr(0,1)}}XXXXXX{{getPhoneSubStr(7,10)}} 
+              </h4>
+              
+              
+              <div class="text-center">
+                <div class="form-inline" style="width:300px;margin:0 auto;">
+                  <input type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" class="form-control theme otp_input" name="term1" ngModel #term1 ="ngModel" style="width:50px; float:left;" (keyup)="autoTab($event)"/>
+                  <input type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" class="form-control theme otp_input" name="term2" ngModel style="width:50px; float:left;" #term2 ="ngModel" (keyup)="autoTab($event)"/>
+                  <input type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" class="form-control theme otp_input" name="term3" ngModel style="width:50px; float:left;" #term3="ngModel" (keyup)="autoTab($event)"/>
+                  <input type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" class="form-control theme otp_input" name="term4" ngModel style="width:50px; float:left;" #term4 ="ngModel" (keyup)="autoTab($event)"/>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+    
+          </div>
+        </div>
+          </div>
+        <div class="modal-footer text-center" style="text-align:center">
+          <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
+     <!--  <button type="submit" class="btn btn-brand">SAVE</button> #otp1-->
+           <button  type="submit"  class="btn btn-brand"  data-toggle="modal"  data-backdrop="false">VERIFY</button>
+          <!--  <button *ngIf="otpBtn" type="submit" class="btn btn-brand"  data-toggle="modal"  data-backdrop="false">SEND OTP</button>
+           <button *ngIf="vBtn" type="submit" class="btn btn-brand"  data-toggle="modal"  data-backdrop="false">Verify</button> -->
+        </div>
+      </div>
+    </form>
+    </div>
+  </div>
+
+
+  <div id="update_mobile_verify1"  data-backdrop="true" class="modal theme_modal" role="dialog">
+    <div class="modal-dialog">
+      <form  #aff3="ngForm" novalidate (ngSubmit)="updateMobileOtpVerify1(aff3,aff3.valid,user.uid)">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="btn modal_close_btn" #btn4 data-dismiss="modal" (click)="reset(aff3)">&times;</button>
+          <h4 class="modal-title"></h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+          <div class="col-md-12">
+              <div>
+              <h4 class="titles" style="font-weight:600">Verify OTP</h4>
+              </div> 
+              <h4 class="text-center text-bold" style="padding:15px; font-weight:600">
+                An OTP has been sent to {{getPhoneSubStr(0,1)}}XXXXXX{{getPhoneSubStr(7,10)}} 
+              </h4>
+              
+              
+              <div class="text-center">
+                <div class="form-inline" style="width:300px;margin:0 auto;">
+                  <input type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" class="form-control theme otp_input" name="term1" ngModel #term1 ="ngModel" style="width:50px; float:left;" (keyup)="autoTab($event)"/>
+                  <input type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" class="form-control theme otp_input" name="term2" ngModel style="width:50px; float:left;" #term2 ="ngModel" (keyup)="autoTab($event)"/>
+                  <input type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" class="form-control theme otp_input" name="term3" ngModel style="width:50px; float:left;" #term3="ngModel" (keyup)="autoTab($event)"/>
+                  <input type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" class="form-control theme otp_input" name="term4" ngModel style="width:50px; float:left;" #term4 ="ngModel" (keyup)="autoTab($event)"/>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+    
+          </div>
+        </div>
+          </div>
+        <div class="modal-footer text-center" style="text-align:center">
+          <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
+     <!--  <button type="submit" class="btn btn-brand">SAVE</button> #otp1-->
+           <button  type="submit"  class="btn btn-brand"  data-toggle="modal"  data-backdrop="false">VERIFY</button>
+          <!--  <button *ngIf="otpBtn" type="submit" class="btn btn-brand"  data-toggle="modal"  data-backdrop="false">SEND OTP</button>
+           <button *ngIf="vBtn" type="submit" class="btn btn-brand"  data-toggle="modal"  data-backdrop="false">Verify</button> -->
+        </div>
+      </div>
+    </form>
+    </div>
+  </div>
+
+
+  <div id="update_mobile1"  data-backdrop="true" class="modal theme_modal" role="dialog">
+  <div class="modal-dialog">
+    <form  #aff="ngForm" novalidate (ngSubmit)="updateMobileGetOtp1(aff,aff.valid,user.uid)">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="btn modal_close_btn" #btn3 data-dismiss="modal" (click)="resetUform(aff)">&times;</button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+      <div class="col-md-12">
+        <h4  class="titles text-left" style="font-weight:600">UPDATE MOBILE NUMBER</h4>
+          <div>
+          </div>
+          <div class="form-group">
+            <input type="text" style="display:none;" [(ngModel)]="cuid" #userid="ngModel" name="userid">
+
+            <input class="form-control theme" placeholder="Old Phone Number" type="text" required name="user_old_mobile" [(ngModel)]="member.user_phone" #user_old_mobile="ngModel" pattern="^[6-9][0-9]{9}$" minlength="10" maxlength="10" readonly="true"/>
+            <div style="color:#fc6107" *ngIf="user_old_mobile?.errors && (user_old_mobile.dirty || user_old_mobile.touched || aff.submitted || user_old_mobile.minlength || user_old_mobile.pattern)">
+                <p *ngIf="user_old_mobile?.errors.required">
+                    The Phone Number is required
+                </p>
+                <p *ngIf="user_old_mobile?.errors.minlength">
+                      Phone number should be 10 digit
+                </p>
+                <p *ngIf="user_old_mobile?.errors.pattern">
+                     Phone number should be only numbers and start with 6/7/8/9
+                </p>
+            </div>
+          </div>
+          <div class="form-group">
+            <input class="form-control theme" placeholder="New Phone Number" type="text" required name="user_new_mobile" ngModel #user_new_mobile="ngModel" pattern="^[6-9][0-9]{9}$" minlength="10" maxlength="10"/>
+            <div style="color:#fc6107" *ngIf="user_new_mobile?.errors && (user_new_mobile.dirty || user_new_mobile.touched || aff.submitted || user_new_mobile.minlength || user_new_mobile.pattern)">
+                <p *ngIf="user_new_mobile?.errors.required">
+                    The Phone Number is required
+                </p>
+                 <p *ngIf="user_new_mobile?.errors.minlength">
+                      Phone number should be 10 digit
+                </p>
+                 <p *ngIf="user_new_mobile?.errors.pattern">
+                     Phone number should be only numbers and start with 6/7/8/9
+                </p>
+
+            </div>
+          </div>
+
+            <div class="text-center" *ngIf="otp">
+              <input type="text" class="form-control theme otp_input" name="term1" ngModel #term1 ="ngModel"/>
+         
+             <input type="hidden" class="form-control theme" name="user_id" [(ngModel)] = "uid" ngModel #user_id="ngModel">
+          </div>
+
+
+             <strong  class="form-text text-success" *ngIf="fam">Family member added successfully</strong>
+          
+      </div>
+    </div>
+      </div>
+      <div class="modal-footer text-center" style="text-align:center">
+        <button type="button" style="display:none;" #muotp1 class="btn btn-default"  data-backdrop="true" data-target="#update_mobile_verify1" data-toggle="modal">Close</button>
+   <!--  <button type="submit" class="btn btn-brand">SAVE</button> #otp1-->
+         <button  type="submit"  class="btn btn-brand"  data-toggle="modal"  data-backdrop="false">GET OTP</button>
+        <!--  <button *ngIf="otpBtn" type="submit" class="btn btn-brand"  data-toggle="modal"  data-backdrop="false">SEND OTP</button>
+         <button *ngIf="vBtn" type="submit" class="btn btn-brand"  data-toggle="modal"  data-backdrop="false">Verify</button> -->
+      </div>
+    </div>
+  </form>
+  </div>
+</div>
+
+
 <div id="otp_model" class="modal theme_modal" role="dialog">
   <div class="modal-dialog">
     <form  #votpForm="ngForm" novalidate (ngSubmit)="getMemberOtpVerification(votpForm,votpForm.valid, memId)">
@@ -671,7 +928,9 @@
         <div class="row">
       <div class="col-md-12">
           <div>
-          <h4 class="text-center text-bold" style="padding:15px; font-weight:600">A One Time Password has been sent to your registered mobile number ending with XX435. 
+         <!--  <h4 class="text-center text-bold" style="padding:15px; font-weight:600">A One Time Password has been sent to your registered mobile number ending with {{mobileNumber}}. 
+          </h4> -->
+          <h4 class="text-center text-bold" style="padding:15px; font-weight:600">{{errorMessage}} 
           </h4>
           </div>
           <style>
@@ -718,7 +977,7 @@
     <div class="modal-content" [ngStyle]="{'border-radius': '20px',
     'border': '1.5px solid #f05b25'}">
       <div class="modal-header">
-        <button class="btn modal_close_btn" data-dismiss="modal" #edit_family>&times;</button>
+        <button class="btn modal_close_btn" data-dismiss="modal" #edit_family1>&times;</button>
         <h4 class="modal-title"></h4>
       </div>
       <div class="modal-body">
@@ -729,7 +988,7 @@
           <div>
           </div>
           <div class="form-group">
-                  <input class="form-control theme" placeholder="First Name" name="firstName1" required ngModel #firstName1="ngModel" [(ngModel)]="member.firstname" pattern="[a-zA-Z ]*" minlength="3"/>
+                  <input class="form-control theme" placeholder="First Name*" name="firstName1" required ngModel #firstName1="ngModel" [(ngModel)]="member.firstname" pattern="[a-zA-Z ]*" minlength="3" style="text-transform:uppercase"/>
                   <div style="color:#fc6107" 
                                 *ngIf="firstName1?.errors && (firstName1.dirty || firstName1.touched || updatefm.submitted ||  firstName1.pattern)">
                                   <p *ngIf="firstName1?.errors.required">
@@ -746,7 +1005,7 @@
                    </div>
           </div>
            <div class="form-group">
-                  <input class="form-control theme" placeholder="Last Name" name="lastName1" required ngModel #lastName1="ngModel" [(ngModel)]="member.lastname" pattern="[a-zA-Z ]*" minlength="3"/>
+                  <input class="form-control theme" placeholder="Last Name*" name="lastName1" required ngModel #lastName1="ngModel" [(ngModel)]="member.lastname" pattern="[a-zA-Z ]*" minlength="3" style="text-transform:uppercase"/>
                   <div style="color:#fc6107" 
                                 *ngIf="lastName1?.errors && (lastName1.dirty || lastName1.touched || updatefm.submitted ||  lastName1.pattern)">
                                   <p *ngIf="lastName1?.errors.required">
@@ -786,7 +1045,7 @@
             </div> -->
             <div class="form-group">
               <!-- <input class="theme form-control" [ngModel] ="member.user_dob | date:'yyyy-MM-dd'" (ngModelChange)="member.user_dob = $event"  type="date" required name="user_dob1" #user_dob1="ngModel"/> -->
-              <input class="form-control" style="float:none" placeholder="Select a date" ngx-mydatepicker name="user_dob1"  [(ngModel)]="model1" [options]="myOptions1"  (dateChanged)="onDateChanged($event)" #user_dob1="ngx-mydatepicker" readonly="true" />
+              <input class="form-control" style="float:none" placeholder="Select a date*" ngx-mydatepicker name="user_dob1"  [(ngModel)]="model1" [options]="myOptions1"  (dateChanged)="onDateChanged($event)" #user_dob1="ngx-mydatepicker" readonly="true" />
 
           
                          <span class="input-group-btn">
@@ -806,8 +1065,10 @@
 
               </div>
             </div>
-            <div class="form-group" *ngIf="member.user_phone">
-              <input class="form-control theme" placeholder="Phone Number"  name="user_mobile1" ngModel #user_mobile1="ngModel" [(ngModel)]="member.user_phone" pattern="^[6-9][0-9]{9}$" minlength="10" maxlength="10" />
+            <div class="form-group" *ngIf="ph">
+              <input class="form-control theme" placeholder="Phone Number"  name="user_mobile1" ngModel #user_mobile1="ngModel" [(ngModel)]="member.user_phone" pattern="^[6-9][0-9]{9}$" minlength="10" maxlength="10"> 
+               <img  *ngIf="member.user_phone" class="pull-right" (click)="currentUpdatingUser1(user.uid)" data-backdrop="false" data-target="#update_mobile1" data-toggle="modal" height="32px" src="./assets/images/iconimages/pencile.png" style="cursor: pointer;" width="32px">
+             
               <div style="color:#fc6107" 
                                 *ngIf="user_mobile1?.errors && (user_mobile1.dirty || user_mobile1.touched || updatefm.submitted)">
                                   <p *ngIf="user_mobile1?.errors.required">
@@ -852,20 +1113,20 @@
     <form #uaf="ngForm" novalidate (ngSubmit)="addUserAddress(uaf,uaf.valid,user.uid)">
     <div class="modal-content">
       <div class="modal-header">
-       <button class="btn modal_close_btn" data-dismiss="modal" #add_address (click)="reset(uaf)">&times;</button>
+       <button class="btn modal_close_btn" data-dismiss="modal" #add_address (click)="resetA(uaf,uaf)">&times;</button>
         <h4 class="modal-title"></h4>
       </div>
       <div class="modal-body">
         <div class="row">
       <div class="col-md-12">
        
-        <h4 class="titles text-left" style="font-weight:600">ADD ADDRESS</h4>
+        <h4 class="titles text-left" style="font-weight:600" >ADD ADDRESS</h4>
             <div class="radio col-md-6">
-              <label><input type="radio" name="title_id" value="1" required #title_id="ngModel" ngModel (click)="other('title')">Home</label>
-              <label><input type="radio" name="title_id" value="2" required #title_id="ngModel" ngModel (click)="other('title')">Office</label>
-              <label><input type="radio" name="title_id" value="3" required #title_id="ngModel" ngModel (click)="other('other')">Other</label>
-              <div style="color:#fc6107" *ngIf="title_id?.errors && (title_id.dirty || title_id.touched || uaf.submitted)">
-                  <p *ngIf="title_id?.errors.required">
+              <label><input type="radio" name="title_id5" value="1" required #title_id5="ngModel" ngModel (click)="other('title')">Home</label>
+              <label><input type="radio" name="title_id5" value="2" required #title_id5="ngModel" ngModel (click)="other('title')">Office</label>
+              <label><input type="radio" name="title_id5" value="3" required #title_id5="ngModel" ngModel (click)="other('other')">Other</label>
+              <div style="color:#fc6107" *ngIf="title_id5?.errors && (title_id5.dirty || title_id5.touched || uaf.submitted)">
+                  <p *ngIf="title_id5?.errors.required">
                       The Title selection is required
                   </p>
               </div>
@@ -880,7 +1141,7 @@
                     </div>
             </div>
             <div class="form-group">
-              <input class="form-control theme" name="doorNo" required #doorNo="ngModel" ngModel required placeholder="Door No">
+              <input class="form-control theme" name="doorNo" required #doorNo="ngModel" ngModel required placeholder="Door No*">
               <div style="color:#fc6107" *ngIf="doorNo?.errors && (doorNo.dirty || doorNo.touched || uaf.submitted)">
                     <p *ngIf="doorNo?.errors.required">
                         The Door No. is required
@@ -888,7 +1149,7 @@
               </div>
             </div>
             <div class="form-group">
-              <input class="form-control theme" name="streetNo"  required #streetNo="ngModel" ngModel placeholder="Street Name">
+              <input class="form-control theme" name="streetNo"  required #streetNo="ngModel" ngModel placeholder="Street Name*">
               <div style="color:#fc6107" *ngIf="streetNo?.errors && (streetNo.dirty || streetNo.touched || uaf.submitted)">
                     <p *ngIf="streetNo?.errors.required">
                         The Street No. is required
@@ -896,7 +1157,7 @@
               </div>
             </div>
             <div class="form-group">
-              <select class="form-control theme" required name="city_id" ngModel #city_id="ngModel" (change)="getAreaByCity($event)"><option value="" selected>Select City</option><option *ngFor="let city of cities" value="{{city.city_id}}">{{city.city_desc}}</option>
+              <select class="form-control theme" required name="city_id" ngModel #city_id="ngModel" (change)="getAreaByCity($event)"><option value="" selected>Select City*</option><option *ngFor="let city of cities" value="{{city.city_id}}">{{city.city_desc}}</option>
               </select>
               <div style="color:#fc6107" *ngIf="city_id?.errors && (city_id.dirty || city_id.touched || uaf.submitted)">
                     <p *ngIf="city_id?.errors.required">
@@ -905,13 +1166,17 @@
               </div>
             </div>
             <div class="form-group">
-               <select class="form-control theme" required name="area_id" ngModel #area_id="ngModel"><option value="" selected>Select Area</option><option *ngFor="let area of areas" value="{{area.area_id}}">{{area.area_name}}</option></select>
+               <select class="form-control theme" required name="area_id" ngModel #area_id="ngModel"><option value="" selected>Select Area*</option><option *ngFor="let area of areas" value="{{area.area_id}}">{{area.area_name}}</option></select>
                <div style="color:#fc6107" *ngIf="area_id?.errors && (area_id.dirty || area_id.touched || uaf.submitted)">
                     <p *ngIf="area_id?.errors.required">
                         The Area selection is required
                     </p>
               </div>
             </div>
+            <!-- <div class="form-group">
+              <span>{{addtxt}}<span>
+              
+           </div> -->
             <!-- <div class="form-group">
               <input class="form-control theme" placeholder="Pincode" required name="pincode" ngModel #pincode="ngModel" pattern="[0-9]*" minlength="6" maxlength="6">
               <div style="color:#fc6107" *ngIf="pincode?.errors && (pincode.dirty || pincode.touched ||  pincode.pattern || uaf.submitted)">
@@ -924,6 +1189,11 @@
                     </p>
               </div>
             </div> -->
+            <!-- <div class="form-group" style="position:relative">
+              <div  #gmaps style="width:100%;height:300px;">
+
+              </div>
+            </div> -->
 
             <strong  class="form-text text-success" *ngIf="ms5">User new address added successfuly.</strong>                           
      
@@ -932,7 +1202,7 @@
       </div>
       <div class="modal-footer text-center" style="text-align:center">
         <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
-    <button type="submit" class="btn btn-brand">Save</button>
+    <button type="submit" name="addAddressBtn" #addAddressBtn class="btn btn-brand">Save</button>
       </div>
     </div>
     </form>
@@ -945,7 +1215,7 @@
     <form #updateAddressForm="ngForm" novalidate (ngSubmit)="updateUserAddress(updateAddressForm,updateAddressForm.valid,user.uid)">
     <div class="modal-content">
       <div class="modal-header">
-       <button class="btn modal_close_btn" data-dismiss="modal" #edit_address>&times;</button>
+       <button class="btn modal_close_btn" data-dismiss="modal" #edit_address (click) ="reset(updateAddressForm)">&times;</button>
         <h4 class="modal-title"></h4>
       </div>
       <div class="modal-body">
@@ -976,7 +1246,7 @@
             </div>
 
             <div class="form-group" >
-              <input class="form-control theme"  name="doorNo1" required #doorNo1="ngModel" ngModel required placeholder="Door No" [(ngModel)]="location.hno">
+              <input class="form-control theme"  name="doorNo1" required #doorNo1="ngModel" ngModel required placeholder="Door No*" [(ngModel)]="location.addrs">
               <div style="color:#fc6107" *ngIf="doorNo1?.errors && (doorNo1.dirty || doorNo1.touched || uaf.submitted)">
                     <p *ngIf="doorNo1?.errors.required">
                         The Door No. is required
@@ -984,7 +1254,7 @@
               </div>
             </div>
             <div class="form-group">
-              <input class="form-control theme"  name="streetNo1"  required #streetNo1="ngModel" ngModel placeholder="Street Name" [(ngModel)]="location.street">
+              <input class="form-control theme"  name="streetNo1"  required #streetNo1="ngModel" ngModel placeholder="Street Name*" [(ngModel)]="location.area">
                <div style="color:#fc6107" *ngIf="streetNo1?.errors && (streetNo1.dirty || streetNo1.touched || uaf.submitted)">
                     <p *ngIf="streetNo1?.errors.required">
                         The Street No. is required
@@ -992,7 +1262,7 @@
               </div>
             </div>
             <div class="form-group">
-              <select class="form-control theme"   [(ngModel)]="location.city_id" required name="city_id1" ngModel #city_id1="ngModel" (change)="getAreaByCity($event)"><option value="">Select City</option><option *ngFor="let city of cities" value="{{city.city_id}}">{{city.city_desc}}</option>
+              <select class="form-control theme"   [(ngModel)]="location.city_id" required name="city_id1" ngModel #city_id1="ngModel" (change)="getAreaByCity($event)"><option value="">Select City*</option><option *ngFor="let city of cities" value="{{city.city_id}}">{{city.city_desc}}</option>
               </select>
               <div style="color:#fc6107" *ngIf="city_id1?.errors && (city_id1.dirty || city_id1.touched || updateAddressForm.submitted)">
                   <p *ngIf="city_id1?.errors.required">
@@ -1002,7 +1272,7 @@
             </div>
 
             <div class="form-group">
-               <select class="form-control theme" [(ngModel)]="location.area_id" required name="area_id1" ngModel #area_id1="ngModel"><option value="">Select Area</option><option *ngFor="let area of areas" value="{{area.area_id}}">{{area.area_name}}</option></select>
+               <select class="form-control theme" [(ngModel)]="location.area_id" required name="area_id1" ngModel #area_id1="ngModel"><option value="">Select Area*</option><option *ngFor="let area of areas" value="{{area.area_id}}">{{area.area_name}}</option></select>
                <div style="color:#fc6107" 
                                   *ngIf="area_id1?.errors && (area_id1.dirty || area_id1.touched || updateAddressForm.submitted)">
                     <p *ngIf="area_id?.errors.required">
@@ -1077,14 +1347,15 @@
                   <tbody>
                     <tr *ngFor="let bill of myFinalizedOrders2| paginate: config; let i = index">
                       <td>{{bill.customer_name}}</td>
-                      <td>{{bill.test_name}}...</td>
-                      <td>{{bill.order_date}}</td>
+                      <td><a href="javascript:void(0)"  target="_blank" (click)="serviceDetails(bill.test_name,bill.service_type)">{{bill.test_name}}...</a></td>
+                      <td>{{bill.order_date| date: 'dd-MMM-yyyy'}}</td>
                       <td>{{bill.bill_no}}</td>
                       <!-- <td>30<sup>th</sup> Jan 11.30 AM</td> -->
                       <td><a href="javascript:void(0)" (click)="getBillDetails(bill.bill_no)">View Details</a></td>
                     </tr>
                     <tr *ngIf="myFinalizedOrders?.length==0">
-                        <td colspan="5">You Have Made No Tests Yet</td>
+                        <!-- <td colspan="5" style="text-align:center;">You Have Made No Tests Yet</td> -->
+                        <td colspan="5" style="text-align:center;">Your journey to the best diagnostics experience is yet to start. Go ahead, try adding a test to your cart and SEE THE DIFFERENCE.</td> 
                     </tr>
                    
                     
@@ -1117,19 +1388,17 @@
               </div>
             
             </div>
-            <div id="billDetails" class="row">
+            <!--<div id="billDetails" class="row">
                 <div class="tenet-loader" *ngIf="loading['billDetails']" ><img src="./assets/images/monogram.svg"  /></div>
                 <div class="tenet-loader" *ngIf="loading['reportDownload']" ><img src="./assets/images/monogram.svg"  /></div>
               <div *ngIf="billDetails.length > 0" table="col-md-12">
                   <div  class="form-group text-right">
-                      <!-- <button class="btn btn-brand" title="This is only available before sample is collected" (click)="addMore(billDetails[0].order_no)">Add More Services to This Bill*</button> -->
-                      <button class="btn btn-brand" title="This is only available after all the services are approved" (click)="downloadReport('',billDetails[0].order_no)">Dowload All Available Reports*</button>
+                                            <button class="btn btn-brand" title="This is only available after all the services are approved" (click)="downloadReport('',billDetails[0].order_no)">Dowload All Available Reports*</button>
                     </div>
                   <div id="patientDetails">
                       <table>
                         <tr><th>Bill. No. :</th><th>{{billDetails[0].order_no}}</th></tr>
                         <tr><th>Name :</th><td>{{partient_name}}</td></tr>
-                        <!-- <tr><th>Age :</th><td>29M</td></tr> -->
                         <tr><th>Status :</th><td>Active</td></tr>
                         
                       </table>
@@ -1143,12 +1412,51 @@
                 </table>
               </div>
             
-            </div>
+            </div>-->
             <div class="text-center">
                 <h4 class="text-brandcolor"><strong>Please reach out to us on 86880 86880 if you want to modify or cancel your order.</strong></h4>
               </div>
           </div>
-          <div id="changepassword" class="tab-pane">
+          <div id="report_access" class="tab-pane">
+            <div class="row" style="margin-top:100px">
+                <div class="tenet-loader" *ngIf="loading['access']" ><img src="./assets/images/monogram.svg" /></div>
+           
+              <div class="col-md-12">
+                <h3 class="text-brandcolor ">My Reports Are Visible for</h3>
+                <table class="table">
+                  <thead>
+                    <tr  *ngIf="parents?.length>0" class="text-brandcolor">
+                      <th>PARENT NAME</th>
+                      <th>MOBILE NUMBER</th>
+                    
+                      <th>Action</th>
+                      
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let parent of parents">
+                      <td>{{parent.user_name}}</td>
+                      <td>{{parent.user_phone}}</td>
+                      <td><a href="javascript:void(0)" (click)="removeParent(parent.uid)">Remove Access</a></td>
+                    </tr>
+                    <tr *ngIf="parents?.length==0">
+                        <td colspan="5" style="text-align:center;">You Are The Only One Who Can View Your Reports</td>
+                    </tr>
+                   
+                    
+                  </tbody>
+                </table>
+                
+               
+              </div>
+            
+            </div>
+            
+            <div class="text-center">
+                <h4 class="text-brandcolor"><strong>Please reach out to us on 86880 86880 if you need any help.</strong></h4>
+              </div>
+          </div>
+          <!-- <div id="changepassword" class="tab-pane">
                       <div class="row" style="margin-top:100px">
                         <div class="col-md-4">
                           </div>
@@ -1157,7 +1465,7 @@
                           <p *ngIf="pwc==4" class="sub_heading-brand ft-10px m-b-15">Invalid old password</p>
                           <p *ngIf="pwc==3" class="sub_heading-brand ft-10px m-b-15">Old and new passwords must be different</p>
                           <form #cp="ngForm" novalidate (ngSubmit)="changePassword(cp,cp.valid,user.uid)">
-                             <!--  <input type="hidden" name="user_id" [(ngModel)]="user.uid" value="{{user.uid}}"> -->
+                               <input type="hidden" name="user_id" [(ngModel)]="user.uid" value="{{user.uid}}"> 
                               <div class="col-md-4">
                                   <div class="form-group">
                                       <input ngModel name="oldpassword" #oldpassword="ngModel" id="oldpassword" class="form-control theme" type="password"  placeholder="Old Password" required/>
@@ -1206,7 +1514,7 @@
                               </div>
                           </form>           
                       </div>
-                  </div>
+                  </div> -->
 
         </div>
       </div>

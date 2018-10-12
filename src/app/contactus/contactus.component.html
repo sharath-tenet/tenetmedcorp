@@ -9,53 +9,59 @@
       <div class="row" style="padding:30px 60px;">
           <div class="col-md-4">
         <h3 class="titles" style="margin-bottom:20px">STORE LOCATOR</h3>
+       
         <div class="form-group">
-          <select class="form-control theme">
-            <option>Telangana</option>
+          <select name="city" class="form-control theme" (change)="cityChange($event.target.value)">
+            <option value="Hyderabad" [selected]="'Hyderabad'===city">Hyderabad</option>
+            <option value="Bengaluru" [selected]="'Bengaluru'===city">Bengaluru</option>
           </select>
         </div>
-        <div class="form-group">
-          <select class="form-control theme">
-            <option>Hyderabad</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <select class="form-control theme">
-            <option>Area</option>
-          </select>
-        </div>
+        
               <ul class="tenet_details_ul list-group">
           <li>
             <h4>Tenet Hub</h4>
-            <p>Imaging, Radiology &amp; Pathology
-                360 0 Diagnostics. </p>
+            <p>Imaging, Radiology &amp; Pathology</p>
+            <p>360&#176; Diagnostics. </p>
           </li>
           <li>
             <h4>Tenet Pro</h4>
-            <p>Radiology &amp; Pathology
-                EXPERTS IN RADIOLOGY &amp; PATHOLOGY. </p>
+            <p>Radiology &amp; Pathology</p>
+            <p>EXPERTS IN RADIOLOGY &amp; PATHOLOGY. </p>
           </li>
           <li>
             <h4>Tenet Express</h4>
-            <p>Pathology
-                QUICK &amp; RESPONSIVE. </p>
+            <p>Pathology</p>
+            <p>QUICK &amp; RESPONSIVE. </p>
           </li>
           <li>
               <h4>Tenet Door Step</h4>
-              <p>Pathology
-                  EASY &amp; CONVENIENT. At your doorstep. </p>
+              <p>Pathology at your doorstep</p>
+                  <p>EASY &amp; CONVENIENT</p>
             </li>
           <li>
               <p><br>
-                
-                <b>Company Name &amp; Address</b> <br>
-                Tenet Med Corp, <br>3rd Floor, Plot No.54, 
-                Kineta Towers,Road No. 3, <br>
-                Banjara Hils,Hyderabad - 500 034 <br>   
-                Email: info@tenetmedcorp.com <br>
+
+              
+                 <b>Company Name &amp; Address</b> <br>
+                Tenet Med Corp, <br> 8-2-269/4/B,
+                Beside New Rainbow Children’s Hospital,<br>
+                Road Number 2, Sagar Society,<br>
+                Sri Nagar Colony, Kamalapuri Colony,<br>
+                Banjara Hills, Hyderabad, Telangana 500034.<br>   
+                Email: customercare@tenetmedcorp.com <br>
                 Ph:  86880 86880<br>
                 <a href="http://www.tenetmedcorp.com" target="_blank">www.tenetmedcorp.com</a> 
               </p>
+          </li>
+          <li>
+              <b>Open Hours: </b> <br>
+              Monday	7AM–10PM<br>
+              Tuesday	7AM–10PM<br>
+              Wednesday	7AM–10PM<br>
+              Thursday	7AM–10PM<br>
+              Friday	7AM–10PM<br>
+              Saturday	7AM–10PM<br>
+              Sunday	7AM–5PM<br>
           </li>
         </ul>
         
@@ -64,12 +70,13 @@
             <div class="col-md-8">
               <div class="row">
           <div class="col-md-12" style="padding-top:30px;">
-            <!-- https://drive.google.com/open?id=1CTdmH5oc1wv9H0SmkLi6MGXKnMW9IZG_&usp=sharing -->
-               <iframe src="https://www.google.com/maps/d/embed?mid=1CTdmH5oc1wv9H0SmkLi6MGXKnMW9IZG_" width="100%" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>
-               <!-- iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.564399995798!2d78.415769315349!3d17.43268010608457!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb9131d35c558f%3A0x3130d77ddad0c9ab!2s119%2C+Road+Number+10%2C+Sravanthi+Nagar%2C+ICRISAT+Colony%2C+Jubilee+Hills%2C+Hyderabad%2C+Telangana+500033!5e0!3m2!1sen!2sin!4v1516016360447" width="100%" height="450" frameborder="0" style="border:0" allowfullscreen></iframe> -->
+           
+            <iframe *ngIf="city==='Hyderabad'" src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15226.889077743617!2d78.4323039!3d17.4251111!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xd3540d9596607adf!2sTenet+Diagnostics!5e0!3m2!1sen!2sin!4v1529480987357" width="100%" height="450" frameborder="0" style="border:0" allowfullscreen=""></iframe>
+            <iframe *ngIf="city==='Bengaluru'" src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15554.572481583662!2d77.579491!3d12.9306439!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xea9bd062fe8a3216!2sTenet+Diagnostics!5e0!3m2!1sen!2sin!4v1529480866923" width="100%" height="450" frameborder="0" style="border:0" allowfullscreen=""></iframe>
+            
           </div>
           <div class="col-md-8">
-            <h3 class="titles">WRITE TO US</h3>
+            <h3 class="titles">WRITE IN TO US</h3>
             <p *ngIf="msg?.length > 0">{{msg}}</p>
             <form #cu="ngForm" (ngSubmit)="contactusSubmit(cu,cu.valid)">
               <div class="form-group">
@@ -81,15 +88,15 @@
                 </div>
               </div>
               <div class="form-group">
-                <input class="form-control theme" ngModel placeholder="Contact No" required name="monileno"  #monileno="ngModel" pattern="[0-9]*" minlength="10" maxlength="10"/>
-                <div style="color:#fc6107" *ngIf="monileno?.errors && (monileno.dirty || monileno.touched || monileno.minlength || cu.submitted || monileno.pattern)">
-                                          <p *ngIf="monileno?.errors.required">
-                                              The Mobile number. is required
+                <input class="form-control theme" ngModel placeholder="Contact No" required name="mobileno"  #mobileno="ngModel" pattern="[0-9]*" minlength="10" maxlength="10"/>
+                <div style="color:#fc6107" *ngIf="mobileno?.errors && (mobileno.dirty || mobileno.touched || mobileno.minlength || cu.submitted || mobileno.pattern)">
+                                          <p *ngIf="mobileno?.errors.required">
+                                              The Mobile number is required
                                           </p>
-                                          <p *ngIf="monileno?.errors.minlength">
+                                          <p *ngIf="mobileno?.errors.minlength">
                                             Mobile number should be 10 digit
                                           </p>
-                                          <p *ngIf="monileno?.errors.pattern">
+                                          <p *ngIf="mobileno?.errors.pattern">
                                             Mobile number should only consists of numbers.
                                           </p>
                                           
@@ -109,7 +116,27 @@
                             </div>
               </div>
               <div class="form-group">
-                <textarea class="form-control theme" ngModel placeholder="Your Message" required name="message" #message="ngModel"></textarea>
+                
+                <select class="form-control theme" ngModel required name="subject" #subject="ngModel" >
+                  <option value="" disabled selected>Select your Subject</option>
+                  <option value="General Inquiry">General Inquiry</option>
+                  <option value="Complaint">Complaint</option>
+                  <option value="Feedback">Feedback</option>
+                  <option value="Test Cancellation">Test Cancellation</option>
+                  <option value="Refunds">Refunds</option>
+                  <option value="Payments">Payments</option>
+                  <option value="Others">Others</option>
+                </select>
+                 <div style="color:#fc6107" 
+                                *ngIf="subject?.errors && (subject.dirty || subject.touched || cu.submitted)">
+                                          <p *ngIf="subject?.errors.required">
+                                              The Subject is required
+                                          </p>
+                        </div>
+
+              </div>
+              <div class="form-group">
+                <textarea class="form-control theme" ngModel placeholder="Description" required name="message" #message="ngModel"></textarea>
                  <div style="color:#fc6107" 
                                 *ngIf="message?.errors && (message.dirty || message.touched || cu.submitted)">
                                           <p *ngIf="message?.errors.required">

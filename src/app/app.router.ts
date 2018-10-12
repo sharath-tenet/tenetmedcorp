@@ -22,7 +22,8 @@ import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.componen
 import { RefundCancelComponent } from './refund-cancel/refund-cancel.component';
 import { TncComponent } from './tnc/tnc.component';
 import { BillViewComponent } from './bill-view/bill-view.component';
-
+import { ReportsComponent } from './reports/reports.component';
+import { DoctorsComponent } from './doctors/doctors.component';
 
 import { NotFoundComponent } from './not-found/not-found.component';
 
@@ -31,10 +32,12 @@ import { NotFoundComponent } from './not-found/not-found.component';
 //import {CookieService} from 'angular2-cookie/core';
 
 export const router:Routes=[
-    {path:'',redirectTo:'home',pathMatch:'full'},
+    // {path:'',redirectTo:'home',pathMatch:'full'},
+    {path:'',component : HomeComponent},
     {path:'home',component : HomeComponent},
+    {path:'book/:event/:no',component : BookComponent},
     {path:'book/:event',component : BookComponent},
-    {path:'book',component : BookComponent},
+    {path:'book',redirectTo :'book/tests'},
     {path:'contactus',component : ContactusComponent},
     {path:'network',component : OurNetworkComponent},
     {path:'profile-details/:event',component : OurPackagesComponent},
@@ -43,6 +46,7 @@ export const router:Routes=[
     {path:'cart',component : CartComponent},
     {path:'login',component : LoginComponent},
     {path:'slots',component : SlotsComponent},
+    {path:'payment/:token',component : PaymentComponent},
     {path:'payment',component : PaymentComponent},
     {path:'invoice',component : InvoiceComponent},
     {path:'account/:any',component : AccountComponent},
@@ -50,7 +54,7 @@ export const router:Routes=[
     {path:'our-facilities',component : OurFacilitiesComponent},
     {path:'order-history',component : OrderHistoryComponent},
     {path:'test-details/:city/:area/:any',component : TestDetailsComponent},
-    {path:'book/test-details/:any',component : TestDetailsComponent},
+    {path:'test-details/:any',component : TestDetailsComponent},
     {path:'test-details/:any',component : TestDetailsComponent},
     {path:'bill-view/:bill',component : BillViewComponent},
     
@@ -61,6 +65,9 @@ export const router:Routes=[
     {path:'privacy-policy',component : PrivacyPolicyComponent},
     {path:'refund-cancel',component : RefundCancelComponent},
     {path:'tnc',component : TncComponent},
+    {path:'reports/:data',component : ReportsComponent},
+    {path:'doctors',component : DoctorsComponent},
+    
     
     
     //these should be in the last of the routes

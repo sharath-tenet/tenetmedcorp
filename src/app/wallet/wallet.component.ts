@@ -40,7 +40,7 @@ export class WalletComponent implements OnInit {
    }
 
    GetWallet(){
-    // console.log(this.user.uid);
+   
      this._api.getToken().subscribe( 
       token => { 
    	this._api.POST('GetWallet', {'TokenNo': token,'userid':this.user.uid}).subscribe(data =>{
@@ -86,7 +86,7 @@ export class WalletComponent implements OnInit {
 
 
    addAmount(form:any){
-	//	console.log('wform==',form);
+	
 		let data={
 			"TokenNo":'SomeTokenHere',
 			"userid":form.userid,
@@ -99,7 +99,7 @@ export class WalletComponent implements OnInit {
       data.TokenNo=token;
    	 	this._api.POST('UpdateWallet', data).subscribe(data =>{
         this.updatedWI = JSON.parse(data.json).data;
-        console.log(this.updatedWI[0].message);
+       
         this.tmp=true;
         this.GetWallet();
         this.GetWalletHistory();

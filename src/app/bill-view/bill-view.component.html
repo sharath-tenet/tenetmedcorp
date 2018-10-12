@@ -1,73 +1,195 @@
-<div class="container">
-		
-		<h3 class="text-brandcolor ">BILL</h3>
+<div class="content"><div class="container">
+	<div  id="test_parameters" class="modal theme_modal in" role="dialog">
+        <div class="modal-dialog">
+          
+        <form >
+          <div class="modal-content 1" >
+            <div class="modal-header">
+              <button class="btn modal_close_btn" data-dismiss="modal" >×</button>
+              <!-- <h4 *ngIf="components.test_name>0" class="modal-title">Parameters covered in "{{testDetails.test_name}}"</h4> -->
+            </div>
+            <div class="modal-body">
+              <div *ngIf="components.length>0">
+                <ul>
+                  <li *ngFor="let para of components"><span *ngIf="para.GRAPH_FLAG==1"><a href="javascript:void(0)" (click)="getGraphs(para.COMPONENT_ID)">{{para.COMPONENT_NAME}}</a></span><span *ngIf="para.GRAPH_FLAG==0">{{para.COMPONENT_NAME}}</span></li>
+                </ul>
+              </div>
+            </div>
+            <div class="modal-footer">
+            </div>
+          </div>
+           </form>
+          
+        </div>
+    </div>
+		<h3 class="text-brandcolor ">Order Details</h3>
 		<p>view and downlod your bills</p>
 	</div>
-<div class="container">
-  <div class="tenet-loader" *ngIf="loading['billDetails']" ><img src="./assets/images/monogram.svg"  /></div> 
+<div *ngIf="!ismobile" class="container">
+  <div class="tenet-loader" *ngIf="loading['billDetails']" ><img src="./assets/images/monogram.svg"  /></div>
+  <div class="tenet-loader" *ngIf="loading['reportDownload']" ><img src="./assets/images/monogram.svg"  /></div> 
 		<div style="border:1px solid #f05b25; padding:30px; margin-bottom:40px;">
-		<h4 class="text-brandcolor"><strong>BILL NO : {{billDetails[0].order_no}}</strong> </h4>
-		<h4 class="text-brandcolor" style="margin-bottom:30px;"><strong>NAME: {{partient_name}} </strong> </h4>
+		<div >
+		<h4 class="text-brandcolor"><strong>BILL NO : {{billDetails[0]?.order_no}}</strong> <a  class="pull-right btn btn-sm btn-brand" target="_blank" href="javascript:void(0)" (click)="getInvoice(billDetails[0]?.order_no)"><i title="Download the Invoice" class="fa fa-arrow-down"></i>Download Invoice</a></h4>
+		<h4 class="text-brandcolor"><strong>NAME: {{partient_name.toUpperCase()}} </strong> <!--<span class="pull-right" *ngIf="((billDetails[0].test_status>=6)&&(billDetails[0].order_due_amount==0))" (click)="getReportComponents(billDetails[0].tid,billDetails[0]?.order_no,0)"><button class="btn btn-primary btn-sm" >Advanced Reports</button></span>--></h4>
+		<h4 class="text-brandcolor" style="margin-bottom:30px;"><strong>STATUS : {{billDetails[0]?.test_status_original}}</strong> </h4>
+		
+		</div>
+		<div style="text-align:right"></div>
+		
+		<!-- <h4 *ngIf="billDetails[0]?.order_due_amount>0" class="text-brandcolor" style="margin-bottom:30px;">Pay Due Amount: <i class="fa fa-rupee"></i><a href="javascript:void(0)" (click)="payDue(billDetails[0].order_no,billDetails[0].order_due_amount)">{{billDetails[0].order_due_amount}} </a></h4> -->
+		<!-- order_due_amount -->
 		
 		<table class="table" style="width:100%">
 			<tbody><tr>
-				<!-- <th></th> -->
+				
 				<th>Service Name</th>
-				<th>Test Code</th>
-				<th>Total Amount</th>
+				<!-- <th>Test Code</th>
+				<th>Total Amount</th> -->
 				<th style="width: 55%;">Status</th>
 				<th>Actions</th>
 			</tr>
 				
 			<tr  *ngFor="let item of billDetails">
-				<!-- <td><input type="checkbox" name="" value=""></td> -->
+				
 				<td>{{item.test_name}}</td>
-				<td class="text-center">{{item.test_code}}</td>
-				<td class="text-center">{{item.test_amount}}</td>
+				<!-- <td class="text-center">{{item.test_code}}</td>
+				<td class="text-center">{{item.test_amount}}</td> -->
 				<td>
 					<ul class="status_ul">
 						<li>
 							<div>
-								<img *ngIf="item.test_status>=1" src="./assets/images/iconimages/bill/active/01.png">
-								<img *ngIf="item.test_status< 1" src="./assets/images/iconimages/bill/01.png">
+								<img *ngIf="item.test_status==1" src="./assets/images/iconimages/bill/active/01.png">
+								<img *ngIf="item.test_status!==1" src="./assets/images/iconimages/bill/01.png">
 								<h5>Order Placed</h5>
 							</div>
 						</li>
 						<li>
 							<div>
-								<img *ngIf="item.test_status>=2" src="./assets/images/iconimages/bill/active/02.png">
-								<img *ngIf="item.test_status< 2" src="./assets/images/iconimages/bill/02.png">
-								<h5>Sampe collected</h5>
+								<img *ngIf="item.test_status==2" src="./assets/images/iconimages/bill/active/02.png">
+								<img *ngIf="item.test_status!==2" src="./assets/images/iconimages/bill/02.png">
+								<h5>Sample collected</h5>
 							</div>
 						</li>
 						<li>
 							<div>
-								<img *ngIf="item.test_status>=3" src="./assets/images/iconimages/bill/active/03.png">
-								<img *ngIf="item.test_status< 3" src="./assets/images/iconimages/bill/03.png">
+								<img *ngIf="item.test_status==3" src="./assets/images/iconimages/bill/active/03.png">
+								<img *ngIf="item.test_status!==3" src="./assets/images/iconimages/bill/03.png">
 								<h5>order in process</h5>
 							</div>
 						</li>
 						<li>
 							<div>
-								<img *ngIf="item.test_status>=5" src="./assets/images/iconimages/bill/active/04.png">
-								<img *ngIf="item.test_status< 5" src="./assets/images/iconimages/bill/04.png">
-								<h5>Report Genegated</h5>
+								<img *ngIf="(item.test_status==6)||(item.test_status==7)" src="./assets/images/iconimages/bill/active/04.png">
+								<img *ngIf="(item.test_status!==6)&&(item.test_status!==7)" src="./assets/images/iconimages/bill/04.png">
+								<h5 [ngStyle]="{'color':((item.test_status==6)||(item.test_status==7)) ? '#f05b25' : '' }">Report Generated</h5>
 							</div>
 						</li>
 					</ul>
 				</td>
-				<td ><span *ngIf="(item.test_status>=6)" (click)="downloadReport(item.tid,billDetails[0].order_no)" style="cursor:pointer;"><img src="./assets/images/iconimages/bill/05.png" width="40px;"></span>	</td>
+				<td ><span *ngIf="(billDetails[0]?.order_due_amount>0)&&(billDetails[0]?.test_status>0)" class="text-brandcolor" style="margin-bottom:30px;"><a href="javascript:void(0)" (click)="payDue(billDetails[0].order_no,billDetails[0].order_due_amount)">Pay Due: <i class="fa fa-rupee"></i> {{billDetails[0].order_due_amount}} </a></span><span *ngIf="((item.test_status>=6)&&(billDetails[0].order_due_amount==0))" (click)="downloadReport(item.tid,billDetails[0].order_no)" style="cursor:pointer;color:#f05b25"><!--<img src="./assets/images/iconimages/bill/05.png" width="40px;">--><button class="btn btn-brand btn-sm">Download Report </button></span><br><span *ngIf="((item.test_status>=6)&&(item.is_analytics=='Y')&&(item.graph_flag==1)&&(billDetails[0].order_due_amount==0))" (click)="getReportComponents(item.tid,billDetails[0]?.order_no)"><button class="btn btn-primary btn-sm"  style="margin-top:2px;">Advanced Report</button></span> </td>
 			
 			</tr>
-			
-			
+
 		</tbody></table>
     	</div>
-       
-       	
-        
-        
-         
-          
-     
+
 	</div>
+	<div *ngIf="ismobile" class="container">
+			<div class="tenet-loader" *ngIf="loading['billDetails']" ><img src="./assets/images/monogram.svg"  /></div>
+			<div class="tenet-loader" *ngIf="loading['reportDownload']" ><img src="./assets/images/monogram.svg"  /></div> 
+		  
+			<div class="row" style="">
+				<div class="col-xs-12">
+					<div style="margin-bottom:10px;">
+						<h4 class="text-brandcolor"><strong>BILL NO : {{billDetails[0]?.order_no}}</strong> </h4>
+						<h4 class="text-brandcolor"><strong>NAME: {{partient_name.toUpperCase()}} </strong> </h4>
+						<h4 class="text-brandcolor" style="margin-bottom:30px;"><strong>STATUS : {{billDetails[0]?.test_status_original}}</strong> </h4>
+						<h4 class="text-brandcolor"><strong>Download Invoice : <a  target="_blank" href="javascript:void(0)" (click)="getInvoice(billDetails[0]?.order_no)"><i title="Download the Invoice" class="fa fa-arrow-down"></i>Invoice</a>
+						</strong> </h4>
+						<h4 *ngIf="(billDetails[0]?.order_due_amount>0)&&(billDetails[0]?.test_status>0)" class="text-brandcolor" style="margin-bottom:30px;"><strong>Pay Due : <span  class="text-brandcolor" style="margin-bottom:30px;"><a href="javascript:void(0)" (click)="payDue(billDetails[0].order_no,billDetails[0].order_due_amount)"> <i class="fa fa-rupee"></i> {{billDetails[0].order_due_amount}} </a></span> 
+						</strong> </h4>
+						
+					</div>
+				</div>
+			</div>
+				<div class="row" style="padding:0 15px;" *ngFor="let item of billDetails">
+					<div class="col-md-12" style="background-color:#eee;border-radius:5px; margin-bottom:10px;">
+						<div class="row">
+							<div class="col-xs-10">
+								<h5 class="text-brandcolor">SERVICE NAME</h5>
+								<h5>{{item.test_name}}</h5>
+								
+							</div>
+							<div class="col-xs-2" style="    text-align: center;    margin-top: 10px;">
+									<span *ngIf="((item.test_status>=6)&&(billDetails[0].order_due_amount==0))" (click)="downloadReport(item.tid,billDetails[0].order_no)" style="cursor:pointer;"><img src="./assets/images/iconimages/bill/05.png" class="dwnl_btn" width="25px;" /></span>
+							</div>
+							<div class="col-xs-12" style="margin-bottom:10px;">
+								<hr>
+							</div>
+						</div>
+						<div class="row">	
+							<div class="col-md-12" style="">
+								<div class="row">
+									<div class="col-xs-4" style="border-right:1px solid #ccc">
+										<!-- <h5 class="text-brandcolor">TEST CODE</h5>
+										<h5>{{item.test_code}}</h5>--><h5> 
+									</h5></div>
+									<div class="col-xs-8">
+										<!-- <h5 class="text-brandcolor">TOTAL AMOUNT</h5>
+										<h5>{{item.test_amount}}</h5>--><h5> 
+									</h5></div>
+									
+								</div>
+								<div class="row">
+									<div class="col-xs-12" style="margin-bottom:10px;margin-top:10px;">
+										<hr>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12">
+										<h5 class="text-brandcolor" style="font-size:12px; margin-top:10px;">STATUS</h5>
+										
+									</div>
+									<div class="col-xs-12">
+											<ul class="status_ul">
+													<li>
+														<div>
+															<img *ngIf="item.test_status==1" src="./assets/images/iconimages/bill/active/01.png">
+															<img *ngIf="item.test_status!==1" src="./assets/images/iconimages/bill/01.png">
+															<h5>Order Placed</h5>
+														</div>
+													</li>
+													<li>
+														<div>
+															<img *ngIf="item.test_status==2" src="./assets/images/iconimages/bill/active/02.png">
+															<img *ngIf="item.test_status!==2" src="./assets/images/iconimages/bill/02.png">
+															<h5>Sample collected</h5>
+														</div>
+													</li>
+													<li>
+														<div>
+															<img *ngIf="item.test_status==3" src="./assets/images/iconimages/bill/active/03.png">
+															<img *ngIf="item.test_status!==3" src="./assets/images/iconimages/bill/03.png">
+															<h5>order in process</h5>
+														</div>
+													</li>
+													<li>
+														<div>
+															<img *ngIf="item.test_status==6" src="./assets/images/iconimages/bill/active/04.png">
+															<img *ngIf="item.test_status!==6" src="./assets/images/iconimages/bill/04.png">
+															<h5>Report Generated</h5>
+														</div>
+													</li>
+												</ul>
+									</div>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+					
+				</div>
+					
+				</div>
+</div>

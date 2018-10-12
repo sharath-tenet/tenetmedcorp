@@ -19,7 +19,7 @@ export class SlotsComponent implements OnInit {
   _tempSlots:any=[];
   constructor(_api:ApiService,private render:Renderer,private router :ActivatedRoute,private grouter :Router) {
     this._api=_api;
-    // this.render
+    
    }
 
   ngOnInit() {
@@ -46,8 +46,7 @@ export class SlotsComponent implements OnInit {
         for (var i = 0; i < this._tempSlots.length; i++) {
           let a=JSON.stringify(this._tempSlots[i][0].tid);
           let b=JSON.stringify(o[0].tid);
-         // console.log(o[0].temp[0].slot_date);
-         //console.log(this._tempSlots[i][0]['temp'][0].slot_date);
+       
             if (a===b) {
                this._tempSlots[i][0]['temp'][0].slot_date=o[0].temp[0].slot_date;
                this._tempSlots[i][0]['temp'][0].slot_time=o[0].temp[0].slot_time;
@@ -63,8 +62,7 @@ export class SlotsComponent implements OnInit {
     this._api.POST('GetAvailableTimeSlots', {TokenNo: token,'test_id':this.test_id,'date':date,'center_id':'1'}).subscribe(data =>{
       this.slots=JSON.parse(data.json).data;
       this.slots_list=this.slots.slots_list;
-      console.log('date',date);
-      console.log(this.slots);
+    
       });
     });
       

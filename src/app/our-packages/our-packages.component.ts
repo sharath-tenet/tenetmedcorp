@@ -7,6 +7,7 @@ import { FormControl,Validators} from '@angular/forms';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/map';
 import { AppComponent } from "../app.component";
+import { GoogleAnalyticsEventsService } from "../common/google-analytics-events.service";
 
 @Component({
   selector: 'app-our-packages',
@@ -16,13 +17,12 @@ import { AppComponent } from "../app.component";
   //directives:[BookComponent]
 })
 export class OurPackagesComponent implements OnInit {
-  loading: any=[];
+  tcount: number;
+  loading: any = [];
   curl: string;
   event: string;
   ser_string: any;
-
-  //@ViewChild(myChildComponent)
-  //private myChild: BookComponent;
+  
 
   public _api:ApiService;
   public bookComponent:any;
@@ -38,7 +38,7 @@ export class OurPackagesComponent implements OnInit {
 
   public filterKey:any;
 
-  constructor(private router :Router, _api :ApiService, bc:BookComponent,private rou:ActivatedRoute,private _appComponent :AppComponent,) {
+  constructor(private router :Router, _api :ApiService, bc:BookComponent,private rou:ActivatedRoute,public gaes:GoogleAnalyticsEventsService,private _appComponent :AppComponent,) {
     this._api=_api;
     this.bookComponent=bc;
     this.event=this.rou.snapshot.paramMap.get('event');
@@ -47,13 +47,11 @@ export class OurPackagesComponent implements OnInit {
     this.ser_string=this.ser_string.replace("_,__",")"); 
     var re=/_/gi;
     this.ser_string=this.ser_string.replace(re," ");
-
+    this.ser_string=this.ser_string.replace("?slh?","/"); 
     this.ser_string=this.ser_string.replace(/^\s+|\s+$/g,""); 
-    //console.log(this.ser_string);
+ 
     this.ser_string=new String(this.ser_string);
     //debugger;
-    //console.log(this.event);
-   
     this.curl=this._appComponent.currentUrl.split("/")[0];
     this.getPackages();
     //AutoComplete search
@@ -64,7 +62,7 @@ export class OurPackagesComponent implements OnInit {
         if(term.length >=3){
           this._api.getToken().subscribe( 
             token => {
-        this._api.POST('GetServices', {TokenNo:token,pincode:'' ,test_name:data,test_code:'',test_type:'',condition_id:'',speciality_id:'',sort_by:'',sort_order:'',AlphaSearch:'',user_id:'',is_home_collection:""}).subscribe(data =>{
+        this._api.POST('GetServices', {TokenNo:token,pincode:'' ,test_name:data,test_code:'',test_type:'',condition_id:'',speciality_id:'',sort_by:'',sort_order:'',AlphaSearch:'',user_id:'',is_home_collection:"",city_name:this._appComponent.getCityName()}).subscribe(data =>{
                         if(data.status==1){
                           this.searchResult=JSON.parse(data.json).data;
                         }else{
@@ -75,7 +73,7 @@ export class OurPackagesComponent implements OnInit {
                       });
                        this._api.getToken().subscribe( 
                         token => {
-                  this._api.POST('GetPackages',{TokenNo:token,"pincode":"","package_name":data,"package_code":"","sort_by":"","sort_order":"","alphaSearch":"","type":""}).subscribe(data =>{
+                  this._api.POST('GetPackages',{TokenNo:token,"pincode":"","package_name":data,"package_code":"","sort_by":"","sort_order":"","alphaSearch":"","type":"",city_name:this._appComponent.getCityName()}).subscribe(data =>{
                   if(data.status==1){
                     this._packages1=JSON.parse(data.json).data;
                   }else{
@@ -119,7 +117,7 @@ export class OurPackagesComponent implements OnInit {
   }
   getPackages(){
     let type="";
-    console.log(this.curl);
+   
     if(this.curl=="package-details"){
       
        type="H";
@@ -130,38 +128,40 @@ export class OurPackagesComponent implements OnInit {
     this.removeUndefined();
     this._api.getToken().subscribe( 
       token => {
-    this._api.POST('GetPackages',{TokenNo:token,"pincode":"","package_name":this.ser_string,"package_code":"","sort_by":"","sort_order":"","alphaSearch":"","type":type}).subscribe(data =>{
+    this._api.POST('GetPackages',{TokenNo:token,"pincode":"","package_name":this.ser_string,"package_code":"","sort_by":"","sort_order":"","alphaSearch":"","type":type,city_name:this._appComponent.getCityName()}).subscribe(data =>{
       if(data.status==1){
         this._packages=JSON.parse(data.json).data;
         //this.testsList=[];
       }else{
         this._packages=[];
+        this.router.navigate(['./404']);
       }
-      //console.log('packages',this._packages);
+   
               if(this._packages.length > 0){
               this.getPackagesDetails();
               }
-         //console.log(this._packages);
+        
      });
     });
    
   }
   getPackagesDetails(){
-    
+      this.tcount=0;
        this._packages.forEach(element => {
         
               this.getTests(element);
         }); 
-        this.loading['_packages']=false;
+        
       
-         console.log(this.packageServicesList);
+         
   }
 
   getTests(element){
- //this.packageServicesList=[];
+ 
  this._api.getToken().subscribe( 
   token => {
         this._api.POST('GetPackageServices',{TokenNo:token,"Pckage_id":element.id}).subscribe(data =>{
+          this.tcount++;
             if(data.status==1){
               let _packageServices=JSON.parse(data.json).data;
               this.packageServicesList[element.id]=[];
@@ -169,6 +169,9 @@ export class OurPackagesComponent implements OnInit {
              
             }else{
               this._packageServices=[];
+            }
+            if(this.tcount==this._packages.length){
+              this.loading['_packages']=false;
             }
 
             
@@ -178,12 +181,10 @@ export class OurPackagesComponent implements OnInit {
   }
 
   addPackageCart(pckg:any){
-    // this.bookComponent.getAddPackageCart(pckg);
-   /*this.router.navigate(['./book', {searchString:str}]);*/
+    this.gaes.emitEvent("click", "package_details_add_to_cart", pckg.package_name, 10);
    this.bookComponent.getAddTestCart(pckg,"pckg");
   }
   isadded(tid:number):boolean{
-    //console.log(tid);
     let k =this.bookComponent.shortIndex(tid);
    
     return k;
@@ -205,6 +206,17 @@ export class OurPackagesComponent implements OnInit {
       });
   }
   return a;
+}
+getNameWOS(name){
+  name=name.replace("(","__,_"); 
+  name=name.replace(")","_,__"); 
+  var re=/ /gi;
+  name=name.replace(re,"_");
+  name=name.replace("/","?slh?"); 
+  return name;
+}
+goToCart(){
+  this._appComponent.goToCart();
 }
 
 

@@ -1,233 +1,172 @@
-<div class="content" style="min-height:800px;">  
-    <div class="container">
-     
-      <!--Section 2-->
-     <!-- <hr> -->
-     <div class="row" style="margin-top:30px; margin-bottom:0px;">
-      <div class="col-md-12">
-             <h1 class="bigtitle">OUR FACILITIES</h1>
-       </div>
-   </div>
-        
-         <div class="row" style="padding:0px 0px; margin-top:0px; margin-bottom:15px;">
-           <!-- <div class="col-md-12">
-                  <h1 class="bigtitle"><strong>OUR FACILITIES </strong></h1>
-            </div> -->
-            <div class="col-md-6">
-                  <h2 class="titles"><img src="./assets/images/iconimages/teneticon.png" class="pull-left" height="35" style="margin:0px 10px 10px 0px; " /> RADIOLOGY </h2>
-                  <div class="info" style="margin:20px 0 0 50px;">
-                      <p class="text-justify">Reliable radiology services play an essential role in your ability to deliver the most accurate diagnosis. With us, you can be assured of the latest technology such as High-Resolution Ultrasound and 32-Slice Cardiac CT Scanner, as well as testing supervised by a team of highly qualified and experienced Radiologists. This ensures that the results you see aren’t just accurate, but clinically relevant. We are committed to being your most reliable and responsive partner.</p>
-                        <ul style="margin:0; padding-left:10px">
-                          <li>High Resolution Ultrasound
-              <li>X-Ray</li>
-                            <li>Bone Mineral densitometry(BMD)</li>
-                            <li>Mammogram</li>
-                            <li>Pulmonary Function Test (PFT)</li>
+<div class="content" style="min-height:800px;">
 
-                        </ul>
-                      
-                  </div>
-          
-             </div>
-             <div class="col-md-6">
-              <img src="./assets/images/iconimages/facilities/1.png" width="100%" style="margin:10px;"/>
-             </div>
-       <div class="col-md-12">
-              <div class="col-md-4 text-center">
-                <img src="./assets/images/iconimages/set2/4.png" width="40%"/>
-                <h4 class="text-brandcolor">MRI-3TESLA</h4>
-              </div>
-              <div class="col-md-4 text-center">
-                <img src="./assets/images/iconimages/set2/2.png" width="40%"/>
-                <h4 class="text-brandcolor">XRAY</h4>
-              </div>
-              <div class="col-md-4 text-center">
-                <img src="./assets/images/iconimages/set2/3.png" width="40%"/>
-                <h4 class="text-brandcolor">ULTRA <br>SOUND</h4>
-              </div>
+<div class="container">
+    	<div class="row" style="margin-top:30px; margin-bottom:0px;">
+        	<div class="col-md-1"></div>
+			<div class="col-md-10 text-center">
+					<div class="form-group" style="margin: 20px 0px;">
+							
+						
+											<div class="input-group search_input-group">
+											  <input #searchString type="text" class="form-control input-lg dropdown-toggle" data-toggle="dropdown" placeholder="Search for Pathology Tests, Scans, MRI, CT etc." aria-describedby="basic-addon2" aria-expanded="true" [formControl]="searchTerm" (keyup.enter)="searchBasedOnString(searchTerm.value)" [(ngModel)]=filterKey value="{{ser_string}}">
+											  <span  *ngIf="searchString.value.length>0" class="" style="color: #f05b25;position: absolute;top: 12px;right: 60px;z-index: 2;padding-right: 10px;cursor:pointer;" (click)="searchString.value=''">X Clear</span>
+											<div class="dropdown-menu search_dropdown" style="width:100%;max-height:250px;overflow-y:auto;    z-index: 1999;">
+												<ul class="search_ul" >
+													   
+													<li class="heading" *ngIf="searchResult.length > 0"><i class="fa fa-history"></i> Tests Related to {{searchTerm.value}}</li>
+													<li *ngFor="let item of searchResult"><a (click)="select(item.test_name,'test')">{{item.test_name}}</a></li>
+													
+													<li class="heading" *ngIf="((_packagesSearchResult.length > 0)&&(mpckgshow===true))"><i class="fa fa-history"></i> Packages Related to {{searchTerm.value}}</li>
+													<li *ngFor="let item of _packagesSearchResult"><a (click)="select(item.package_name,'package')">{{item.package_name}}</a></li>
+						
+													<li class="heading" *ngIf="((_packagesSearchResult.length ==0) && (searchResult.length==0) &&(searchString.value===''))">Popular Tests</li>
+													<li *ngFor="let test of getPopularTests(searchString.value)" (click)="select(test,'test')">{{test}}</li>
+						
+												</ul>
+											  </div>
+						
+											  <span class="input-group-addon" id="basic-addon2" style="background-color:#fff; border:0px;"  (click)="searchBasedOnString(searchTerm.value)"> 
+													<span><i class="fa fa-circle" style="color:#EEEEED ; font-size: 50px;margin-top: -7px;"></i></span>
+													<div style="font-size: 35px;margin-top: -42px; color:#f05b25"><i class="fa fa-search"></i></div>
+													  
+											  </span>
+											</div>
+						
+										</div>
+            </div>	
+        </div>		 <hr>
+        
+       
+        
+        
+         <div class="row" style="padding:20px 0px; margin-top:15px; margin-bottom:15px;">
+			<div class="col-md-12">
+                  <h1 class="bigtitle"><strong>OUR FACILITIES </strong></h1>
             </div>
+            <div class="col-md-6">
+                  <h2 class="titles"><img src="./assets/images/iconimages/teneticon.png" class="pull-left" height="35" style="margin:0px 10px 10px 0px; "> RADIOLOGY </h2>
+                  <div class="info" style="">
+                  		<p class="text-justify">Radiology provides critical inputs when doctors and physicians are in the process of determining and identifying a patient’s medical problem. Reliable radiology services are essential for medical professionals to confirm or negate certain medical conditions. At Tenet, every procedure is supervised by our team of highly qualified and experienced Radiologists, to ensure that the results are accurate and clinically relevant to enable better diagnosis. With our commitment to reliable, accurate and responsive diagnosis, Tenet houses a complete spectrum of radiology services like the High Resolution 3D Ultrasound and 64 slice Cardiac CT scanner.</p>
+                        <h4 class="text-brandcolor">TECHNOLOGY HIGHLIGHTS</h4>
+						<p><strong>MRI - 3T/1.5T -</strong> MAGNETOM SKYRA - Total Imaging Matrix - 4th  Generation, Ultrafast Scan with Neuro and MSK Quite Suite. Go Brain - 5 min Fast Scan</p>
+						<p><strong>MDCT - </strong>Fast and Precise Imaging. SAFIRE - Low Dose CT. Inline Computer Aided Detection (CAD)</p>
+						<p><strong>ULTRASOUND - </strong>GE Logiq S7 R2, P9, F8 - Cross Beam Imaging, XD Clear, CEUS</p>
+						<p><strong>2D ECHO - </strong>STIC/Omniview. Auto IMT/EF</p>
+						<p><strong>BMD-DEXA - </strong>GE Lunar Prodigy Advance  - Encore/FRAX Software with Auto Analysis. Subject Trend Analysis</p>
+						<p><strong>Mammography - </strong>Mammomat-Automated Exposure control for Extremely Low Radiation Dose. Swivel Arm with Compression for Maximum Subject Comfort </p>
+						<p><strong>ECG/ENMG/EEG - Mac 2000 - </strong>Cutting Edge Marquette, 12 Lead ECG with Analysis Program and Resting ECG</p>
+						<p><strong>TMT - Mac 5500/Cardiosoft - </strong>Digital Signal with ECG Analysis Algorithms</p>
+						<p><strong>Computed Radiography - </strong>Image Intelligence with High Speed Processing, SAR with High Efficiency Dry Imager</p>
+						<p><strong></strong></p>		
+											
+                  </div>
+				  
+             </div>
+             <div class="col-md-6 text-center">
+             	<img src="./assets/images/iconimages/facilities/102.png" width="60%" style="margin:10px;">
+             
+				<div class="row">
+					<div class="col-md-2"></div>
+					<div class="col-md-8">
+						<div class="row">			
+									<div class="col-md-4 col-xs-4 text-center">
+										<img src="./assets/images/iconimages/facilities/5.png" width="100%">
+										<h5 class="text-brandcolor">MDCT</h5>
+									</div>
+									<div class="col-md-4 col-xs-4 text-center">
+										<img src="./assets/images/iconimages/facilities/09.png" width="100%">
+										<h5 class="text-brandcolor">ULTRA <br>SOUND</h5>
+									</div>
+									<div class="col-md-4 col-xs-4 text-center">
+										<img src="./assets/images/iconimages/facilities/08.png" width="100%">
+										<h5 class="text-brandcolor">2D ECHO</h5>
+									</div>
+						</div>
+						<div class="row">			
+									<div class="col-md-4 col-xs-4 text-center">
+										<img src="./assets/images/iconimages/facilities/2656.png" width="100%">
+										<h5 class="text-brandcolor">BMD</h5>
+									</div>
+									<div class="col-md-4 col-xs-4 text-center">
+										<img src="./assets/images/iconimages/02.png" width="100%" height="92.06px">
+										<h5 class="text-brandcolor">MAMMOGRAPHY</h5>
+									</div>
+									<div class="col-md-4 col-xs-4 text-center">
+										<img src="./assets/images/iconimages/facilities/06.png" width="100%">
+										<h5 class="text-brandcolor">ECG/ENMG/EEG</h5>
+									</div>
+						</div>
+					</div>
+				</div>
+			</div>
           </div>
           <hr>
           <div class="row" style="padding:20px 0px; margin-top:15px; margin-bottom:15px;">
-           <!--<div class="col-md-6">
-                  <h2 class="titles"><img src="images/iconimages/teneticon.png" class="pull-left" height="35" style="margin:0px 10px 10px 0px; " /> IMAGING  </h2>
-                  <div class="info" style="margin:20px 0 0 50px;">
-                      <p class="text-justify">Imaging or diagnostic radiation helps your doctor understand your medical health better. Generally, it is a non-invasive method of detecting an illness by creating pictures and images of internal organs through X-ray and it doesn’t require opening a patient up. At Tenet, all imaging procedures are performed with a patient’s safety in mind. We ensure highest quality results while minimizing exposure to radiation. We offer cutting edge imaging modalities like MRI-3Tesla, to bring to you the best in diagnostics.</p>
-                        <ul style="margin:0; padding-left:10px">
-                          <li>MRI-3Tesla</li>
-              <li>MDCT</li>
-                            
-
-                        </ul>
-                  </div>
-             </div>
-             <div class="col-md-6">
-              <img src="images/iconimages/facilities/2.png" width="100%" style="margin:10px;"/>
-             </div>
-          </div>
-      <hr> -->
+          
+		  </div>
           <div class="row" style="padding:20px 0px; margin-top:15px; margin-bottom:15px;">
            <div class="col-md-6">
-                  <h2 class="titles"><img src="./assets/images/iconimages/teneticon.png" class="pull-left" height="35" style="margin:0px 10px 10px 0px; " /> PATHOLGY  </h2>
-                  <div class="info" style="margin:20px 0 0 50px;">
-                      <p class="text-justify">At Tenet, we pride ourselves on providing quality services for the prevention and accurate detection of diseases. The latest technology, sophisticated equipment and stringent quality measures let us do this consistently. Under our roofs, your patients will find the full spectrum of services from routine CBP and Blood Glucose tests to highly specialised investigations for infectious diseases, cancer markers, hormonal assays, and more. Each discipline is headed by reputed and experienced medical professionals supported by teams of rigorously trained technologists. All quantitative investigations are done on fully automated, state-of-the-art analysers to virtually eliminate the chance of human error.</p>
-                        <ul style="margin:0; padding-left:10px">
-                          <li>Clinical Biochemistry</li>
-              <li>Hematology</li>
-              <li>Clinical pathology</li>
-              <li>Microbiology</li>
-              <li>Immunology</li>
-              <li>Cytopathology </li>
-              <li>Histopathology</li>
-              <li>Molecular Pathology</li>
-              <li>Mass Spectroscopy</li>
-              <li>Cytogenetics</li>                                         
-                       </ul>
+                  <h2 class="titles"><img src="./assets/images/iconimages/teneticon.png" class="pull-left" height="35" style="margin:0px 10px 10px 0px; "> PATHOLGY  </h2>
+                  <div class="info" style="">
+                  		<p class="text-justify">To monitor your health status better, pathology testing helps not just to diagnose or test a disease but to prevent it as well, by detecting possible precursors. These services include tests done on clinical specimens for the purpose of obtaining relevant information of your health to define appropriate health and lifestyle precautions. Some procedures are invasive while others are not. Our main aim is to provide quality services focused on prevention and early detection of diseases, using latest technology, sophisticated equipment and follow stringent quality measures. With our complete spectrum of services from routine tests such as CBP or Blood Glucose to highly specialized investigations for infectious diseases, cancer markers, hormonal assays, therapeutic drug assays etc. Each individual discipline is headed by experienced, professionally qualified medical doctors supported by a team of qualified and trained technologists. All quantitative investigations are undertaken on fully automated state of art the analyzers, to eliminate the chance of any human error.</p>
+                         <h4 class="text-brandcolor">TECHNOLOGY HIGHLIGHTS</h4>
+						<p><strong>LCMS - </strong>Newborn Screening/Metabolic Disorders/Vitamins/Immunosuppressants</p>
+						<p><strong>Genexpert - </strong>Tuberculosis</p>
+						<p><strong>Immunocap - </strong>Allergy Screening</p>
+						<p><strong>Liquid Based Cytology - </strong>Cervical Cancer</p>
+						<p><strong>PRISCA - </strong>An Advanced Prenatal Risk Calculation System</p>
+						<p><strong>HPLC - </strong>Automated System for Diabetic &amp; Thalassemia Testing</p>
+						<p><strong>Immuno Fixation Electrophoresis – </strong>Cancers</p>
+						<p><strong>Cytogenetics - </strong>Chromosomal Disorders</p>
+						<p><strong>Immunofluorescence - </strong>Autoimmune Disorders</p>
+						<p><strong>Multiplex RT PCR - </strong>Molecular Diagnostics</p>
+						<p><strong>Automated Clinical Chemistry Systems</strong></p>
+						<p><strong>Flow Cytometry - </strong>Analysis of Blood &amp; Body Fluid in Routine <br> Hematology / Immunophenotyping </p>
+						<p><strong>Nephelometry – </strong>Quick &amp; Accurate Measurement of Plasma <br>Proteins / Immunoglobulins</p>
+						<p><strong>Automated Microbial Identification and AST Systems</strong></p>
+						<p><strong>Immunohistochemistry - </strong>Histopathology</p>
                   </div>
-         
+				 
              </div>
-       
-             <div class="col-md-6">
-              <img src="./assets/images/iconimages/facilities/12.png" width="100%" style="margin:10px;"/>
-             </div>
-            <div class="col-md-12">
-              <div class="col-md-4 text-center">
-                <img src="./assets/images/iconimages/facilities/9.png" width="45%"/>
-                <h4 class="text-brandcolor">PHLEBOTOMY</h4>
-              </div>
-              <div class="col-md-4 text-center">
-                <img src="./assets/images/iconimages/facilities/10.png" width="40%"/>
-                <h4 class="text-brandcolor">URINE SAMPLE <br> COLLECTION</h4>
-              </div>
-              <div class="col-md-4 text-center">
-                <img src="./assets/images/iconimages/facilities/3.png" width="57%"/>
-                <h4 class="text-brandcolor">BLOOD SAMPLE<br>COLLECTION</h4>
-              </div>
-            </div>
+			 
+             <div class="col-md-6 text-center">
+             	<img src="./assets/images/iconimages/facilities/12.png" width="100%" style="margin:10px;">
+             
+				
+				<div class="row">
+					<div class="col-md-2"></div>
+					<div class="col-md-4 col-xs-6">
+						<img src="./assets/images/iconimages/facilities/0202.png" width="130px">
+						<h5 class="text-brandcolor">PHLEBOTOMY</h5>
+					</div>
+					
+					<div class="col-md-4 col-xs-6">
+						<img src="./assets/images/iconimages/facilities/0303.png" width="130px">
+						<h5 class="text-brandcolor">SPECIMEN<br>COLLECTION</h5>
+					</div>
+				</div>
+		
+						
+							
+			</div>
           </div>
-      <hr>
-      <!-- <hr> -->
-          <!--<div class="row" style="padding:20px 0px; margin-top:15px; margin-bottom:15px;">
-           <div class="col-md-6">
-                  <h2 class="titles"><img src="images/iconimages/teneticon.png" class="pull-left" height="35" style="margin:0px 10px 10px 0px; " /> CARDIOLOGY</h2>
-                  <div class="info" style="margin:20px 0 0 50px;">
-                      <p class="text-justify">New tests are constantly being developed to further the understanding of disease, injury, and congenital (present at birth) or acquired abnormalities of the heart. We, at Tenet, offer a complete picture of the functioning of your heart using sophisticated technologies handled by experienced professionals. With our commitment to keep you healthy, we keep in pace with the ever-changing world to offer you the best.</P>
-            <ul style="margin:0; padding-left:10px">
-                          <li>ECG</li>
-              <li>TMT</li>
-              <li>2D ECHO</li>
-                            
-
-                        </ul>
-                  </div>
-             </div>
-             <div class="col-md-6">
-              <img src="images/iconimages/facilities/4.png" width="100%" style="margin:10px;"/>
-             </div>
-          </div>-->
-     </div>
-      <!--Search content-->
-      <!-- <div class="row search-bottom" >
-            <div class="col-md-12 text-center">
-                <div class="form-group" style="margin: 40px 100px;">
-                    <div class="input-group search_input-group">
-                        <input type="text"  #searchString class="form-control input-lg" placeholder="Search for your nearest tenet center, test or service." aria-describedby="basic-addon2" [formControl]="searchTerm" (keyup.enter)="searchBasedOnString(searchTerm.value)" [(ngModel)]=filterKey>
-                        <span class="input-group-addon" id="basic-addon2" style="background-color:#fff; border:0px;"  (click)="searchBasedOnString(searchString.value)"> 
-                            <span><i class="far fa-circle" style="color:#f05b25; font-size: 30px;margin-top: -7px;"></i></span>
-                              <div style="font-size: 14px;margin-top: -22px; color:#f05b25"><i class="fas fa-search"></i></div>
-                                
-                        </span>
-                      </div>
-                       <div class="suggestions" *ngIf="searchResult.length > 0">
-                                  <div *ngFor="let item of searchResult">
-                                      <div>
-                                          <a (click)="select(item.test_name)">{{item.test_name}}</a>
-                                      </div>
-                                  </div>
-                      </div>
-                      <div class="suggestions" *ngIf="_packages.length > 0">
-                          <div *ngFor="let item of _packages">
-                              <div>
-                                  <a (click)="select(item.package_name)">{{item.package_name}}</a>
-                              </div>
-                          </div>
-                      </div>
-  
-                  </div>
-              </div>  
-          </div> -->
-        <!--Search content-->
-        <!--Section 2 -->
-        <div class="row search-bottom">
-          <div class="col-md-6 text-center " style="padding:20px">
-               <button class="btn btn-brand btn-lg home_btn" (click)="getBookAnAppointment()" style="height: 70px;padding: 0 50px;">Book a test</button>
-  
-          </div>
-          <div class="col-md-6 text-center left-border-brandcolor-light-2px" style="padding:20px">
-          
-              <span *ngIf="tokenSet"><button class="btn btn-brand btn-lg home_btn" (click)="redir('./account/order-history')" style="text-align:center;height: 70px;padding: 0 50px;">Check Report <br> Status</button></span>  
-                <span *ngIf="!tokenSet"><button class="btn btn-brand btn-lg home_btn" data-toggle="modal" data-target="#book_modal" data-backdrop="false" style="text-align:center;height: 70px;padding: 0 50px;">Check Report <br> Status</button></span>  
-          </div>
-      </div>
-  
-<div id="book_modal" class="modal theme_modal" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button class="btn modal_close_btn"  data-dismiss="modal">&times;</button>
-        <h4 class="modal-title"></h4>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-            <div class="col-md-12">
-                    <form #lf="ngForm" novalidate (ngSubmit)="loginSubmit(lf,lf.valid)">
-                        <div class="form-group">
-                            
-                             <input type="text" class="form-control theme"  placeholder="Enter TIN Number or Mobile number" name="phone" ngModel  required #phone="ngModel">
-
-                              <div style="color:#fc6107" 
-                                *ngIf="phone?.errors && (phone.dirty || phone.touched || lf.submitted)">
-                                      <p *ngIf="phone?.errors.required">
-                                          The TIN number/Phone Number is required
-                                      </p>
-                              </div>
-                        </div>
-                         <div class="form-group">
-                             
-                              <input type="password" class="form-control theme"  placeholder="Password*" name="password1" ngModel  required #password1="ngModel">
-
-                              <div style="color:#fc6107" 
-                            *ngIf="password1?.errors && (password1.dirty || password1.touched || lf.submitted || password1.minlength)">
-                                <p *ngIf="password1?.errors.required">
-                                    The Password is required
-                                </p>
-                              
-                            </div>
-
-                         </div>
-            
-                    <div class="form-group">
-                      <h5 class="titles text-left" style="font-weight:600; display:inline-block" data-toggle="modal" data-target="#forget_password_modal" data-backdrop="false">
-                      <span style="margin-top:15px"><a href="./login">Forgot Password?</a></span>
-                      </h5>
-                    <button type="submit" class="btn btn-brand pull-right" >Submit</button>
-                    </div>
-            
-                  </form> 
-                
-            </div>
-        </div>
-      </div>
-      <!-- <div class="modal-footer"> -->
-        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
-        <!-- <button type="button" class="btn btn-brand">Submit</button> -->
-      <!-- </div> -->
-    </div>
-    
-
-  </div>
-</div>
-    <!--Modal -->
+		  <hr>
+		  <hr>
+			 <div class="row" style="padding:30px 0;">
+					<div class="col-md-6 text-center " style="padding:20px">
+						 <button class="btn btn-brand btn-lg home_btn" (click)="getBookAnAppointment()" style="height: 70px;padding: 0 50px;width:270px;">Book a Test</button>
+			
+					</div>
+					<div class="col-md-6 text-center left-border-brandcolor-light-2px" style="padding:20px">
+							<!-- tokenSet -->
+						<span *ngIf="tokenSet"><button class="btn btn-brand btn-lg home_btn" (click)="redir('./account/order-history')" style="text-align:center;height: 70px;padding: 0 50px;width:270px;">Check Report <br> Status</button></span>  
+						<span *ngIf="!tokenSet">
+							<button class="btn btn-brand btn-lg home_btn" (click)="getOTP()" style="text-align:center;height: 70px;padding: 0 50px;width:270px;">Check Report <br> Status</button> 
+						</span>  
+						
+					</div>
+			 </div>
+		<h4 class="text-center text-brandcolor">Join the 'It's Good to know' regime. Follow us on our social media channels and get free health tips regularly. <br> Call us on 86880 86880.</h4>    
+	 </div>
+	 
 </div>

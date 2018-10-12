@@ -4,6 +4,10 @@ import {BookComponent} from '../book/book.component';
 import {AppComponent} from '../app.component';
 import {Router} from '@angular/router';
 import { NgForm } from '@angular/forms';
+
+import { Observable } from "rxjs/Observable";
+import 'rxjs/add/observable/timer';
+
 import { DatePipe } from '@angular/common';
 import {INgxMyDpOptions, IMyDateModel} from 'ngx-mydatepicker';
 declare var swal: any;
@@ -14,9 +18,12 @@ declare var swal: any;
   providers:[BookComponent]
 })
 export class CartComponent implements OnInit {
+  ismobileview: any;
+  location_city_name: any;
+  MPGprice: number = 0;
   finhvc: number;
   finhvd: any = [];
-
+  isbtnloading:boolean=false;
   @ViewChild('otpModel') otpModel: ElementRef;
   @ViewChild('otp_model') otp_model: ElementRef;
 
@@ -73,7 +80,7 @@ export class CartComponent implements OnInit {
   cartPckgIds:any=[];
   tempTotal:number=0;
   tot:number;
-  hvc:number=50;
+  hvc:number=0;
   colc:number=0;
   labs:any=[];
   lablocations:any=[];
@@ -82,33 +89,53 @@ export class CartComponent implements OnInit {
   modify_bill:any=null;
   modi_member:any=[];
 
-  ph:boolean=false;
+  ph:boolean=true;
   memId:any;
+  mobileNumber:any;
+  errorMessage:any;
+  FMname:any;
+
+  resendotptime: any;
+  resendotpv: boolean=false;
+  fmForm:any;
+  tloop: Observable<number>;
 
   date = new Date();
   myOptions: INgxMyDpOptions = {
     // other options...
     dateFormat: 'dd-mm-yyyy',
-    disableUntil: { year: this.date.getUTCFullYear(), month: this.date.getUTCMonth() + 1, day: this.date.getUTCDate()-1 },
-    disableSince: { year: this.date.getUTCFullYear()+1, month: this.date.getUTCMonth() + 1, day: this.date.getUTCDate() }
+  
+    disableSince: { year: this.date.getUTCFullYear()+1, month: this.date.getUTCMonth() + 1, day: this.date.getUTCDate() },
+    disableUntil :{ year: this.date.getUTCFullYear(), month: this.date.getUTCMonth() + 1, day: this.date.getUTCDate()-1}
   };
 
   myOptions1: INgxMyDpOptions = {
   // other options...
   dateFormat: 'yyyy-mm-dd',
-  disableSince: { year: this.date.getUTCFullYear(), month: this.date.getUTCMonth() + 1, day: this.date.getUTCDate()+1}
+  disableSince: { year: this.date.getUTCFullYear(), month: this.date.getUTCMonth() + 1, day: this.date.getUTCDate()+1},
+  disableUntil :{ year: 1918, month: 1, day: 1},
 };
 
   constructor(_api :ApiService,bc:BookComponent,private router :Router,_appComponent :AppComponent,private elementRef:ElementRef,private datePipe:DatePipe) {
     window.scrollTo(0, 0);
+   
     var date = new Date();
     this.setDate1();
-    this.minDate={ date: { year: date.getUTCFullYear(), month: date.getUTCMonth() + 1, day: date.getUTCDate() } }
-    //this.minDate={day: date.getUTCDate(), month: date.getUTCMonth() + 1, year: date.getUTCFullYear()};
+    if(date.getHours()>19){
+      this.minDate={ date: { year: date.getUTCFullYear(), month: date.getUTCMonth() + 1, day: date.getUTCDate()+1 } }
+    }else{
+      this.minDate={ date: { year: date.getUTCFullYear(), month: date.getUTCMonth() + 1, day: date.getUTCDate() } }
+    }
+    
+    
+    
     this.maxDate={day: date.getUTCDate(), month: date.getUTCMonth() + 1, year: date.getUTCFullYear()+1};
+    
     
     this._api=_api;
     this._appComponent=_appComponent;
+    this.ismobileview=this._appComponent.isMobile();
+    
     this.tokenCheck(); 
     this.getLocStorage();
     if(this.isTokenSet){
@@ -117,36 +144,26 @@ export class CartComponent implements OnInit {
         this.mytests();
         this.getUserFamily(this.user.uid,0);
       
-       
+       this._appComponent.setCart();
     }
    
-    // if(this.isTokenSet){
-    //   this.getUserFamily(this.user.uid,0);
-    //   this.getUserLocation(this.user.uid,0);
-    // }
-    // this._appComponent.setFlag();
     
-    
-    // // //this.listPckgs();
-    //  this.listTests();
-    //  this.getLabLocations("Hyderabad");//this will be dynamic form google locations
     this.couponRes={"discount_amount":0}
      this.bookComponent=bc;
      this.getCities();
      this.getTimeSlots();
-    // this.checkLoad();
-    //console.log('this.user',this.user);
-   
     
   }
+  //user data check
+
   mytests(){
     this.tests= JSON.parse(localStorage.getItem('tests'));
-  //  console.log('tests=',this.tests);
+
        
       if(this.tests!==null){
                if(this.tests.length > 0){
                  this.tests.forEach(element => {
-                  // console.log(typeof this.sel_members[element.tid].uid);
+                 
                    this.cartTestIds.push(element.tid);
                     if(this.sel_members[element.tid]==undefined||this.sel_members[element.tid]==[]){
                      this.sel_members[element.tid]=[];
@@ -163,14 +180,14 @@ export class CartComponent implements OnInit {
                    this.sel_members[element.tid]=this.modi_member;
                    }
                   }); 
-                 // console.log(this.modi_member);
+               
                  
                 }
       }else{
    
            this.tests=[];
       }
-      console.log("sel_mem",this.sel_members);
+      
       this.cartValues= JSON.parse(localStorage.getItem('cartValues'));
    
   }
@@ -184,12 +201,7 @@ export class CartComponent implements OnInit {
     console.log("sel_type",this.sel_type);
   }
   ngOnInit() {
-    // this._api.getToken().subscribe( 
-    //   token => {
-    //  this._api.POST('PaymentMethods', {TokenNo: token}).subscribe(data =>{
-    //   this.paymentMethods=JSON.parse(data.json).data;
-    //  });
-    // });
+ 
      this._api.getToken().subscribe( 
       token => {
      this._api.POST('SuggestedTests', {TokenNo: token,'test_ids':this.cartTestIds}).subscribe(data =>{
@@ -202,7 +214,7 @@ export class CartComponent implements OnInit {
 
   listTests(){
    this.tests= JSON.parse(localStorage.getItem('tests'));
- //console.log('tests=',this.tests);
+
     
    if(this.tests!==null){
             if(this.tests.length > 0){
@@ -219,7 +231,7 @@ export class CartComponent implements OnInit {
                 this.sel_members[element.tid]=this.modi_member;
                 }
                }); 
-              // console.log(this.modi_member);
+           
               
              }
    }else{
@@ -241,14 +253,13 @@ export class CartComponent implements OnInit {
         localStorage.removeItem('sel_locations')
       }
     }
-  //  console.log(this.sel_locations);
+
   this.cartValues= JSON.parse(localStorage.getItem('cartValues'));
  
-    //  this.bookComponent.hideCart();
   }
   //set home collection as default for all family members all tests
   setHcDefault(){
-    //this.tests= JSON.parse(localStorage.getItem('tests'));
+   
     
    
       if(this.tests!==null){
@@ -267,7 +278,7 @@ export class CartComponent implements OnInit {
       this.sel_locations[element.tid]=[];
     }
       if(this.sel_locations[element.tid][element1.uid]==undefined||this.sel_locations[element.tid][element1.uid]==''){
-       //let strngaddres=this.user.user_address;
+     
     
         this.sel_locations[element.tid][element1.uid]=this.locations[0];
       
@@ -277,6 +288,8 @@ export class CartComponent implements OnInit {
         this.sel_lablocation[element.tid]=[];
       }
         if(this.sel_lablocation[element.tid][element1.uid]==undefined||this.sel_lablocation[element.tid][element1.uid]==''){
+         
+
           this.sel_lablocation[element.tid][element1.uid]=this.lablocations[0];
         }
 
@@ -287,27 +300,20 @@ export class CartComponent implements OnInit {
             this.sel_date[element.tid][element1.uid]=this.minDate;
             
           }
+        
           if(this.sel_slot[element.tid]==undefined||this.sel_slot[element.tid]===''){
             this.sel_slot[element.tid]=[];
           }
       
      
-     
-     // this.sel_locations[element.tid]="Plot #119,Road No 10,Jubliee Hills";
-   
-   //  console.log(this.user);
-   //  console.log(this.sel_locations);
-  
-  //  if(this.sel_lablocation[element.tid]==undefined){
-  //    this.sel_lablocation[element.tid]=this.lablocations[0];
-  //  }
+    
     });
     
         });
-        //console.log(this.sel_lablocation);
+       
         }
       }
-     // console.log("here",this.sel_date[36][2]);
+    
       this.setLocStorage();
       this.mypayotp('1');
       this.loading['data']=false;
@@ -319,7 +325,7 @@ export class CartComponent implements OnInit {
   }
   //packages
     listPckgs(){
-    //console.log("pckgs=",this.pckgs);
+   
     this.pckgs= JSON.parse(localStorage.getItem('packages'));
     if(this.pckgs != null){
       this.pckgs.forEach(element => {
@@ -328,8 +334,7 @@ export class CartComponent implements OnInit {
            this.sel_members[element.id]=this.user;
          }
          if(this.sel_locations[element.id]==undefined){
-         //  this.sel_locations[element.id]=this.user.user_address;
-          // this.sel_locations[element.tid]="Plot #119,Road No 10,Jubliee Hills";
+        
          }
          if(this.sel_type[element.id]==undefined){
            this.sel_type[element.id]=1;
@@ -337,7 +342,7 @@ export class CartComponent implements OnInit {
    
        });
     }
-    //this.sel_locations=this.cleanArray(this.sel_locations);
+   
     if(this.sel_members.length==0){
       if(localStorage.getItem('sel_members')){
         this.sel_members=JSON.parse(localStorage.getItem('sel_members'));
@@ -351,7 +356,7 @@ export class CartComponent implements OnInit {
       }
     }
   this.cartValues= JSON.parse(localStorage.getItem('cartValues'));
-  //  console.log(this.sel_members);
+ 
   }
 
   tokenCheck(){
@@ -363,8 +368,11 @@ export class CartComponent implements OnInit {
       if(JSON.parse(localStorage.getItem('user'))){
         this.user=JSON.parse(localStorage.getItem('user'));
       }
-      // console.log(this.user); 
-      // console.log(localStorage.getItem('token'))
+      if(this._appComponent.noCart==false){
+        this._appComponent.getNotify("Please fill your personal details to proceed the order");
+        this.router.navigate(['./account']);
+      }
+      
     }
   
   }
@@ -418,15 +426,18 @@ export class CartComponent implements OnInit {
   }
 
   checkOut(){
+    window.scrollTo(0, 0);
     this.loading['data']=true;
+    this.isbtnloading=true;
     if(this.isTokenSet){
       
-      if(confirm("Proceed to pay?")){
+    
+
         this.finalPostList=[];
         if(this.tests!=null){
             this.tests=this.cleanArray(this.tests);
             this.tests.forEach(element => {
-              //console.log(this.sel_members[element.tid]['uid']);
+            
              if(this.sel_members[element.tid].length==0){
                this.finalPostList['uid_'+this.user.uid]=[];
                this.finalPostList['uid_'+this.user.uid].push(element.tid);
@@ -447,46 +458,25 @@ export class CartComponent implements OnInit {
              }
               /*user quantity check start here*/
         if(this.userVsQuant(element,this.sel_members[element.tid])){
-          // swal("Your Quantity did not match with number of member selected in "+element.test_name,"warning");
-          swal("Alas!", "Your Quantity did not match with number of members selected in '"+element.test_name+"'","warning");
-          this.loading["data"]=false;
-         
-          // return "false";
-           throw new Error("Something went badly wrong!");
-        }          
-         });
-        }
-        // if(this.pckgs!=null){
-        //     this.pckgs=this.cleanArray(this.pckgs);
-        //    // console.log(this.pckgs);
-        //     this.pckgs.forEach(element => {
-        //       //console.log(this.sel_members[element.tid]['uid']);
-        //      if(this.sel_members[element.id]['uid']===undefined){
-        //        this.finalPostList['uid_'+this.user.uid]=[];
-        //        this.finalPostList['uid_'+this.user.uid].push(element.id);
-        //      }else{
-               
-        //        if(this.finalPostList['uid_'+this.sel_members[element.id]['uid']]==undefined){
-        //          this.finalPostList['uid_'+this.sel_members[element.id]['uid']]=[];
-        //         this.finalPostList['uid_'+this.sel_members[element.id]['uid']].tests=[];
-        //         this.finalPostList['uid_'+this.sel_members[element.id]['uid']].tests.push(element.id);
-        //        }else{
-        //          this.finalPostList['uid_'+this.sel_members[element.id]['uid']].tests.push(element.id);
-        //        }
-               
-        //      }
-                       
-        //  });
-        // }
         
-       
-      
-  
-      // this._api.POST('GetFamilyMembers', {TokenNo: token,'user_id':uid}).subscribe(data =>{
-      //   this.members=JSON.parse(data.json).data;
-       
-      //  });
-  
+          let tqnt=this.getQuantByTid(element.tid);
+          
+          this._appComponent.getNotify("You have selected "+tqnt+" units for '"+element.test_name+"'\nyou can add a family member if you want to be tested together");
+         
+         
+          this.loading["data"]=false;
+          this.isbtnloading=false;
+         
+         
+          this.isbtnloading=false;
+           throw new Error("Something went badly wrong!");
+        }
+         
+               
+         });
+            
+        }
+     
        for(let key in this.finalPostList){
          let i=1;
        let fuid=key.split("_")[1];
@@ -505,12 +495,11 @@ export class CartComponent implements OnInit {
         fiprice.push(this.getFpriceByTid(element));
         fiseltype.push(this.sel_type[element][fuid]);
         if(this.sel_type[element][fuid]==1){
-         // console.log(this.sel_locations[element].address);
-         // if(this.sel_locations[element].address==undefined){
-            filocation.push(this.sel_locations[element][fuid].address);
-         // }else{
-      //    filocation.push(this.sel_locations[element][fuid].address);
-        //  }
+        
+        let fiadrs=this.sel_locations[element][fuid].address+","+this.sel_locations[element][fuid].area+","+this.sel_locations[element][fuid].city+","+this.sel_locations[element][fuid].state;
+            filocation.push(fiadrs);//state
+            
+  
           
         }else{
           filocation.push(this.sel_lablocation[element][fuid].address);
@@ -528,7 +517,7 @@ export class CartComponent implements OnInit {
         this._api.POST('ModifyOrder', {TokenNo: token,'test_id':fitest.join(),'user_name':fuid,'order_no':this.modify_bill,'item_net_amount':fiprice.join(),'item_center_id':1,'item_center_name':'banjara','order_net_amount':this.tempTotal,'status':'M','schdate':fischedule.join('`'),'schaddress':filocation.join('`'),'order_type':fiseltype.join()}).subscribe(data =>{
           let inv=JSON.parse(data.json).data;
     
-         // console.log(inv[0].order_no);
+      
           fiorder_no.push(inv[0].order_no);
     
           if(Object.keys(this.finalPostList).length==fiorder_no.length){
@@ -542,11 +531,11 @@ export class CartComponent implements OnInit {
         this._api.getToken().subscribe( 
           token => {
             let dat={TokenNo: token,'test_id':fitest.join(),'user_name':fuid,'item_net_amount':fiprice.join(),'item_center_id':1,'item_center_name':'banjara','order_net_amount':this.tempTotal,'schdate':fischedule.join('`'),'schaddress':filocation.join('`'),'order_type':fiseltype.join()};
-            console.log(dat);
-        this._api.POST('OrderCreate', {TokenNo: token,'test_id':fitest.join(),'user_name':fuid,'item_net_amount':fiprice.join(),'item_center_id':1,'item_center_name':'banjara','order_net_amount':this.tempTotal,'schdate':fischedule.join('`'),'schaddress':filocation.join('`'),'order_type':fiseltype.join()}).subscribe(data =>{
+          
+        this._api.POST('OrderCreate', {TokenNo: token,'test_id':fitest.join(),'user_name':fuid,'item_net_amount':fiprice.join(),'item_center_id':1,'item_center_name':'banjara','order_net_amount':this.tempTotal,'schdate':fischedule.join('`'),'schaddress':filocation.join('`'),'order_type':fiseltype.join(),city_name:this._appComponent.getCityName(),"pay_type":this.paymentOption}).subscribe(data =>{
           let inv=JSON.parse(data.json).data;
           if(JSON.parse(data.json).status==1){
-            console.log(inv);
+         
             fiorder_no.push(inv[0].order_no);
            
           }else{
@@ -560,7 +549,7 @@ export class CartComponent implements OnInit {
              
           }else if(Object.keys(this.finalPostList).length==i){
             
-            //  this.errors();
+            // this.errors();
             swal({
               type: 'error',
               title: 'Oops...',
@@ -576,15 +565,8 @@ export class CartComponent implements OnInit {
        }
        
       
-       }
-      }else{
-        this.loading["data"]=false;
-        return false;
-      }
+       }//for
 
-     
-
-     
     }else{
       this.router.navigate(['./login']);
     }
@@ -595,29 +577,24 @@ export class CartComponent implements OnInit {
     swal("<small>Something Went Wrong,Please Try again</small>");
   }
   finalizeOrder(fiorder_no:any){
+    this._appComponent.getNotify("Your test has been getting booked. Check your email or SMS for further information.");
     this._api.getToken().subscribe( 
       token => {
-    this._api.POST('FinalizeOrder', {TokenNo: token,'Referenceid':this.user.uid,'order_no':fiorder_no.join(),'payment_type':'0'}).subscribe(data =>{
+    this._api.POST('FinalizeOrder', {TokenNo: token,'Referenceid':this.user.uid,'order_no':fiorder_no.join(),'payment_type':this.paymentOption,is_due:"N"}).subscribe(data =>{
       let inv=JSON.parse(data.json).data;
-      console.log(inv);
+   
       sessionStorage.setItem('invoice', JSON.stringify(inv));
       localStorage.setItem('invoice', JSON.stringify(inv));
-      localStorage.setItem('tempTotal', JSON.stringify(this.tempTotal));
-      
-      console.log("order finalized");
-
-  //    console.log(inv);
+      localStorage.setItem('tempTotal', JSON.stringify(this.MPGprice));
+      // debugger;
     this.removeLocalStorage();
     
      this.clearCart();
-    console.log("payment gateway redirection here");
-    // this.router.navigate(['./payment']);
      });
     });
   }
   orderModified(fiorder_no:any){
     this.clearCart();
-    console.log("payment gateway redirection here");
     this.router.navigate(['./payment']);
 
   }
@@ -626,7 +603,6 @@ export class CartComponent implements OnInit {
       token => {
     this._api.POST('AddtoWishList', {TokenNo: token,'uid':this.user.uid,'test_id':0,'quantity':0,'loc_id':'1','status':'C','is_wishlist':'2'}).subscribe(data =>{
       let inv=JSON.parse(data.json).data;
-    //  console.log("Cart Cleared");
       this.bookComponent._appComponent.clearCart();
       this.router.navigate(['./payment']);
      });
@@ -639,9 +615,9 @@ export class CartComponent implements OnInit {
      
       if(element.tid==tid){
         a= element.test_finalpr;
+        
       } 
     });
-    //console.log("here",this.pckgs);
     if(this.pckgs){
       this.pckgs.forEach(element => {
         
@@ -651,7 +627,7 @@ export class CartComponent implements OnInit {
        });
     }
     
-    
+    this.MPGprice=this.MPGprice+(this.getQuantByTid(tid)*a);
     this.tempTotal=this.tempTotal+a;
     return a;
   }
@@ -663,7 +639,6 @@ export class CartComponent implements OnInit {
         a= element.quant;
       } 
     });
-    //console.log("here",this.pckgs);
     if(this.pckgs){
       this.pckgs.forEach(element => {
         
@@ -672,9 +647,7 @@ export class CartComponent implements OnInit {
          } 
        });
     }
-    
-    
-    //this.tempTotal=this.tempTotal+a;
+
     return a;
   }
   backToTests(){
@@ -690,7 +663,7 @@ export class CartComponent implements OnInit {
     
      if(res.length==0){
       this.members.push(this.user);
-             // console.log(this.members);
+             
      }else{
 
             if(JSON.parse(data.json).data.length > 0){
@@ -701,14 +674,12 @@ export class CartComponent implements OnInit {
               this.members.push(this.user);
             }
           }
-          console.log(this.members);
+         
           this.getUserLocation(this.user.uid,0);
      });
     });
 
-  /*  if(uid){
-      this.ms1=true;
-    }*/
+
   }
 
   hm1(){
@@ -727,9 +698,9 @@ export class CartComponent implements OnInit {
     this._api.getToken().subscribe( 
       token => {
      this._api.POST('GetUserAddress', {TokenNo: token,'uid':uid}).subscribe(data =>{
-    // console.log('locs',(JSON.parse(data.json).data.length));
+ 
     let res =JSON.parse(data.json).data;
-  // console.log(res);
+
     if(res==undefined){
          this.locations[0]=[];
          this.locations[0].address="NA";
@@ -749,14 +720,12 @@ export class CartComponent implements OnInit {
        }
 
     }
-    console.log( this.locations);
+
     this.getLabLocations("Hyderabad");//this will be dynamic form google locations
        
       });
     });
-    /* if(uid){
-       this.ms3=true;
-     }*/ 
+ 
    }
    hm3(){
      this.ms3=false;
@@ -774,7 +743,7 @@ export class CartComponent implements OnInit {
     this.router.navigate(['./slots', {testId:test_id}]);
    }
    setFamilyMember(mem:any){
-    //console.log(mem);
+   
     this.sel_members[this.tid]=mem;
     this.hm1();
     this.setLocStorage();
@@ -784,20 +753,14 @@ export class CartComponent implements OnInit {
      let k=false;
      arr.forEach(element => {
        if(element.uid===key.uid){
-    // console.log(element.uid,"undi");
+   
         k= true;
        }
        
      });
-    //  console.log(key.uid,"ledu");
+   
      return k;
-    //  key=JSON.stringify(key);
-    //  arr=JSON.stringify(arr);
-    // if(arr.indexOf(key)>=0){
-    //   return true;
-    // }else{
-    //   return false;
-    // }
+    
    }
    getIndex(key,arr):number{
     let index = arr.findIndex(x => JSON.stringify(x)==JSON.stringify(key));
@@ -813,10 +776,10 @@ export class CartComponent implements OnInit {
       });
       return a;
   }
-   setFamilyMember1(memId:any,tid:number,event){
+   setFamilyMember1(memId:any,tid:number,event,sms:any){
 
   this.members.forEach( (item, index) => {
-    //console.log(item.uid,memId);
+   
       if(item.uid==memId){
         if(this.uniqueCheck(item,this.sel_members[tid])){
       if(this.sel_members[tid].length>1){
@@ -824,7 +787,8 @@ export class CartComponent implements OnInit {
           this.bookComponent.getRemoveTestCart(this.getTestBytid(tid),'test','');
           
       }else{
-        alert("test Should be made to atleast one member");
+        swal("Alas!","Test Should be made to atleast one member","warning");
+        
         return false;
       }
           
@@ -832,11 +796,13 @@ export class CartComponent implements OnInit {
           if(this.getTestQuant(tid)>=(this.sel_members[tid].length+1)){
             this.sel_members[tid].push(item);
           }else{
-            alert("you have selected more family members than your quantity \nWe are adding up");
-            
-            this.bookComponent.getAddTestCart(this.getTestBytid(tid));
-            this.getLocStorage();
+           
+            this._appComponent.getNotify("You have selected the test "+sms+" for "+this.sel_members[tid].length+" family members.");
+           
+            this.bookComponent.getAddTestCart(this.getTestBytid(tid),'','',false);
+           
             this.sel_members[tid].push(item);
+
             
           }
           
@@ -848,37 +814,24 @@ export class CartComponent implements OnInit {
      
   this.hm1();
   this.setLocStorage();
- // this.getLocStorage();
-  console.log(this.sel_members[tid]);
+
    }
 
-  // saveFamilyMembers(mem:any,uid:number){
-  //   mem.user_id=uid;
-  //  // console.log("mem=",mem);
-   
-  //   this._api.POST('AddFamilyMembers', mem).subscribe(data =>{
-  //     let mems=JSON.parse(data.json).data;
-  //     //console.log(mems);
-  //     this.tmp = true;
-  //     window.location.reload();
-  //    });
-
-  //  }
+ 
 
    setTestLocation(loc:any){
-    //  console.log(loc.sub_area+','+loc.area+','+loc.pincode);
+  
      this.sel_locations[this.tid]=loc.address+','+loc.area+','+loc.city;
      this.hm3();
      this.setLocStorage();
    }
 
    setTestLocation1(locId:any, tid:number,mem:any){
-    // console.log('setLoc',locId,tid,mem);
-    // console.log(Array.isArray(this.sel_locations[tid]));
+   
     if(this.sel_type[tid][mem]==1){
       this.locations.forEach( (item, index) => {
         if(item.area_id==locId){
-          //this.sel_locations[tid]=item.address+','+item.area+','+item.city;
+          
           if(this.sel_locations[tid]==undefined||this.sel_locations[tid]===null||Array.isArray(this.sel_locations[tid])==false){
             this.sel_locations[tid]=[];
           }
@@ -889,7 +842,7 @@ export class CartComponent implements OnInit {
     }else{
     this.lablocations.forEach( (item, index) => {
         if(item.area_id==locId){
-          //this.sel_locations[tid]=item.address+','+item.area+','+item.city;
+          
           if(this.sel_locations[tid]==undefined||this.sel_locations[tid]===null){
             this.sel_locations[tid]=[];
           }
@@ -897,8 +850,7 @@ export class CartComponent implements OnInit {
         }
       });
     }
-    // console.log(this.sel_locations);
-      /* this.sel_locations[this.tid]=loc.address+','+loc.area+','+loc.city;*/
+   
      this.hm3();
      this.setLocStorage();
    }
@@ -918,22 +870,27 @@ export class CartComponent implements OnInit {
      }
      if(localStorage.getItem("slot_details")){
       this.sel_slot=JSON.parse(localStorage.getItem("slot_details"));
-      //console.log(this.sel_slot);
+     
      }
      if(localStorage.getItem("sel_lablocation")){
       this.sel_lablocation=JSON.parse(localStorage.getItem("sel_lablocation"));
-      //console.log(this.sel_slot);
+      
      }
      if(localStorage.getItem("sel_type")){
       this.sel_type=JSON.parse(localStorage.getItem("sel_type"));
-      //console.log(this.sel_slot);
+      
      }
      if(localStorage.getItem("modify_bill")){
       let mm=JSON.parse(localStorage.getItem("modi_member"));
-      //console.log(mm);
+    
        this.modi_member=mm;
       this.modify_bill=localStorage.getItem("modify_bill");
      }
+     if(localStorage.getItem("location_city_name")){
+      this.location_city_name=localStorage.getItem("location_city_name");
+     
+     }
+     
      
    }
 
@@ -942,18 +899,18 @@ export class CartComponent implements OnInit {
       token => {
     this._api.POST('GetCity',{TokenNo: token}).subscribe(data =>{
       this.cities=JSON.parse(data.json).data;
-     // console.log(this.cities);
+     
      });
     });
    }
    getAreaByCity(event){
      this.optionVal = event.target.value;
-     //console.log(optionVal);
+    
      this._api.getToken().subscribe( 
       token => {
       this._api.POST('GetAreasByCity',{TokenNo: token,'City_id':this.optionVal}).subscribe(data =>{
       this.areas=JSON.parse(data.json).data;
-      console.log(this.areas);
+  
      });
     });
     
@@ -964,23 +921,20 @@ export class CartComponent implements OnInit {
         token => {
       this._api.POST('GetAreasByCity',{TokenNo: token,'City_id':cityId}).subscribe(data =>{
       this.areas=JSON.parse(data.json).data;
-      console.log(this.areas);
+    
      });
     });
     
    }
    addUserAddress(address_info:any,uid:number){
-    //address_info.TokenNo=localStorage.getItem('token');
+   
     address_info.user_id=uid;
     address_info.state_id=1;
     address_info.country_id=1;
-  //  console.log(address_info);
-     /*if(localStorage.getItem('token')!=null){
-      }*/
-      
+  
       this._api.POST('AddUserAddress', address_info).subscribe(data =>{
       this.address=JSON.parse(data.json).data;
-      console.log(this.address);
+    
         this.ms5=true;
         window.location.reload();
       });
@@ -988,11 +942,10 @@ export class CartComponent implements OnInit {
 
     deleteCartItem(uid:number,tid:number){
     this.tests= JSON.parse(localStorage.getItem('tests'));
-     // console.log(this.tests);
-      //this.tests.splice(this.tests.indexOf(tid), 1);
+     
       if(this.tests!=null){
       this.tests.forEach( (item, index) => {
-      //console.log(this.sel_members[item.tid]['uid']);
+     
         if(this.sel_members[item.tid]){  
           if(item.tid === tid) this.tests.splice(index,1);
         }
@@ -1000,7 +953,7 @@ export class CartComponent implements OnInit {
     }
 
       this.pckgs= JSON.parse(localStorage.getItem('packages'));
-     //console.log(this.tests);
+    
      if(this.pckgs!=null){
       this.pckgs.forEach( (item, index) => {
         if(item.id === tid) this.pckgs.splice(index,1);
@@ -1025,7 +978,6 @@ export class CartComponent implements OnInit {
      let a={"tot":this.tot,"hvc":this.hvc,"colc":this.colc};
      localStorage.setItem("cartValues",JSON.stringify(a));
      this.cartValues= JSON.parse(localStorage.getItem('cartValues'));
-     //console.log('ucv',this.cartValues);
     
     this.bookComponent._appComponent.checkOut(); 
    }
@@ -1033,9 +985,9 @@ export class CartComponent implements OnInit {
    editFMAddress(uid:number,user_loc_id:number){
 
     this.locations.forEach(element => {
-        //console.log(element.id);
+       
         if(element.user_loc_id === user_loc_id){
-           // console.log(element);
+         
             this.location = element;
 
         }
@@ -1043,7 +995,7 @@ export class CartComponent implements OnInit {
       this.ms6=true;
       this.hm3();
       this.getAreaByCity1(this.location.city_id);
-      console.log(this.location);
+
 
    }
 
@@ -1052,25 +1004,17 @@ export class CartComponent implements OnInit {
    }
 
    updateUserAddress(address_info:any,uid:number){
-    //address_info.TokenNo=localStorage.getItem('token');
+   
     address_info.user_id=uid;
     address_info.state_id=1;
     address_info.country_id=1;
-   // console.log(address_info);
-     /*if(localStorage.getItem('token')!=null){
-      }*/
-     /* this._api.POST('UpdateUserAddress', address_info).subscribe(data =>{
-      this.address=JSON.parse(data.json).data;
-        //this.ms5=true;
-        console.log("User address updated");
-        window.location.reload();
-      });*/
+   
    }
 
    editFMInfo(fmid:number){
     this.ms7=true;
     this.hm1();
-    //console.log(this.members);
+    
       this.members.forEach(element => {
         if(element.fmid === fmid){
             this.member = element;
@@ -1080,11 +1024,11 @@ export class CartComponent implements OnInit {
             if(this.member.gender=='F'){
               this.member.gender=2;
             }
-             //this.member.user_dob=this.getHumanDate(this.member.user_dob);
+             
         }
     });
     return this.member;
-     // console.log(this.member);
+     
    }
 
    hm6(){
@@ -1106,11 +1050,10 @@ export class CartComponent implements OnInit {
 
   updateFamilyMembers(fmInfo:any,fmid:number){
      fmInfo.user_id=fmid;
-     //console.log(fmInfo);
+     
      this._api.POST('UpdateFamilyMembers',fmInfo).subscribe(data =>{
       let mems=JSON.parse(data.json).data;
-     // console.log("Family member updated successfully");
-      //this.tmp = true;
+     
      window.location.reload();
      });
 
@@ -1121,8 +1064,7 @@ export class CartComponent implements OnInit {
     }
 
     getSelMem(tid:any){
-    //  this.sel_members[tid]=this.cleanArray(this.sel_members[tid]);
-    //console.log("sel_mem",this.sel_members[tid]);
+   
      if(this.sel_members[tid].length>0){
       return this.sel_members[tid];
      }else{
@@ -1131,11 +1073,9 @@ export class CartComponent implements OnInit {
       
     }
     getNonSelMem(tid:any){
-     // console.log(this.sel_members[tid].length);
+    
       if(this.sel_members[tid].length>0){
-       // this.sel_members[tid]=[];
-     
-      //  return this.members.filter(item =>false );
+      
        return this.members.filter(item =>!this.uniqueCheck(item,this.sel_members[tid]) );
       }
       return this.members;
@@ -1159,10 +1099,10 @@ export class CartComponent implements OnInit {
 
     }
     getSelLoc(tid:any,mem:any){
-      //console.log(this.sel_locations);
+      
       if(this.sel_locations[tid][mem]!==undefined){
        
-        let a= this.locations.filter(item => item.area_id== this.sel_locations[tid][mem].area_id);
+        let a= this.locations.filter(item => (item.area_id== this.sel_locations[tid][mem].area_id));
        return this.getDisplayTypeNames(a);
         }else{
         return [];
@@ -1182,7 +1122,7 @@ export class CartComponent implements OnInit {
     }
     getSelLabLoc(tid:any,mem:any){
       if(this.sel_lablocation[tid][mem]){
-        return this.lablocations.filter(item => item.area_id== this.sel_lablocation[tid][mem].area_id);
+        return this.lablocations.filter(item => (item.area_id== this.sel_lablocation[tid][mem].area_id)&&(item.location_id!==6)&&(item.location_id!==7)&&(item.location_id!==1)&&(item.location_id!==4)&&(item.location_id!==5));
       }else{
         return [];
       }
@@ -1190,10 +1130,11 @@ export class CartComponent implements OnInit {
     }
     getNonSelLabLoc(tid:any,mem:any){
       if(this.sel_lablocation[tid][mem]){
-        return this.lablocations.filter(item => item.area_id!== this.sel_lablocation[tid][mem].area_id);
+        return this.lablocations.filter(item => (item.area_id!== this.sel_lablocation[tid][mem].area_id)&&(item.location_id!==6)&&(item.location_id!==7)&&(item.location_id!==1)&&(item.location_id!==4)&&(item.location_id!==5));
         
       }else{
-        return this.lablocations;
+       
+        return this.lablocations.filter(item => (item.location_id!==6)&&(item.location_id!==7)&&(item.location_id!==1)&&(item.location_id!==4)&&(item.location_id!==5));
       }
         
     }
@@ -1201,8 +1142,7 @@ export class CartComponent implements OnInit {
       let type=evnt;
     
       this.sel_type[tid][mem]=type;
-      //console.log(this.sel_type);
-    //  let b=this.elementRef.nativeElement.querySelectorAll('.selloc_'+tid);
+     
     this.setLocStorage();
     }
     getLabLocations(city:any){ //get nearest location API
@@ -1215,27 +1155,26 @@ export class CartComponent implements OnInit {
             
             this._api.getToken().subscribe( 
               token => {
-              this._api.POST('GetNearestLab',{TokenNo: token,'serviceid':b.join()}).subscribe(data =>{
+              this._api.POST('GetNearestLab',{TokenNo: token,'serviceid':b.join(),"city":this.location_city_name}).subscribe(data =>{
                 let d=JSON.parse(data.json);
                 if(d.status==1){
                   this.lablocations=d.data;
+                  this.lablocations=this.lablocations.filter(item=> ((item.location_id!==6)&&(item.location_id!==7)&&(item.location_id!==1)&&(item.location_id!==4)&&(item.location_id!==5)));
                 }else{
                   this.lablocations=[];
                 }
                
                
-                //console.log(this.lablocations);
+                
                 this.setHcDefault();
                 
              });
             });
-           // let t='[{"location_id":1,"location_name":"Tenet Central Lab","address":"Plot no 54, Kineta Towers, Journalist Colony,  Road no. 3","area_id":5,"city_id":1,"state_id":25,"country_id":1,"area":"banjara hills","city":"hyderabad","state":"25 Telangana ","country":"INDIA"}]';
-            
-          //  this.lablocations= JSON.parse(t);
+           
     }
     locationhcset(tid,mem){
     
-    //console.log(this.sel_type[tid][mem]);
+   
     let a:boolean;
       if(this.sel_type[tid][mem]==1){
         a= true;
@@ -1276,10 +1215,10 @@ export class CartComponent implements OnInit {
      if(this.sel_date[test]==undefined){
       this.sel_date[test]=[];
      }
-     console.log(date);
-    // this.sel_date[test][mem]=date.value;
+
+    
      this.sel_date[test][mem]=date;
-     //this.sel_date[test][mem]=this.getDateString(this.sel_date[test][mem]);
+   
      this.set_slot(test,mem);
     
     }
@@ -1287,8 +1226,9 @@ export class CartComponent implements OnInit {
       if(this.sel_time[test]==undefined){
        this.sel_time[test]=[];
       }
+    
       this.sel_time[test][mem]=time.value;
-      // console.log(this.sel_time[test][mem]);
+     
       if(this.sel_slot[test]==undefined){
         this.sel_slot[test]=[];
        }
@@ -1296,70 +1236,54 @@ export class CartComponent implements OnInit {
       
      }
      set_slot(tid,uid){
+       if(typeof this.sel_time[tid][uid]=="object"){
+        this.sel_time[tid][uid]=this.sel_time[tid][uid].slot;
+       }
       this.sel_slot[tid][uid]=this.converObjToDate(this.sel_date[tid][uid])+' '+this.sel_time[tid][uid];
       
-     //  console.log(this.sel_slot);
+     
      }
-    /* saveFamilyMembers(mem:NgForm,isValid:boolean, uid:number){
-      
-        if(isValid){
-          mem.value.user_id = uid;
-          this._api.getToken().subscribe( 
-            token => {
-             mem.value.TokenNo=token;
-          this._api.POST('AddFamilyMembers', mem.value).subscribe(data =>{
-              let mems=JSON.parse(data.json).data;
-              //console.log(mems);
-               this.fam = true;
-               //window.location.reload
-              this.add_family.nativeElement.click();
-              swal("<small>Family member added successfully</small>");
-              mem.resetForm();
-              //console.log("family member added");
-              window.location.reload();
-             
-             });
-            });
-      
-          }else{
-      
-          }
-        
-         }*/
+    
 
 saveFamilyMembers(mem:NgForm,isValid:boolean, uid:number){
 
   if(isValid){
-    console.log('age',mem.value.user_dob1.formatted);
+    this.otpModel.nativeElement.disabled = true;
+  
      let memAge = this.getAge(mem.value.user_dob1.formatted);
       let a:any = memAge.split(' ');
-        //console.log('memAge',memAge);
+        
       if(a[0] >=18){
           this.ph = true;
-         // this.otpBtn = true;
-          //this.svBtn = false;
+        
            if(mem.value.user_mobile){
                      mem.value.user_id = uid;
+                      mem.value.user_name = mem.value.firstName1+' '+mem.value.lastName1;
                             this._api.getToken().subscribe( 
                               token => {
                                mem.value.TokenNo=token;
                               mem.value.user_dob = mem.value.user_dob1.formatted;
-                               //console.log('memVal',mem.value);
+                              
                             this._api.POST('AddFamilyMembers', mem.value).subscribe(data =>{
                                 let mems=JSON.parse(data.json).data;
-                                 console.log('mems',mems);
-
-                                swal("<small>OTP SENT successfully</small>");
+                                
+                                 this.mobileNumber = mem.value.user_mobile;
+                                this.mobileNumber  = this.mobileNumber.replace(this.mobileNumber.substring(0,7),'XX');
+                                this.FMname = mem.value.user_name;
+                                this.fmForm = mem.value;
+                              
+                               this.errorMessage = "An OTP is has been sent to "+mem.value.user_name+"'s  mobile number "+this.mobileNumber;
                                 mem.resetForm();
                                 
                                 this.add_family.nativeElement.click();
 
                                 this.otpModel.nativeElement.setAttribute("data-target", "#otp_model");
+                                 this.otpModel.nativeElement.disabled = false;
                                  this.otpModel.nativeElement.setAttribute('type','button');
                                 this.otpModel.nativeElement.click();
                                  this.ph=false;
                                  this.memId = mems[0].id;
-                              
+                                this.timerless(29);
                                
                                });
                               });
@@ -1368,15 +1292,10 @@ saveFamilyMembers(mem:NgForm,isValid:boolean, uid:number){
                           }
       }else{
 
-    //console.log('memVal',mem.value.user_dob.formatted);
-
-        //this.ph=true;
-           this.ph=false;
-       // mem.value.user_id = uid;
+        this.ph=false;
         this._api.getToken().subscribe( 
           token => {
-          // mem.value.TokenNo=token;
-          // mem.value.user_dob = mem.value.user_dob.formatted;
+           mem.value.user_name = mem.value.firstName1+' '+mem.value.lastName1;
                       let data = {
                 "TokenNo":token,
                 "user_dob":mem.value.user_dob1.formatted,
@@ -1386,16 +1305,18 @@ saveFamilyMembers(mem:NgForm,isValid:boolean, uid:number){
                 "user_email":mem.value.user_email,
                 "user_mobile":''
                  }
-               console.log('memVal',data);
+                 this.FMname = mem.value.user_name;
+                 this.fmForm = mem.value;
+            
 
         this._api.POST('AddFamilyMembers', data).subscribe(data =>{
             let mems=JSON.parse(data.json).data;
-            swal("<small>Family member added successfully</small>");
-            this.add_family.nativeElement.click();
+             this._appComponent.getNotify("We have added "+this.FMname+" as your family member to your Tenet Profile");
+             this.add_family.nativeElement.click();
              this.ph=false;
-            mem.resetForm();
-            //this.getFamilyMembers(this.user.uid);
-            this.getUserFamily(this.user.uid,0);
+             mem.resetForm();
+            this.getFamilyMembers(this.user.uid);
+            
            });
           });
 
@@ -1403,16 +1324,106 @@ saveFamilyMembers(mem:NgForm,isValid:boolean, uid:number){
       }
 
     }else{
-        window.alert("Please fill all fields");
+       
+        this._appComponent.getNotify("Fields marked with the * are mandatory ");
     }
   
    }
 
+   timerless(t){
+  this.resendotptime=t;
+  this.tloop=Observable.timer(1000);
+  this.tloop.subscribe(()=>{
+    
+    if(t>0){
+      this.timerless(t-1);
+    }
+  })
+}
+
+  getresendotptime(){
+   
+    return this.resendotptime;
+  }
+
+  afResendOTP(mid){
+     this.resendotpv=true;
+    
+         let form2 ={"value":{"user_id":mid, "user_name":this.fmForm.user_name, "user_email":this.fmForm.user_email, "user_mobile":this.fmForm.user_mobile,"user_dob":this.fmForm.user_dob,"user_gender":this.fmForm.user_gender}};
+     
+      this.saveFamilyMembers1(form2,true,mid);
+     }
+
+    saveFamilyMembers1(form,isValid, mid){
+      let memAge = this.getAge(form.value.user_dob);
+                     form.value.user_id = mid;
+                   
+                     
+                           this._api.getToken().subscribe( 
+                              token => {
+                                form.value.TokenNo=token;
+                                this._api.POST('AddFamilyMembers', form.value).subscribe(data =>{
+                                let mems=JSON.parse(data.json).data;
+                              
+                                this.mobileNumber = form.value.user_mobile;
+                                this.mobileNumber  = this.mobileNumber.replace(this.mobileNumber.substring(0,7),'XX');
+                                this.FMname = form.value.user_name;
+                                this.errorMessage = "An OTP is has been sent to "+form.value.user_name+"'s  mobile number "+this.mobileNumber;
+                                
+                                this.otpModel.nativeElement.setAttribute("data-target", "#otp_model");
+                                this.otpModel.nativeElement.setAttribute('type','button');
+
+                                 if(this.resendotpv !== true){
+                                    this.otpModel.nativeElement.click();
+                                  }
+
+                                  this.otpModel.nativeElement.removeAttribute("data-target", "#otp_model");
+                                  this.otpModel.nativeElement.setAttribute('type','submit');
+
+                                 this.ph=false;
+                                 this.memId = mems[0].id;
+                                 this.timerless(29);
+                               
+                               });
+                              });
+      
+   }
+
+     getFamilyMembers(uid:number){
+  let fm_dob:any;
+
+  this._api.getToken().subscribe( 
+    token => { 
+    this._api.POST('GetFamilyMembers', {TokenNo: token,'user_id':uid}).subscribe(data =>{
+      this.members=JSON.parse(data.json).data;
+      if(this.members){
+        this.members.forEach(element => {
+         
+             fm_dob = this.getHumanDate(element.user_dob);
+             let fm_dob1 = fm_dob.split('/');
+             let date = fm_dob1[2]+'-'+fm_dob1[1]+'-'+fm_dob1[0];
+            element.age=this.getAge(date);
+
+             if(element.user_name){
+                    let userName = element.user_name.split(' ');   
+                    element.firstname = userName[0];
+                    element.lastname =  userName[1];
+            }
+        });
+      }else{
+        this.members=[];
+      }
+         
+     
+     });
+    });
+  }
+
 getAge(dateString:any) {
-   //console.log('dateString'+dateString);
+   
   let birthdate = new Date(dateString).getTime();
   let now = new Date().getTime();
-  // now find the difference between now and the birthdate
+ 
   let n = (now - birthdate)/1000;
 
   if (n < 604800) { // less than a week
@@ -1434,7 +1445,7 @@ getAge(dateString:any) {
     //yyyy-dd-mm
       let memAge = this.getAge(event.formatted);//yyyy/mm/dd
       let a:any = memAge.split(' ');
-    //console.log('memA',memAge);
+   
       if(a[0] >= 18){
           this.ph = true;
         }else{
@@ -1451,7 +1462,7 @@ getAge(dateString:any) {
 
        getMemberOtpVerification(form: NgForm,isValid: boolean,memId:any){
 
-      console.log(form.value);
+  
       if(isValid){
 
         this._api.getToken().subscribe( 
@@ -1464,25 +1475,25 @@ getAge(dateString:any) {
        
     this._api.POST('GetMemberOtpVerification', data).subscribe(data =>{
        let resp=(JSON.parse(data.json).data);
-       console.log('resp',resp);
+   
        if(resp ==undefined){
-        swal("<small>Invalid OTP</small>");
+       
+         this.errorMessage = "AN OTP has been sent to "+this.mobileNumber;
           form.resetForm();
        }else{
 
          if(resp[0].uid!=null){ 
-         
-          //this.votp=false;
-         swal("<small>OTP verified successfully</small>");
+        
+         this._appComponent.getNotify("We have added "+this.FMname+" as your family member to your Tenet Profile");
            form.resetForm();
         this.otp_model.nativeElement.click();
-          // this.getFamilyMembers(this.user.uid);
+        
              this.getUserFamily(this.user.uid,0);
              this.otpModel.nativeElement.removeAttribute("data-target");
              this.otpModel.nativeElement.setAttribute("type","submit");
-            //this.router.navigate(['./book']);
+          
           }else{
-           //window.alert("failed to login");
+          
            swal("OTP verification failed");
            form.resetForm();
           }
@@ -1501,20 +1512,24 @@ getAge(dateString:any) {
    reset(form:any){
         form.resetForm();
     }
+    resetAf(form:any){
+      form.resetForm();
+      this.ph= true;
+    }
 
 
      testQuantPlus(test:any){
-       this.bookComponent.getAddTestCart(test,'test','');
+       this.bookComponent.getAddTestCart(test,'test','',false);
      }
      testQuantMinus(test:any){
-     //  console.log(test);
+    
        this.bookComponent.getRemoveTestCart(test,'test','');
        
      }
      getTestQuant(test){
            let a=1;
 let stest=JSON.parse(localStorage.getItem('tests'));
-//console.log(stest);
+
     if(stest){
       stest.forEach(element => {
         if(element.tid===test){
@@ -1523,7 +1538,7 @@ let stest=JSON.parse(localStorage.getItem('tests'));
     });
     }
 
-//console.log(a);
+
     return a;
      }
      getTotalPricesUp(){
@@ -1533,9 +1548,15 @@ let stest=JSON.parse(localStorage.getItem('tests'));
       this.colc=a.colc;
       return this.tot+this.hvc+this.colc+this.finhvc;
      }
+     getTestingPrices(){
+      let a=JSON.parse(localStorage.getItem("cartValues"));
+      this.tot=a.tot;
+      this.hvc=a.hvc;
+      this.colc=a.colc;
+      return this.tot+this.colc;
+     }
      userVsQuant(test:any,sel_mems){
-      //  console.log(test.quant)
-      //  console.log(sel_mems.length);
+    
        if(this.getTestQuant(test.tid)!==sel_mems.length){
         return true;
        }else{
@@ -1545,33 +1566,24 @@ let stest=JSON.parse(localStorage.getItem('tests'));
      removeLocalStorage(){
      localStorage.removeItem("sel_locations");
        localStorage.removeItem("sel_members");
-      //  localStorage.removeItem("slot_details");
+     
        localStorage.removeItem("sel_lablocation");
        localStorage.removeItem("sel_type");
-        //console.log(this.sel_slot);
+    
       
      }
       /* by sharath for date and time picker start*/
-    
     getDateString(date){
-    //  let a= this.dateparser.format(date);
-    console.log(date);
+ 
       return date;
-      // return date;
     }
-    // getDateStruct(ud){
-    //   ud=this.GetFormattedDate(ud);
-    //   let a= this.dateparser.parse(ud);
-    //   return a;
-    // }
+   
     setDate1(){
       let dt=new Date();
       let tdate=this.GetFormattedDate(dt).split("-");
-       //console.log(tdate);
+      
                 this.model = { date: { year: tdate[2], month: tdate[1], day: tdate[0] } };//assign date to date-picker
-                
-                
-        // console.log(this.model);
+
     
      }
    GetFormattedDate(date) {
@@ -1579,16 +1591,19 @@ let stest=JSON.parse(localStorage.getItem('tests'));
    return latest_date;
   }
   getSelDate(tid,mem):any{
-   console.log("getseldate",this.sel_date[tid][mem]);
-  // return this.sel_date[tid][mem];
+  
+
   return this.model;
   }
+  dateCrossCheck(tid,mem){
+    return   (((this.sel_date[tid][mem].date.year==this.minDate.date.year)&&(this.sel_date[tid][mem].date.month==this.minDate.date.month)&&(this.sel_date[tid][mem].date.day==this.minDate.date.day))&&(((this.maxDate.year-1)==this.minDate.date.year)&&(this.maxDate.month==this.minDate.date.month)&&(this.maxDate.day==this.minDate.date.day)))
+  }
   getValidTimeSlots(tid,mem){
-      // this.timeslots
+     
       let ttime=[];
-    // console.log(this.minDate);
-     // console.log(this.minDate.date);
-      if((this.sel_date[tid][mem].date.year==this.minDate.date.year)&&(this.sel_date[tid][mem].date.month==this.minDate.date.month)&&(this.sel_date[tid][mem].date.day==this.minDate.date.day)){
+    
+        if(this.dateCrossCheck(tid,mem)){
+     
         let chr = new Date().getHours(); 
         let cmin = new Date().getMinutes(); 
         let ctot=(chr*60)+(cmin)+90;//90 mins is the buffer time;
@@ -1605,12 +1620,13 @@ let stest=JSON.parse(localStorage.getItem('tests'));
       if(this.sel_slot[tid][mem]==undefined){
         let ktime=[];
         ktime['value']=ttime[0].slot;
-        // console.log(ttime[0]);
+        
       this.setTime(ktime,tid,mem);
       }
 
         return ttime;
       }else{
+       
         if(this.sel_slot[tid][mem]==undefined){
         let ktime=[];
         ktime['value']=this.timeslots[0];
@@ -1640,7 +1656,7 @@ let stest=JSON.parse(localStorage.getItem('tests'));
   getHomeVisitCharges(){
     let mtest=this.getMTestList();
   if(mtest.length>0){
-    this.finhvd=[];
+      this.finhvd=[];
     mtest.forEach(element => {
       let mem=this.getSelMem(element.tid);
       mem.forEach(element1 => {
@@ -1649,6 +1665,7 @@ let stest=JSON.parse(localStorage.getItem('tests'));
         let loc=this.getSelLoc(element.tid,element1.uid);
        
         let kobj={"time":time,"loc":loc[0].user_loc_id,"user":element1.uid};
+        
         if(this.sel_type[element.tid][element1.uid]==1){
          
           this.kobjpush(kobj);
@@ -1658,11 +1675,11 @@ let stest=JSON.parse(localStorage.getItem('tests'));
         }
       });
     });
-    //console.log(this.finhvd);
-   //console.log(this.getUniqueHVC(this.finhvd));
+    
     let no_of_visits=this.getUniqueHVC(this.finhvd);
 let per_visit_charge=this._appComponent.homoe_visit_charge;
 this.finhvc=no_of_visits*per_visit_charge;
+
 return this.finhvc;
   }
 
@@ -1670,8 +1687,10 @@ return this.finhvc;
   }
   getUniqueHVC(objs){
     let u=[];
-let k=0   
-objs.forEach(element => {
+let k=0;
+
+objs.forEach(elementk => {
+  let element=JSON.parse(elementk);
     if(u[element.time]==undefined){
       u[element.time]=[];
       u[element.time].push(element.loc);
@@ -1682,7 +1701,7 @@ objs.forEach(element => {
     }
 
 });
-// console.log(u);
+
 for (let key in u) {
   let element = u[key];
   k+=element.length;
@@ -1692,17 +1711,21 @@ return k;
   }
  
   kobjpush(obj){
+ 
     if(this.finhvd.length>0){
       if(this.indexOfObj(obj)<0){
-        this.finhvd.push(obj);
+        this.finhvd[this.finhvd.length]=JSON.stringify(obj);
       }
         
       
     }else{
-      this.finhvd.push(obj);
+     
+      this.finhvd[this.finhvd.length]=JSON.stringify(obj);
+      
     }
+    
   }
-  removeKobj(obj){
+  removeKobj(obj){ 
     if(this.finhvd.length>0){
        let i=this.indexOfObj(obj);
       if(i>=0){
@@ -1716,7 +1739,8 @@ return k;
 let a=-1;
 let i=0;
 this.finhvd.forEach(element => {
-  if((element.time===obj.time)&&(element.loc===obj.loc)&&(element.user===obj.user)){
+  let elementk=JSON.parse(element);
+  if((elementk.time===obj.time)&&(elementk.loc===obj.loc)&&(elementk.user===obj.user)){
     
     a=i;
    }
@@ -1724,5 +1748,22 @@ this.finhvd.forEach(element => {
 });
 return a;
  }
+ //remove cart items
+ removeItem(tid){
+  this._appComponent.deleteCartItem(this.user.uid,tid);
+ }
+ isadded(tid:number):boolean{
+  let stest= JSON.parse(localStorage.getItem('tests')); 
+ 
+  let a=false;
+  if(stest){
+    stest.forEach(element => {
+      if(element.tid===tid){
+        a=true;
+      }
+    });
+  }
+return a;
+}
 
 }

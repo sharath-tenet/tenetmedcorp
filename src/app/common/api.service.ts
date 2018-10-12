@@ -14,8 +14,10 @@ export class ApiService {
     token:any=null;
     //private url:any='http://192.168.0.169:2007/api/';
     mdata:any=[];
-   private url:any='http://208.163.37.165/IntgCEMS/CemsDataRequest.asmx/';
-    private url1:any='http://208.163.37.165/IntgCEMS/CemsDataRequest.asmx/GetAuthorization';
+    public other_url:string="http://cems.medsoft.in/intgtenet";
+   private url:any='http://cems.medsoft.in/intgtenet/CemsDataRequest.asmx/';
+    private url1:any='http://cems.medsoft.in/intgtenet/CemsDataRequest.asmx/GetAuthorization';
+    private ticketurl:any='https://tenetmedcorp.freshdesk.com/api/v2/tickets';
      constructor(http: Http){
          this.http=http;
         // this.labDetails =[];
@@ -72,7 +74,7 @@ export class ApiService {
                     localStorage.setItem('req_token',this.token);
                 }
             );
-            return this.masterCall(url,data).debounceTime(2000).map((res)=>{
+            return this.masterCall(url,data).debounceTime(200).map((res)=>{
                 return this.mdata=res;
             });
             
@@ -113,6 +115,18 @@ export class ApiService {
         return this.http.get(req_url).map(data => {
            return JSON.parse(this.trimxmltag(data._body)).results;
      });
+    }
+    ticketsHandling(data){
+         return this.http.post(this.ticketurl,data,{
+              headers : {
+                  'Content-Type' : 'application/json',
+                  'Authorization':'Basic c3Jpbml2YXNAdGVuZXRtZWRjb3JwLmNvbTp0ZW5ldEAzMjE='
+              }
+              
+          })
+          .map((res: Response) => {
+          return res;
+          });
     }
 
 }

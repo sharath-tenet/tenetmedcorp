@@ -1,8 +1,32 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <!-- Google Analytics Content Experiment code -->
+<!--<script>function utmx_section(){}function utmx(){}(function(){var
+    k='169211246-0',d=document,l=d.location,c=d.cookie;
+    if(l.search.indexOf('utm_expid='+k)>0)return;
+    function f(n){if(c){var i=c.indexOf(n+'=');if(i>-1){var j=c.
+    indexOf(';',i);return escape(c.substring(i+n.length+1,j<0?c.
+    length:j))}}}var x=f('__utmx'),xx=f('__utmxx'),h=l.hash;d.write(
+    '<sc'+'ript src="'+'http'+(l.protocol=='https:'?'s://ssl':
+    '://www')+'.google-analytics.com/ga_exp.js?'+'utmxkey='+k+
+    '&utmx='+(x?x:'')+'&utmxx='+(xx?xx:'')+'&utmxtime='+new Date().
+    valueOf()+(h?'&utmxhash='+escape(h.substr(1)):'')+
+    '" type="text/javascript" charset="utf-8"><\/sc'+'ript>')})();
+    </script><script>utmx('url','A/B');</script>-->
+    <!-- End of Google Analytics Content Experiment code -->
+    
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NCP5XRN');</script>
+<!-- End Google Tag Manager -->
+  
+  <meta name="robots" content="noindex">
   <meta charset="utf-8">
-  <title>Cemsdemo</title>
+  <title>Tenet Diagnostics, It's Good to Know</title> 
   <base href="/">
   <!-- <link rel="stylesheet" href="https://bootswatch.com/darkly/bootstrap.css" media="screen"> -->
 
@@ -22,10 +46,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- <meta http-equiv="Content-Type" content="image/svg+xml" /> -->
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/x-icon" href="./assets/images/favicon.png">
   <!-- <script src="https://wchat.freshchat.com/js/widget.js"></script> -->
  
 <script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js"></script>
+
+<script src="./assets/js/amcharts.js"></script>
+<script src="https://www.amcharts.com/lib/3/serial.js"></script>
+<script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+<link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+<script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
 <!-- <script>
   // Initialize Firebase
   var config = {
@@ -38,8 +70,13 @@
   };
   firebase.initializeApp(config);
 </script> -->
+<link rel="manifest" href="../manifest.json">
 </head>
 <body>
+  <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NCP5XRN"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 
   <app-root>
       <style type="text/css">
@@ -54,6 +91,15 @@
           </style>
     <div class="mloader"> <img src="./assets/images/monogram.svg"  /></div>
   </app-root> 
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ 
+    ga('create', 'UA-113617014-1', 'auto');  // <- add the UA-ID from your tracking code
+                                           // <- remove the last line like me
+  </script>
  
   <!-- <script type="text/javascript" src="./assets/js/jquery-3.2.1.min.js"></script>
   <script src="./assets/plugins/owl.carousel2/owl.carousel.min.js"></script> -->
@@ -63,7 +109,17 @@
       host: "https://wchat.freshchat.com"
     });
   </script> -->
-  
+  <!-- <div class="notification-bar"></div>
+  <script type="text/javascript"> ConvertifierSettings = { config: { app_key: "32e3cf42-b1b2-4dde-bcdf-3d102adb179b" } }; </script>
+  <script src="https://cdn.convertifier.com/js/ConvertifierSDKWorker.js?app_key=32e3cf42-b1b2-4dde-bcdf-3d102adb179b" async></script>
+  <script> window.onload = function(){
+     if (location.protocol=="http:" && location.hostname != "localhost") {
+        var getCN = Convertifier.getCookies('cn'); if ( getCN=="" ) { getCN = null; }
+        var param = "endpoint="+getCN+"&appkey="+ConvertifierSettings.config.app_key ;
+        initHistory(param);
+     };
+  };
+  </script> -->
 </body>
 
 </html>

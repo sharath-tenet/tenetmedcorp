@@ -18,12 +18,13 @@ import { NgForm,FormsModule } from '@angular/forms';
 import { EqualValidator } from './login/password.match.directive';
 import { AccountComponent } from './account/account.component';
 import { WishlistComponent } from './wishlist/wishlist.component';
-import {CookieService} from 'angular2-cookie/core';
+// import {CookieService} from 'angular2-cookie/core';
 import { DatePipe } from '@angular/common';
+
 //import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 //ng2-idle
-import { NgIdleKeepaliveModule } from '@ng-idle/keepalive';
+ //import { NgIdleKeepaliveModule } from '@ng-idle/keepalive';
 
 import { MomentModule } from 'angular2-moment';
 
@@ -35,7 +36,7 @@ import { OurNetworkComponent } from './our-network/our-network.component';
 import { OurPackagesComponent } from './our-packages/our-packages.component';
 import { OrderHistoryComponent } from './order-history/order-history.component';
 import { WalletComponent } from './wallet/wallet.component';
-import { NotFoundComponent } from './not-found/not-found.component';
+
 import {  HttpClient,HttpHandler,HTTP_INTERCEPTORS  } from '@angular/common/http';
 import { LoadingModule,ANIMATION_TYPES } from 'ngx-loading';
 import {NgxPaginationModule} from 'ngx-pagination';
@@ -50,7 +51,11 @@ import { RefundCancelComponent } from './refund-cancel/refund-cancel.component';
 // import { AngularFireAuth, AngularFireAuthModule } from 'angularfire2/auth';
 import { TncComponent } from './tnc/tnc.component';
 import { BillViewComponent } from './bill-view/bill-view.component';
-
+import {NotificationsModule, NotificationsService} from 'angular4-notify';
+import { NotFoundComponent } from './not-found/not-found.component';
+import {GoogleAnalyticsEventsService} from "./common/google-analytics-events.service";
+import { ReportsComponent } from './reports/reports.component';
+import { DoctorsComponent } from './doctors/doctors.component';
 
 
 export const httpInterceptorProviders = [
@@ -85,13 +90,15 @@ export const firebaseconfig = {
     OurPackagesComponent,
     OrderHistoryComponent,
     WalletComponent,
-    NotFoundComponent,
     AboutUsComponent,
     PrivacyPolicyComponent,
     RefundCancelComponent,
     TncComponent,
     BillViewComponent,
-    
+    NotFoundComponent,
+    ReportsComponent,
+    DoctorsComponent
+    // NgxMyDatePickerModule,
    
  
 
@@ -105,12 +112,15 @@ export const firebaseconfig = {
     OwlModule,
     NgxPaginationModule,
     ReactiveFormsModule,
-   // BrowserAnimationsModule,
-  //  AngularFireModule.initializeApp(firebaseconfig),
-  //  AngularFireAuthModule,
+    
+    // BrowserAnimationsModule, 
+    //  AngularFireModule.initializeApp(firebaseconfig),
+    //  AngularFireAuthModule,
     NgxMyDatePickerModule.forRoot(),
    ScrollToModule.forRoot(),
-    LoadingModule.forRoot({
+   NotificationsModule,
+  // NgIdleKeepaliveModule,
+   LoadingModule.forRoot({
       animationType: ANIMATION_TYPES.threeBounce,
       backdropBackgroundColour: 'rgba(0,0,0,0.1)', 
       backdropBorderRadius: '10px',
@@ -118,9 +128,9 @@ export const firebaseconfig = {
       secondaryColour: '#f05b25', 
       tertiaryColour: '#f05b25'
   }),
-    NgIdleKeepaliveModule.forRoot()
+   // NgIdleKeepaliveModule.forRoot()
   ],
-  providers: [HomeComponent,ApiService,AppComponent,LoginComponent,CookieService,httpInterceptorProviders,HttpClient,DatePipe],
+  providers: [HomeComponent,ApiService,AppComponent,LoginComponent,httpInterceptorProviders,HttpClient,DatePipe,NotificationsService,GoogleAnalyticsEventsService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

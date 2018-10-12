@@ -1,0 +1,39 @@
+<div class="content">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12" style="margin-top:25px;text-align:center">
+        <h4 class="text-brandcolor">The Best Doctors are available at Tenet Diagnostics</h4>
+        <h5 >To Book A Consultation call us @ 86880 86880 </h5>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 " style="margin-top:25px;">
+        <div class="">
+          <table id="no-more-tables" class="table" style="min-height:300px;">
+              
+              <thead>
+                <tr>
+                <th style="text-align:center">Doctor</th>
+                <th style="text-align:center">Department</th>
+                <th style="text-align:center">Location</th>
+                <th style="text-align:center">Available Days</th>
+                <th style="text-align:center">Available Timings</th>
+                </tr>
+              </thead>
+                <tbody>  
+              <tr  *ngFor="let doc of doctors">
+                
+                <td style="text-align:left">{{doc.name}}</td>
+                <td style="text-align:center" >{{doc.specialization}}</td>
+                <td style="text-align:center" >{{doc.location}}</td>
+                <td style="text-align:center" >{{doc.days}}</td>
+                <td style="text-align:center" >{{doc.timing}}</td>
+              
+              </tr>
+        
+            </tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

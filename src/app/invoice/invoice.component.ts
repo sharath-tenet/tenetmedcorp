@@ -3,6 +3,7 @@ import {ApiService} from '../common/api.service';
 import { AccountComponent } from '../account/account.component';
 import {Router} from '@angular/router';
 import { BookComponent } from "../book/book.component";
+import { AppComponent } from "../app.component";
 @Component({
   selector: 'app-invoice',
   templateUrl: './invoice.component.html',
@@ -10,7 +11,10 @@ import { BookComponent } from "../book/book.component";
   providers:[AccountComponent,BookComponent]
 })
 export class InvoiceComponent implements OnInit {
-  pdf:any=[];
+  server_url: string;
+  ismobileview: boolean;
+  paymentOpt: string;
+  pdf: any = [];
   nearestLabLocation:any;
   public _api:ApiService;
   orderno:string;
@@ -28,22 +32,33 @@ export class InvoiceComponent implements OnInit {
   ti:boolean=false;
   pdf1:string;
   res:any=[];
+  newInvoices:any=[];
   loading: any = [];
-  constructor(_api :ApiService, private router :Router,accountComponent:AccountComponent,private bookComponent:BookComponent) {
+  constructor(_api :ApiService, private router :Router,accountComponent:AccountComponent,private bookComponent:BookComponent,private _appComponent :AppComponent) {
     this._api=_api;
+    this.server_url=this._api.other_url;
     this.accountComponent =accountComponent;
-    this.getOrderInvoice();
-    this.getOrderDetails();
+    this._appComponent=_appComponent;
+    this.ismobileview=this._appComponent.isMobile();
+    this.paymentOpt=localStorage.getItem("paymentOpt_slip");
+    //console.log(this.paymentOpt);
+    if(this.paymentOpt=="1"){
+      this.getOrderPaymentStatus();
+    }else {
+      this.getOrderDetails();
+    }
+    
     this.user = JSON.parse(localStorage.getItem('user'));
 
    }
 
-  ngOnInit() {
+  ngOnInit(){
     this.getNearestLab();
-    if(JSON.parse(localStorage.getItem('tests')).length>0){
-     this.bookComponent._appComponent.clearCart();
+    if(localStorage.getItem('tests')!==null){
+      if(JSON.parse(localStorage.getItem('tests')).length>0){
+        this.bookComponent._appComponent.clearCart();
+       }
     }
-   
     window.scrollTo(0, 0);
   }
 
@@ -59,13 +74,10 @@ export class InvoiceComponent implements OnInit {
     this.loading['invoice']=true;
    if(sessionStorage.getItem('invoice')){
         let orderInfo = JSON.parse(sessionStorage.getItem('invoice'));
-        console.log("my",orderInfo);
-       console.log('ses',orderInfo[0].order_nos);
          if(orderInfo[0].order_nos.indexOf(',') > -1) {
             let ord_nos  = orderInfo[0].order_nos.split(',');
             this.order_data=[];
               for (let ord_no of ord_nos) {
-                //  console.log('loop',ord_no); // 1, "string", false
                   this.pdf=[];
                   this._api.getToken().subscribe( 
                     token => { 
@@ -83,7 +95,7 @@ export class InvoiceComponent implements OnInit {
 
            }else{
             this.pdf=[];
-            //console.log('else',orderInfo[0].order_nos);
+           
             this._api.getToken().subscribe( 
               token => { 
               this._api.POST('GetOrderInvoice', {TokenNo: token,orderno: orderInfo[0].order_nos}).subscribe(data =>{
@@ -94,7 +106,7 @@ export class InvoiceComponent implements OnInit {
                 if(this.pdf){
                        this.order_data.push(this.pdf);
                       }
-                //console.log(this.pdf);
+                
                });
               });
            }
@@ -105,78 +117,82 @@ export class InvoiceComponent implements OnInit {
 
 
   getOrderDetails(){
-
+ 
   this.user = JSON.parse(localStorage.getItem('user'));
    let orderInfo = JSON.parse(sessionStorage.getItem('invoice'));
+
+   console.log("orderInfo=",orderInfo);
+
    this.loading['details']=true;
-     if(orderInfo[0].order_nos.indexOf(',') > -1) {
-            let ord_nos  = orderInfo[0].order_nos.split(',');
+   let ord_nos  = orderInfo[0].order_nos.split(',');
+     if(ord_nos.length > 0) {
+             ord_nos  = orderInfo[0].order_nos.split(',');
             this.orderDetails=[];
               for (let ord_no of ord_nos) {
                 this._api.getToken().subscribe( 
                   token => {
-                  this._api.POST('GetOrderDetails', {TokenNo: token,orderno: ord_no,mobileno:''}).subscribe(data =>{
+                  this._api.POST('GetOrderDetails', {TokenNo: token,orderno: ord_no,mobileno:'',type:"B"}).subscribe(data =>{
                     this.loading['details']=false;
                      this.orderDetails=JSON.parse(data.json).data;
 
                       if(this.orderDetails.length>0){
                         let ords:any=[];
                         this.orderDetails.forEach(element => {
+                                  if(this.newInvoices.indexOf(element.order_no)==-1){
+                                    this.newInvoices.push(element.order_no);
+                                  }
                                   element.schedule_dt= this.getHumanDate(element.schedule_dt);
                                   this.getTestInstructions(element.tid);
                                   ords.push(element);
-                                   //this.orderInfo.push(element);//org
+                                   
                                 });
                                 
                         this.orderInfo.push(ords);
-                        console.log('kkk',this.orderInfo);
+                        
                      }else{}
 
                    });
                   });
                    
                }
-              // console.log(this.orderInfo);
+              
            }else{
             let invpdf:any;
             this._api.getToken().subscribe( 
               token => {
-              this._api.POST('GetOrderDetails', {TokenNo:token,orderno: orderInfo[0].order_nos,mobileno:''}).subscribe(data =>{
+              this._api.POST('GetOrderDetails', {TokenNo:token,orderno: orderInfo[0].order_nos,mobileno:'',type:"B"}).subscribe(data =>{
                 this.loading['details']=false;
               this.orderInfo1=JSON.parse(data.json).data;
-              console.log(this.orderInfo1);
+              
                   this.orderInfo1.forEach(element => {
                     element.schedule_dt= this.getHumanDate(element.schedule_dt);
                      this.getTestInstructions(element.tid);
                             }); 
-
-                  //invpdf = this.getOrderInvoice1(orderInfo[0].order_nos);
-            
-                 /*  let valueArr = this.orderInfo.map(function(item){ return item.patient_name });
-                    let isDuplicate = valueArr.some(function(item, idx){ 
-                        return valueArr.indexOf(item) != idx ;
-                    });
-                    console.log('boolean',isDuplicate);*/
-
                });
               });
 
            }
-           console.log(this.orderInfo);
+           
 
   }
 
    getOrderInvoice1(billNo:string){
-
-      /*     let pdf1:any
-          this._api.POST('GetOrderInvoice', {TokenNo: 'SomeTokenHere',orderno: billNo}).subscribe(data =>{
-                    this.res =JSON.parse(data.json).data;
-                   //console.log('getOrderInvoice=',this.res);
-                 pdf1 = this.res[0].message;
-                    //console.log('pdf',pdf1);
-                    return pdf1;               
-                     });
-      */
+    this.loading['invoice']=true;
+    this._api.getToken().subscribe( 
+      token => { 
+      this._api.POST('GetOrderInvoice', {TokenNo: token,orderno: billNo}).subscribe(data =>{
+        this.loading['invoice']=false;
+        this.tmp=JSON.parse(data.json).data;
+        this.pdf = this.tmp[0].message;
+        this.pdf={'message':this.tmp[0].message,'ordNo':billNo}
+        if(this.pdf){
+             
+              window.open(this.server_url+'/orderinvoice/'+this.pdf.message,"_blank");
+              }
+              this.loading['invoice']=false;
+       
+       });
+      });
        }
 
 
@@ -188,19 +204,7 @@ export class InvoiceComponent implements OnInit {
     let fdt=parseInt(date[0]);
     let theDate = new Date(fdt);
     let dateString = theDate.toLocaleString();
-    /*let hr=date[1].substring(0,2)*60*1000;
-    let min=date[1].substring(2,4)*60*1000;
-    let fdt=parseInt(date[0])+hr+min;
-    let theDate = new Date(fdt);
-
-    let dateString = theDate.toUTCString();
-    let date1 = theDate.getDate().toString()+'/'+(theDate.getMonth()+1).toString()+'/'+theDate.getFullYear().toString()+'  '+theDate.getTime().toString();
-    let date2 =theDate.getDate().toLocaleString('en-US', {minimumIntegerDigits: 2})
-    + '/' + (theDate.getMonth()+1).toLocaleString('en-US', {minimumIntegerDigits: 2})
-    + '/' + theDate.getFullYear();
-
-    let dateTimeString = date2 +' '+theDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })*/
-   return dateString;
+    return dateString;
   }
 
   getTestInstructions(tid:any){
@@ -209,18 +213,56 @@ export class InvoiceComponent implements OnInit {
      this._api.POST('GetOrderInstructions', {TokenNo: token,serviceid:tid}).subscribe(data =>{
                 
                   let inst=JSON.parse(data.json).data;
-                 // console.log('ti',testInstrs[tid]);
-                  //console.log('test Instrutions=',this.testInstrs);
-                 // this.ti=true;
                   this.testInstrs[tid]=[];
                   this.testInstrs[tid]=inst;  
-                  console.log('a',this.testInstrs[tid][0]);    
+                  // console.log('a',this.testInstrs[tid][0]);    
                  });
                 });
   }
 
   testInst(){
     this.ti=false;
+  }
+  getOrderPaymentStatus(){
+    let transdata=localStorage.getItem("transtoken");
+    if(transdata!==null){
+      transdata=JSON.parse(transdata);
+      let orderid=transdata['orderid'];
+      let transid=transdata['transid'];
+      this._api.getToken().subscribe( 
+        token => {
+       this._api.POST('GetOrderPaymentStatus', {TokenNo: token,orderno:orderid,tranno:transid}).subscribe(data =>{
+                  
+                    let inst=JSON.parse(data.json).data;
+                    let inlen=inst.length;
+                    let k=0;
+                    let l=0;
+                    inst.forEach(element => {
+                  if(element['due_amount']>0){
+                    k++;
+                  }
+                  l++;
+                  if(l==inlen){
+                    if(k>0){
+                      alert("Your Payment Failed,Please try later");
+                    }else{
+                    
+                      this.getOrderDetails();
+                    }
+                  }
+                 
+
+                });
+                   });
+                  });
+    }
+    
+
+  }
+  getLoadingMessage(){
+    return "Please Wait";
+    // this._appComponent.loadingmessages(0);
+    // return this._appComponent.getCurrentLoadingMsg(); 
   }
 
 }

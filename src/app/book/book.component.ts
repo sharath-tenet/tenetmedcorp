@@ -1,15 +1,14 @@
-import { Component, OnInit, Injectable, ElementRef } from '@angular/core';
+import { Component, OnInit, Injectable, ElementRef, ViewChild } from '@angular/core';
 import {ApiService} from '../common/api.service';
 import {HomeComponent} from '../home/home.component';
 import {AppComponent} from '../app.component';
-// import {TestDetailsComponent} from '../test-details/test-details.component';
-// import {Repeater} from './app/repeater';
 import {ActivatedRoute,Router} from '@angular/router';
 
 import { FormControl,Validators} from '@angular/forms';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/map';
-// @ViewChild('category') category: ElementRef;
+import { by } from "protractor/built";
+import { GoogleAnalyticsEventsService } from "../common/google-analytics-events.service";
 @Component({
   selector: 'app-book',
   templateUrl: './book.component.html',
@@ -18,6 +17,18 @@ import 'rxjs/add/operator/map';
 })
 @Injectable()
 export class BookComponent implements OnInit {
+  mobileview: boolean=true;
+  no: string;
+  filterson: boolean = true;
+  @ViewChild('oraganradiogroup') oraganradiogroup: ElementRef;
+  @ViewChild('conditionradiogroup') conditionradiogroup: ElementRef;
+  @ViewChild('splradiogroup') splradiogroup: ElementRef;
+  @ViewChild('packageradio') packageradio: ElementRef;
+  @ViewChild('profileradio') profileradio: ElementRef;
+  @ViewChild('testradio') testradio: ElementRef;
+  @ViewChild('filtersec') filtersec: ElementRef;
+  
+  
   sel_rad: any=[];
   cat_checkbox: boolean;
   cond_checkbox: boolean;
@@ -31,7 +42,7 @@ export class BookComponent implements OnInit {
                       ,"Complete Urine Examination (CUE), Spot Urine","Glucose Fasting (FBS),  Sodium Flouride Plasma","Glycosylated Hemoglobin (HbA1C), EDTA Whole Blood","Uric Acid, Serum","Thyroglobulin (Tg), Serum","Blood Urea Nitrogen (BUN), Serum","Prolactin, Serum","Prothrombin Time With INR, Sodium Citrate Whole Blood","HIV 1 & 2 Antibodies, Serum","Culture And Sensitivity (Aerobic), Urine"];
   test_code: any;
   addtovisible: string;
-  sortString: any = "Popularity";
+  sortString: any = "Featured";
   event: string = '';
   pa: number = 1;
   public config= {};
@@ -51,7 +62,6 @@ export class BookComponent implements OnInit {
  
  public _api:ApiService;
  public test_id:any;
- //public _homeComponent:any;
  public _appComponent:any;
  public _testDetailsComponent:any;
  public _tempTest=[];
@@ -97,91 +107,85 @@ testIds:any=[];
 alphap:any=["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
 
  searchTerm : FormControl = new FormControl('', [Validators.required, Validators.minLength(3)]);
- searchResult = [];
+ searchResult:any = [];
 _packages1=[];
 public loading = [];
  public filterKey:any;
  mpckgshow:boolean=false;
-  constructor(_api :ApiService,_appComponent :AppComponent,private router :Router,private rou:ActivatedRoute,private _elementRef:ElementRef) { 
+  constructor(_api :ApiService,_appComponent :AppComponent,private router :Router,public gaes:GoogleAnalyticsEventsService,private rou:ActivatedRoute,private _elementRef:ElementRef) { 
     this._api=_api;
-    //this._homeComponent=_homeComponent;
     this._appComponent=_appComponent;
     this.getAddToVisable(); //add to cart visibility button
     this._appComponent.setFlag();
-    //console.log(this.testsList);
     this.user.uid="";
     if(this.searchTerm!=undefined){
       this.autoSuggestTrigger();
     }
-    this.event=this.rou.snapshot.paramMap.get('event');
-    let a=parseInt(this.event);
-    if(!isNaN(a)){
-    
-     this.config= {
-        id: 'custom',
-        itemsPerPage: 9,
-        currentPage: a
-    }
-      
-     
+    this.currentPg(true);
+
+  }
+  currentPg(consider=false){
+
+    if(consider){
+      this.event=this.rou.snapshot.paramMap.get('event');
+      this.no=this.rou.snapshot.paramMap.get('no');
+      if(this.event=="packages"||this.event=="profiles"){
+        this.filterson=false;
+      }else{
+        this.filterson=true;
+      }
+      let a=parseInt(this.event);
+
+      if(this.no!==null){
+        a=parseInt(this.no);
+      }
+      if(!isNaN(a)){
+
+          this.config= {
+              id: 'custom',
+              itemsPerPage: 9,
+              currentPage: a
+          }
+      }else{      
+        this.config= {
+          id: 'custom',
+          itemsPerPage: 9,
+          currentPage: 1
+        }
+      }
     }else{
       this.config= {
         id: 'custom',
-        itemsPerPage: 9,
+        itemsPerPage: 100,
         currentPage: 1
       }
-    }
-    
 
+    }
   }
+  
   getAddToVisable(){
     this.addtovisible=localStorage.getItem("addTocart");
    
   }
+
   autoSuggestTrigger(){
-  
-   /* this.searchTerm.valueChanges
-    .debounceTime(400) 
-    .subscribe(data => {
-    let term = new String(data); 
-   // if(this.searchString!=''){
-    if(data==undefined){
-          this.mpckgshow=false;
-          return false;
-        }
-      if(term.length >=3){
-       
-        this._api.getToken().subscribe( 
-          token => { 
-        this._api.POST('GetServices', {TokenNo: token,pincode:'' ,test_name:data,test_code:'',test_type:'',condition_id:'',speciality_id:'',sort_by:'',sort_order:'',AlphaSearch:'',user_id:'',is_home_collection:"",organ_id:""}).subscribe(data =>{
-                        if(data.status==1){
-                          this.searchResult=JSON.parse(data.json).data;
-                        }else{
-                          this.searchResult=[];
-                        }
-                         
-                       });
-                      });
-        this._api.getToken().subscribe(
-          token => {
-        this._api.POST('GetPackages',{TokenNo: token,"pincode":"","package_name":data,"package_code":"","sort_by":"","sort_order":"","alphaSearch":"","type":""}).subscribe(data =>{
-                  if(data.status==1){
-                    this._packages1=JSON.parse(data.json).data;
-                  }else{
-                    this._packages1=[];
-                  }
-                
-               });
-              });
-    
-    
-             //} 
+            
+    this.user = localStorage.getItem('user');
+    this.user = JSON.parse(this.user);
+    if(this.user==null){
+      this.user=[];
+      this.user.uid="";
     }
-     
-    })*/
+    this.sortBy="";
+    this.sort_order="";
+    this.speciality_id="";
+    this.condition_id="";
+    this.organ_id="";
+    this.test_type="";
+    this.AlphaSearch="";  
 
 
-    this.searchTerm.valueChanges
+        this.searchTerm.valueChanges
         .debounceTime(400) 
         .subscribe(data => {
         let term = new String(data); 
@@ -191,11 +195,13 @@ public loading = [];
         }
        
         if(term.length >=3){
-          this._api.getToken().subscribe( 
+      
+     /*     this._api.getToken().subscribe( 
             token => { 
-        this._api.POST('GetServices', {TokenNo: token,pincode:'' ,test_name:data,test_code:'',test_type:'',condition_id:'',speciality_id:'',sort_by:'',sort_order:'',AlphaSearch:'',user_id:'',is_home_collection:"",organ_id:""}).subscribe(data =>{
+        this._api.POST('GetServices',{TokenNo: token,"pincode":"","test_name":data,"test_code":"","test_type":"","condition_id":"","speciality_id":"","sort_by":"","sort_order":"","alphaSearch":"","user_id":"","is_home_collection":"","organ_id":"","city_name":this._appComponent.getCityName()}).subscribe(data =>{
                         if(data.status==1){
-                          this.searchResult=JSON.parse(data.json).data;
+                          this.searchResult=(JSON.parse(data.json).data);
+                          console.log('searchResult',this.searchResult);
                         }else{
                           this.searchResult=[];
                         }
@@ -205,11 +211,33 @@ public loading = [];
                     
      this._api.getToken().subscribe( 
                         token => { 
-         this._api.POST('GetPackages',{TokenNo: token,"pincode":"","package_name":data,"package_code":"","sort_by":"","sort_order":"","alphaSearch":"","type":""}).subscribe(data =>{
+         this._api.POST('GetPackages',{TokenNo: token,"pincode":"","package_name":data,"package_code":"","sort_by":"","sort_order":"","alphaSearch":"","type":"H",city_name:this._appComponent.getCityName()}).subscribe(data =>{
                   if(data.status==1){
-
                     this._packagesSearchResult=JSON.parse(data.json).data;
-                    //this.testsList=[];
+                  }else{
+                    this._packagesSearchResult=[];
+                  }
+                  this.mpckgshow=true;
+               });
+              });*/
+    this._api.getToken().subscribe(
+      token => {
+    this._api.POST('GetServices', {TokenNo: token,pincode:this.pincode,test_name:data,test_code:'',test_type:this.test_type,condition_id:this.condition_id,speciality_id:this.speciality_id,sort_by:this.sortBy,sort_order:this.sort_order,alphaSearch:this.AlphaSearch,user_id:this.user.uid,is_home_collection:2,organ_id:this.organ_id,city_name:this._appComponent.getCityName()}).subscribe(data =>{
+
+      if(data.status==1){
+     this.searchResult=(JSON.parse(data.json).data);
+      }else{
+       this.searchResult=[];
+      }
+
+     });
+    });
+
+                 this._api.getToken().subscribe( 
+                        token => { 
+         this._api.POST('GetPackages',{TokenNo: token,"pincode":"","package_name":data,"package_code":"","sort_by":"","sort_order":"","alphaSearch":"","type":"H",city_name:this._appComponent.getCityName()}).subscribe(data =>{
+                  if(data.status==1){
+                    this._packagesSearchResult=JSON.parse(data.json).data;
                   }else{
                     this._packagesSearchResult=[];
                   }
@@ -219,6 +247,7 @@ public loading = [];
 
              }      
         })
+      
       
 
   }
@@ -238,25 +267,21 @@ public loading = [];
           });
       }
       this.postalCode = localStorage.getItem('postalCode');
-      //this.postalCode =500033;
+     
         let data = {
           'tests': this.testIds,
           'postalCode': this.postalCode
-        }
+        }   
     this.nearestLabLocation={ name:"Loading...",address:"Loading..."}
-    //  this._api.POST('getLabLocation.php', {token: 'SomeTokenHere',coordinates:  this._homeComponent.getCordinates()}).subscribe(data =>{
-    //   this.nearestLabLocation=JSON.parse(data.json).data;
-    //   localStorage.setItem('nearestLabLocation',JSON.stringify(this.nearestLabLocation));
-    //  });
-    /*  this._api.POST('getLabLocation.php', {token: 'SomeTokenHere',data:data}).subscribe(data =>{
-       this.nearestLabLocation=JSON.parse(data.json).data;
-       localStorage.setItem('nearestLabLocation',JSON.stringify(this.nearestLabLocation));
-      });*/
-      this.rou.params.subscribe(params => this.searchString=params.searchString);
+   
+      this.rou.params.subscribe(params => this.searchString = params.searchString);
       
-      //console.log(this.searchString);
+    
       this.tempstr=this.searchString;
+
+
       this.filterKey=this.searchString;
+
       this.loading['condition']=true;
       this._api.getToken().subscribe(
         token => {
@@ -293,70 +318,83 @@ public loading = [];
       this.organsList=this.organsList1.slice(0,this.filterLength);
       this.showMore['organs']="Show More";
       this.loading['organs']=false;
+      
       this.urlParseSearch("organ");
      });
 
     }
   );
-      // this._api.POST('GetServices', {pincode: '',test_name:'',test_code:'',test_type:'',condition_id:'',speciality_id:'',sort_by:'',sort_order:''}).subscribe(data =>{
-      //   this.testsList=JSON.parse(data.json).data;
-      //  });
+      
       if(this.event=='packages'){
         this.ptype="H";
+        setTimeout(()=>{
+          this.packageradio.nativeElement.checked=true;
+        },1000);
+        
         this.getPackages();
       }else if(this.event=='profiles'){
         this.ptype="P";
+        setTimeout(()=>{
+          this.profileradio.nativeElement.checked=true;
+        },1000);
         this.getPackages();
         //profile will be loaded here
       }else{
+        setTimeout(()=>{
+          this.testradio.nativeElement.checked=true;
+        },1000);
         this.masterSearch();
       }
+
+   
       
       if(localStorage.getItem('user')!=null)this.wList =true;
       window.scrollTo(0, 0);
   }
 
-  getTestDetails(id:number){
-    this.router.navigate(['./book/test-details/'+id]);
-    // this.router.navigate(['./book/test-details', {testId:id}]);
+  getTestDetails(id:any){
+    this.gaes.emitEvent("click", "test_details", id, 1);
+    let nameser = new String(id);
+    var re=/ /gi;
+     nameser=nameser.replace(re,"_"); 
+     nameser=nameser.replace("(","__,_"); 
+     nameser=nameser.replace(")","_,__"); 
+     nameser=nameser.replace("/","?slh?"); 
+    this.router.navigate(['./test-details/'+nameser]);
+   
   }
 
-//SELCTION ITEM METHOD.
-/*  select(item){
-      this.filterKey = item;
-      this.searchResult = [];
-      this._packages1=[];
-     // this.filteredItems = [];
-  }*/
+
 
     select(item,type:any){
         this.filterKey = new String(item);
         this.searchResult = [];
-         //this._packagesSearchResult=[];
+        
          this._packages1=[];
+         var re=/ /gi;
+         let base_url="";
+         this.filterKey=this.filterKey.replace(re,"_"); 
+         this.filterKey=this.filterKey.replace("(","__,_"); 
+         this.filterKey=this.filterKey.replace(")","_,__"); 
+         this.filterKey=this.filterKey.replace("/","?slh?"); 
         if(type=="test"){
-          var re=/ /gi;
-          
-          this.filterKey=this.filterKey.replace(re,"_"); 
-          this.filterKey=this.filterKey.replace("(","__,_"); 
-          this.filterKey=this.filterKey.replace(")","_,__"); 
-         window.location.href="./test-details/"+this.filterKey;
+          base_url="test-details";
+          this.gaes.emitEvent("click", "test_details", this.filterKey, 1);
         }else if(type="package"){
-          var re=/ /gi;
-          
-          this.filterKey=this.filterKey.replace(re,"_"); 
-          this.filterKey=this.filterKey.replace("(","__,_"); 
-          this.filterKey=this.filterKey.replace(")","_,__"); 
-          let base_url="";
+         
+         
          if( this.ptype=="H"){
           base_url="package-details";
+          this.gaes.emitEvent("click", "package-details", this.filterKey, 1);
          }else if(this.ptype=="P"){
           base_url="profile-details";
+          this.gaes.emitEvent("click", "profile-details", this.filterKey, 1);
          }
-         window.location.href="./"+base_url+"/"+this.filterKey; 
+        
 
         }
-       // this.filteredItems = [];
+        window.location.href="./"+base_url+"/"+this.filterKey; 
+       
     }
 
   getTestId(){
@@ -379,11 +417,7 @@ public loading = [];
 
 IndexOf(p){
         for (var i = 0; i < this._pckg.length; i++) {
-         /* let a=JSON.stringify(this._pckg[i]);
-          let b=JSON.stringify(p);
-            if (a===b) {
-                return i;
-            }*/
+        
 
             let a=this._pckg[i];
             let b=p;
@@ -396,7 +430,7 @@ IndexOf(p){
     }
 shortIndex(tid:number):boolean{
   let stest= JSON.parse(localStorage.getItem('tests')); 
- // console.log(stest);
+ 
   let a=false;
   if(stest){
     stest.forEach(element => {
@@ -408,17 +442,13 @@ shortIndex(tid:number):boolean{
 return a;
 }
 
-  getAddTestCart(test:any,attrib:any,event:any=''){
+  getAddTestCart(test:any,attrib:any,event:any='',smsg:any=true){
     
-  // console.log(event.target.classList.add('added'));
-   //localStorage.setItem('btncls',event.target.classList.add('added'));
-   //event.target.textContent = "ADDED";
-    //console.log(test);
     if(attrib=='pckg'){
        let test1 = test;
        test = {};
        test.tid = test1.id;
-       test.test_name = test1.package_code;
+       test.test_code = test1.package_code;
        test.test_code = test1.package_discpr;
        test.test_finalpr = test1.package_finalpr;
        test.test_name = test1.package_name;
@@ -427,6 +457,7 @@ return a;
        test.report_avb = "";
        test.test_ptn = "";
        test.type = "";
+       test.is_home_collection=test1.is_home_collection;
     }
 
   this._tempTest=[]; 
@@ -451,11 +482,18 @@ let testshere = JSON.parse(localStorage.getItem('tests'));
         test.quant=1;
         this._tempTest.push(test);
       }
-      //console.log(this._tempTest);
+      
       localStorage.setItem('tests',JSON.stringify(this._tempTest));
+      if(smsg==true){
+         this._appComponent.getNotify(test.test_name+" has been added to your cart.");
+       }
+     
       this._appComponent.setCart();
     
   }
+  testQuantPlus(tid){
+        this._appComponent.quantAddByIndex(tid);
+      }
   getRemoveTestCart(test:any,type:any=null){
    
     if(this._tempTest.length==0){
@@ -466,7 +504,7 @@ let testshere = JSON.parse(localStorage.getItem('tests'));
       test.tid=test.id;
     }
     let i=this.myIndexOf(test);
-    //console.log(i);
+   
     let t=this._tempTest[i].quant;
     
     if(t>1){
@@ -484,12 +522,12 @@ let testshere = JSON.parse(localStorage.getItem('tests'));
   getTestByTidnAdd(tid,test_name){
     let a={};
     this.searchString=test_name;
-   // this.test_code=tid;
+   
     this.checkUndefined();
     return this._api.getToken().subscribe(
       token => {
         
-      return  this._api.POST('GetServices', {TokenNo: token,pincode: this.pincode,test_name:this.searchString,test_code:this.test_code,test_type:this.test_type,condition_id:this.condition_id,speciality_id:this.speciality_id,sort_by:this.sortBy,sort_order:this.sort_order,AlphaSearch:this.AlphaSearch,user_id:this.user.uid,is_home_collection:"",organ_id:this.organ_id}).subscribe(data =>{
+      return  this._api.POST('GetServices', {TokenNo: token,pincode: this.pincode,test_name:this.searchString,test_code:this.test_code,test_type:this.test_type,condition_id:this.condition_id,speciality_id:this.speciality_id,sort_by:this.sortBy,sort_order:this.sort_order,AlphaSearch:this.AlphaSearch,user_id:this.user.uid,is_home_collection:"",organ_id:this.organ_id,city_name:this._appComponent.getCityName()}).subscribe(data =>{
           if(data.status==1){
              this.loading["service"]=false;
              this.gettestcnf=false;
@@ -497,11 +535,12 @@ let testshere = JSON.parse(localStorage.getItem('tests'));
           }else{
              this.loading["service"]=false;
             this.gettestcnf=true;
+            this.getpackagecnf=false;
             this.testsList=[];
           }
-       // console.log(this.testsList)
+      
         let stest=this.testsList;
-        //console.log(stest);
+      
             if(stest){
               stest.forEach(element => {
                 if(element.tid===tid){
@@ -513,14 +552,10 @@ let testshere = JSON.parse(localStorage.getItem('tests'));
          });
 
     }
-  );
-  
-    
-    //console.log(a);
+  ); 
+   
        
   }
-
-
    getRemovePackageCart(pckg:any){
     let i=this.IndexOf(pckg);
     let t=this._pckg[i].quant;
@@ -535,7 +570,7 @@ let testshere = JSON.parse(localStorage.getItem('tests'));
   getTestQuant(test:any){
     let a=1;
 let stest=JSON.parse(localStorage.getItem('tests'));
-//console.log(stest);
+
     if(stest){
       stest.forEach(element => {
         if(element.tid===test){
@@ -544,7 +579,7 @@ let stest=JSON.parse(localStorage.getItem('tests'));
     });
     }
 
-//console.log(a);
+
     return a;
 }
 
@@ -553,7 +588,7 @@ let stest=JSON.parse(localStorage.getItem('tests'));
     if(this.IndexOf(pckg)>=0){
       b=this._pckg[this.IndexOf(pckg)].quant;
     }
-    //console.log('b=',b);
+  
     return b;
    }
 
@@ -569,7 +604,7 @@ let stest=JSON.parse(localStorage.getItem('tests'));
         this.tmp.forEach(element => {
                   this._pckg.push(element);  
               });
-    //console.log('indexOfpckgs',this.IndexOf(pckg));
+
        if(this.IndexOf(pckg) < 0){
       
            pckg.quant=1;
@@ -581,7 +616,7 @@ let stest=JSON.parse(localStorage.getItem('tests'));
         let i=this.IndexOf(pckg);
         let t=this._pckg[i].quant;
         t=t+1;
-        console.log('t=',t);
+       
         this._pckg[i].quant=t;
        }
 
@@ -599,66 +634,6 @@ let stest=JSON.parse(localStorage.getItem('tests'));
 
 
 
-   /* getAddPackageCart(pckg:any){
-      
-    this._pckg=[];
-   // console.log('pkgs=',(localStorage.getItem('packages')));
-    if(localStorage.getItem('packages')===null){
-        this._pckg.push(pckg);
-        localStorage.setItem('packages',JSON.stringify(this._pckg));
-     
-    }else{
-        
-       this.tmp=JSON.parse(localStorage.getItem('packages'));
-        this.tmp.forEach(element => {
-                  this._pckg.push(element);  
-              });
-      //console.log('pkgs=',(localStorage.getItem('packages')));
-     /* if(this.tmp){
-
-              this.tmp.forEach(element => {
-                  this._pckg.push(element);  
-              });
-              
-      }else{
-          this._pckg.push(pckg);
-      }*/
-       
-      /* if(this.IndexOf(pckg) < 0){
-        this._pckg.push(pckg);
-       }
-        localStorage.setItem('packages',JSON.stringify(this._pckg));
-    
-    }
-
-    localStorage.setItem('showcart',"true");
-    this._appComponent.setCart();
-
-  }*/
-
-  /*getAddPackageCart(pckg:any){
-    this._pckg=[];
-  console.log('pkgs=',localStorage.getItem('packages'));
-    if((localStorage.getItem('packages'))!==null){
-
-      this.tmp=JSON.parse(localStorage.getItem('packages'));
-
-        this.tmp.forEach(element => {
-            this._pckg.push(element);  
-        });
-       if(this.IndexOf(pckg) < 0){
-        this._pckg.push(pckg);
-       }
-        localStorage.setItem('packages',JSON.stringify(this._pckg));
-     
-    }else{
-      this._pckg.push(pckg);
-      localStorage.setItem('packages',JSON.stringify(this._pckg));
-    }
-
-    this._appComponent.setCart();
-
-  }*/
 
   hideCart(){ 
     localStorage.setItem('showcart',"false");
@@ -667,23 +642,56 @@ let stest=JSON.parse(localStorage.getItem('tests'));
   getNearestLabLocation(){
     return this.nearestLabLocation;
   }
-  
+  clearConditions(){
+
+    this.tempstr="";
+    this.sortBy="";
+    this.searchString="";
+    this.speciality_id="";
+    this.condition_id="";
+    this.organ_id="";
+    
+    this.test_type="";
+    this.AlphaSearch="";
+    this.sortString="Featured"; 
+    this.sort_order="";
+    
+    this.filterKey="";
+
+  }
   search(event,attrib){
+    this.currentPg(false); // this is to disable the pagination
     let sId = '';
     if(event.target.checked){
       sId = event.target.id;
     }
-    
+    this.clearConditions(); //make this enable if we are using only any one of the filters
     if(attrib=="cond"){
+      
       this.condition_id=sId;
+    
+      this.spl_checkbox=false;
+      this.organ_checkbox=false;
+     
       this.masterSearch();
     }
     if(attrib=="spl"){
       this.speciality_id=sId;
+    
+      this.cond_checkbox=false;
+    
+      this.organ_checkbox=false;
+     
       this.masterSearch();
     }
     if(attrib=="organ"){
+   
       this.organ_id=sId;
+   
+      this.cond_checkbox=false;
+      this.spl_checkbox=false;
+     
+     
       this.masterSearch();
     }
     if(attrib=="pckgs"){
@@ -694,55 +702,68 @@ let stest=JSON.parse(localStorage.getItem('tests'));
    shload(val){
 return false;
    }
+
    masterSearch(){
+    if(this._appComponent.currentUrl=="book/packages"||this._appComponent.currentUrl=="book/profiles"){
+      window.location.href="./book/tests";
+    }
+   
+    this.filterson=true;
     this.checkUndefined();
      this._packages=[];
-    //console.log("pin=",this.pincode,"search=",this.searchString,"tt",this.test_type,"cond=",this.condition_id,"spc",this.speciality_id,"srtby",this.sortBy,"so",this.sort_order,"as",this.AlphaSearch);
+    
     this.user = localStorage.getItem('user');
     this.user = JSON.parse(this.user);
     if(this.user==null){
       this.user=[];
       this.user.uid="";
     }
+    if(this.sortBy==""){
+      this.sort_order="";
+    }
     this.loading["service"]=true;
     
     this._api.getToken().subscribe(
       token => {
-        
-        this._api.POST('GetServices', {TokenNo: token,pincode: this.pincode,test_name:this.searchString,test_code:'',test_type:this.test_type,condition_id:this.condition_id,speciality_id:this.speciality_id,sort_by:this.sortBy,sort_order:this.sort_order,AlphaSearch:this.AlphaSearch,user_id:this.user.uid,is_home_collection:"",organ_id:this.organ_id}).subscribe(data =>{
-          if(data.status==1){
+        this._api.POST('GetServices', {TokenNo: token,pincode: this.pincode,test_name:this.searchString,test_code:'',test_type:this.test_type,condition_id:this.condition_id,speciality_id:this.speciality_id,sort_by:this.sortBy,sort_order:this.sort_order,AlphaSearch:this.AlphaSearch,user_id:this.user.uid,is_home_collection:"",organ_id:this.organ_id,city_name:this._appComponent.getCityName()}).subscribe(data =>{
+          // debugger;
+          // if(data.json.length)
+          if(data.status==0){
+            this.loading["service"]=false;
+            this.testsList=[];
+             this.gettestcnf=true;
+             this.getpackagecnf=false;
+          }else if(JSON.parse(data.json).data.length>0){
+            
              this.loading["service"]=false;
              this.gettestcnf=false;
+             
             this.testsList=JSON.parse(data.json).data;
           }else{
+            
              this.loading["service"]=false;
-            this.gettestcnf=true;
             this.testsList=[];
+             this.gettestcnf=true;
+             this.getpackagecnf=false;
           }
-        //console.log(this.testsList)
+          if(this.testsList.length>0||this._packages.length>0){
+          
+           
+            this.getpackagecnf=false;
+            this.gettestcnf=false;
+          }
+       
          });
 
     }
   );
-  
-
-      //Packages
-     /* this._api.POST('GetPackages',{"pincode":this.pincode,"package_name":this.searchString,"package_code":"","sort_by":"","sort_order":"","alphaSearch":""}).subscribe(data =>{
-        if(data.status==1){
-          this._packages=JSON.parse(data.json).data;
-        }else{
-          this._packages=[];
-        }
-        
-       });*/
-
    }
 
 
    
    serClick(srt_by:any,strng:any){
-    //console.log(strng);
-      if(strng=== undefined){
+
+      if(strng=== undefined||strng==null||strng==""){
         return false;
       }else{
         this.sortBy=srt_by;
@@ -761,11 +782,23 @@ return false;
     }
 
    sortingFun(srtby:any,strng:any,val:any){
+     
     this.sortBy=srtby;
     this.sortString=strng;
     this.sort_order=val;
-    this.masterSearch();
+    if(this._appComponent.currentUrl=="book/packages"){
+      this.ptype="H";
+      this.getPackages();
+    }else if(this._appComponent.currentUrl=="book/profiles"){
+      this.ptype="P";
+      this.getPackages();
+    }else{
+      this.masterSearch();
+      this.router.navigate(['./book/tests/1']);
+    }
+   
    }
+
    checkUndefined(){
      if(typeof this.searchString=='string'){
        if(this.searchString.length==0){
@@ -793,6 +826,9 @@ return false;
     if(this.sortBy === undefined||this.sortBy === null){
       this.sortBy="";
     }
+    if(this.sort_order === undefined||this.sort_order === null){
+      this.sort_order="";
+    }
     
     
    }
@@ -812,41 +848,45 @@ return false;
     
     this.test_type="";
     this.AlphaSearch="";
-    this.sortString="Popularity"; 
-    this.sort_order="1";
+    this.sortString="Featured"; 
+    this.sort_order="";
     
     this.filterKey="";
-    // this.ngOnInit();
-    this.masterSearch();
-    this.router.navigate(['./book']);
+   
+    
+    
+    window.location.href="./book/tests";
 
   }
   alphaPaginate(alpha:any){
     this.AlphaSearch=alpha;
     this.masterSearch(); 
   }
+
   getPackages(){
-   // console.log("packages");
+ 
    this.loading['service']=true;
     this.testsList=[];
     this._packages=[];
     this._api.getToken().subscribe(
       token => {
-     this._api.POST('GetPackages',{TokenNo: token,"pincode":"","package_name":"","package_code":"","sort_by":"","sort_order":"","alphaSearch":"","type":this.ptype}).subscribe(data =>{
+     this._api.POST('GetPackages',{TokenNo: token,"pincode":"","package_name":"","package_code":"","sort_by":this.sortBy,"sort_order":this.sort_order,"alphaSearch":"","type":this.ptype,city_name:this._appComponent.getCityName()}).subscribe(data =>{
       if(data.status==1){
         let p=JSON.parse(data.json).data;
         p.forEach(element => {
-          if(element.package_price>0){
+          if(element.package_price>=0){ //this has to be removed when moving to live
             this._packages.push(element);
           }
         });
-        //this.testsList=[];//package_price
+    
 
       }else{
-        this.getpackagecnf=true;
+       
         this._packages=[];
+         this.getpackagecnf=true;
+       
       }
-      //console.log(this._packages);
+    
       this.loading['service']=false;
       return this._packages;
     
@@ -854,7 +894,7 @@ return false;
     });
   }
   getPackageDetails(package_id:any,selpackagename:any){
-    //console.log(package_id);  
+    
     this.selpackagename=selpackagename;
 this._api.getToken().subscribe(
       token => {
@@ -866,14 +906,14 @@ this._api.getToken().subscribe(
         }else{
           this._packageServices=[];
         }
-        console.log(this._packageServices);
+        
        });
      })
 
   }
 
   addToWishlist(event,test:any,i) {
-   //console.log("heart id",event.currentTarget.firstChild.id);
+  
     this.visible = !this.visible;
     
         if(this.visible==true){
@@ -887,7 +927,7 @@ this._api.getToken().subscribe(
                 this.is_wishlist=1;
                 this._api.POST('AddtoWishList', {"uid":this.user.uid,"test_id":test.tid,"loc_id":this.loc_id,"status":this.status,"is_wishlist":this.is_wishlist}).subscribe(data =>{
                 this.temp3 = JSON.parse(data.json).data;
-                      //console.log(this.wishList);
+              
                 this.temp3.forEach(element => {
                       this.temp3.push(element);  
                       });
@@ -900,7 +940,7 @@ this._api.getToken().subscribe(
             }else{
               this.msg = "Please enter your details to continue...";
               this.router.navigate(['./login', {msg:this.msg}]);
-              console.log("Please enter your details to continue...");
+              
             }
     
         }else{
@@ -913,7 +953,7 @@ this._api.getToken().subscribe(
             let is_wishlist:number=1;
             this._api.POST('AddtoWishList', {"uid":this.user.uid,"test_id":test.tid,"loc_id":loc_id,"status":status,"is_wishlist":is_wishlist}).subscribe(data =>{
             this.wishList = JSON.parse(data.json).data;
-                //console.log("res=",this.wishList);
+         
              });
         } 
   }
@@ -931,6 +971,7 @@ this._api.getToken().subscribe(
     this.checkUndefined();
     this.user = localStorage.getItem('user');
     this.user = JSON.parse(this.user);
+    this._packages=[];
     if(this.user==null){
       this.user=[];
       this.user.uid="";
@@ -939,11 +980,20 @@ this._api.getToken().subscribe(
     this._api.getToken().subscribe(
       token => {
        
-    this._api.POST('GetServices', {TokenNo: token,pincode: this.pincode,test_name:this.searchString,test_code:'',test_type:this.test_type,condition_id:this.condition_id,speciality_id:this.speciality_id,sort_by:this.sortBy,sort_order:this.sort_order,AlphaSearch:this.AlphaSearch,user_id:this.user.uid,is_home_collection:"",organ_id:this.organ_id}).subscribe(data =>{
+    this._api.POST('GetServices', {TokenNo: token,pincode: this.pincode,test_name:this.searchString,test_code:'',test_type:this.test_type,condition_id:this.condition_id,speciality_id:this.speciality_id,sort_by:this.sortBy,sort_order:this.sort_order,AlphaSearch:this.AlphaSearch,user_id:this.user.uid,is_home_collection:"",organ_id:this.organ_id,city_name:this._appComponent.getCityName()}).subscribe(data =>{
+
       if(data.status==1){
         this.testsList=JSON.parse(data.json).data;
+        this.getpackagecnf=false;
+        this.gettestcnf=false;
       }else{
         this.testsList=[];
+        this.gettestcnf=true;
+      }
+
+      if(this.testsList.length>0||this._packages.length>0){
+        this.getpackagecnf=false;
+        this.gettestcnf=false;
       }
 
      });
@@ -951,11 +1001,21 @@ this._api.getToken().subscribe(
       //Packages
       this._api.getToken().subscribe(
         token => {
-      this._api.POST('GetPackages',{TokenNo: token,"pincode":this.pincode,"package_name":this.searchString,"package_code":"","sort_by":"","sort_order":"","alphaSearch":"","type":""}).subscribe(data =>{
+      this._api.POST('GetPackages',{TokenNo: token,"pincode":this.pincode,"package_name":this.searchString,"package_code":"","sort_by":"","sort_order":"","alphaSearch":"","type":"",city_name:this._appComponent.getCityName()}).subscribe(data =>{
         if(data.status==1){
           this._packages=JSON.parse(data.json).data;
+          this.getpackagecnf=false;
+          this.gettestcnf=false;
         }else{
+
           this._packages=[];
+          this.getpackagecnf=true;
+        
+
+        }
+        if(this.testsList.length>0||this._packages.length>0){
+          this.getpackagecnf=false;
+          this.gettestcnf=false;
         }
         
        });
@@ -977,9 +1037,11 @@ this._api.getToken().subscribe(
      }else{
       this.showMore[type]="Show More";
       if(type=="cond"){
+        
         this.testConditions=this.testConditions1.slice(0,this.filterLength);
       }
       if(type=="speciality"){
+       
         this.testSpecialityList=this.testSpecialityList1.slice(0,this.filterLength);
       }
       if(type=="organs"){
@@ -990,7 +1052,7 @@ this._api.getToken().subscribe(
      
    }
    whatSelected(val){
-     console.log(val);
+    
       if(this.event==val){
         return true;
       }else{
@@ -998,20 +1060,29 @@ this._api.getToken().subscribe(
       }
    }
    setPagiUrl(page){
-     if(page>0){
-      window.location.href="./book/"+page;
-     }
+   
+       if(this.sortBy!==''){
+        //window.location.href="./book/"+this.event+'/'+page;
+        this.router.navigate(["./book/"+this.event+'/'+page]);
+       }else{
+         this.router.navigate(["./book/"+this.event+'/'+page]);
+       }
+       
+  
     
    }
    filter_masters(val){
     if(val=="Packages"){
       this.ptype="H";
+      window.location.href="./book/packages";
       this.getPackages();
     }else if(val=="Profiles"){
       this.ptype="P";
+      window.location.href="./book/profiles";
       this.getPackages();
     }
    }
+
    revStrings(data){
     data=data.replace("__,_","("); 
     data=data.replace("_,__",")"); 
@@ -1025,7 +1096,7 @@ this._api.getToken().subscribe(
      if(type=="organ"){
       
       thread.forEach(element => {
-        //console.log(element.organ_name);
+       
         if(needle.toLowerCase()==element.organ_name.toLowerCase()){
          k=element.test_organ_id;
         }
@@ -1045,26 +1116,36 @@ this._api.getToken().subscribe(
       });
      }
      return k;
-      
-    
-
    }
+
    urlParseSearch(typ){
+
      if(typ=="organ"){
       this.rou.params.subscribe(params => {
         this.organ_name=params.organ
         this.ser_string=this.organ_name;
         if(this.ser_string!==undefined||this.ser_string==''){
           this.ser_string=this.revStrings(this.ser_string);
-          let a={"target":{"id":0,"checked":false}};
+          let a={"target":{"id":0,"checked":false,"value":""}};
+         
           a.target.id=this.getIndex(this.organsList1,this.ser_string,"organ");
+         
           if(a.target.id>=0){
             a.target.checked=true;
-            //this.organ_id="";
+            a.target.value="on";
+         
             this.category_id="";
-            this.speciality_id="";
-            this.condition_id="";
-            this.search(a,"organ");
+            this.speciality_id="";  
+            this.condition_id=""; 
+         
+           
+           this.showmlflip('organs');
+           setTimeout(()=>{
+            this.oraganradiogroup.nativeElement.querySelectorAll('input')[a.target.id-1].click();
+          },2000);
+            
+        
+
           }
         }
         
@@ -1076,17 +1157,23 @@ this._api.getToken().subscribe(
         this.ser_string=this.organ_name;
         if(this.ser_string!==undefined||this.ser_string==''){
         this.ser_string=this.revStrings(this.ser_string);
-        let a={"target":{"id":0,"checked":false}};
+        let a={"target":{"id":0,"checked":false,"value":""}};
         a.target.id=this.getIndex(this.testConditions1,this.ser_string,"cond");
+       
         if(a.target.id>=0){
           a.target.checked=true;
-          this.showMoreLess(this.testConditions.length,'cond');
-          this.sel_rad['cond']=a.target.id;
+          a.target.value="on";
           this.organ_id="";
           this.category_id="";
-          this.speciality_id="";
-         // this.condition_id="";
-          this.search(a,"cond");
+          this.speciality_id="";  
+          
+
+         this.showmlflip('cond');
+         setTimeout(()=>{
+           
+          this.conditionradiogroup.nativeElement.querySelectorAll('input')[a.target.id-1].click();
+        },3000);
+          
         }
       }
       });
@@ -1097,20 +1184,27 @@ this._api.getToken().subscribe(
         this.ser_string=this.organ_name;
         if(this.ser_string!==undefined||this.ser_string==''){
         this.ser_string=this.revStrings(this.ser_string);
-        let a={"target":{"id":0,"checked":false}};
+        let a={"target":{"id":0,"checked":false,"value":""}};
         a.target.id=this.getIndex(this.testSpecialityList1,this.ser_string,"spl");
         if(a.target.id>=0){
           a.target.checked=true;
+          a.target.value="on";
           this.organ_id="";
           this.category_id="";
-         // this.speciality_id="";
-          this.condition_id="";
-          this.search(a,"spl");
+        
+          this.condition_id=""; 
+          this.showmlflip('speciality');
+          setTimeout(()=>{
+            
+           this.splradiogroup.nativeElement.querySelectorAll('input')[a.target.id-1].click();
+         },2000);
+          
         }
       }
       });
       
     }
+    
      
     
     
@@ -1119,5 +1213,21 @@ this._api.getToken().subscribe(
       
     
    }
+   showmlflip(val){
+
+    this.currentPg(false); //this is to disable the pagination
+    this.showMoreLess(3,val);
+  }
+  setMobileView(){
+    if(this.filtersec.nativeElement.classList.contains('hidden-xs')){
+      this.mobileview=false;
+    }else{
+      this.mobileview=true;
+    }
+  }
+  goToCart(){
+    this._appComponent.goToCart();
+  }
+  
 
 }

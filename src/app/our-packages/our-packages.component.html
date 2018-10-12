@@ -5,87 +5,54 @@
                   <h1 class="bigtitle">OUR PACKAGES </h1>
             </div>
         </div>
-        <!-- <div class="row" style="">
-            <div class="col-md-12 text-center">
-                <div class="form-group" style="margin: 30px 100px;">
-                    <div class="input-group search_input-group">
-                      <input #searchString type="text" class="form-control input-lg" placeholder="Search for your nearest tenet center, test or service." aria-describedby="basic-addon2"  [formControl]="searchTerm" (keyup.enter)="searchBasedOnString(searchTerm.value)" [(ngModel)]=filterKey>
-                       <label *ngIf="searchTerm.invalid" [ngClass] = "'error'"> SearchTerm required with min 3 characters. </label>
-                      <span class="input-group-addon" id="basic-addon2" style="background-color:#fff; border:0px;" (click)="searchBasedOnString(searchString.value)"> 
-                            <span><i class="far fa-circle" style="color:#f05b25; font-size: 30px;margin-top: -7px;"></i></span>
-                            <div style="font-size: 14px;margin-top: -22px; color:#f05b25"><i class="fas fa-search"></i></div>
-                              
-                      </span>
-                    </div>
-
-                    <div class="suggestions" *ngIf="searchResult.length > 0">
-                                <div *ngFor="let item of searchResult">
-                                    <div>
-                                        <a (click)="select(item.test_name)">{{item.test_name}}</a>
-                                    </div>
-                                </div>
-                    </div>
-                    <div class="suggestions" *ngIf="_packages1.length > 0">
-                        <div *ngFor="let item of _packages1">
-                            <div>
-                                <a (click)="select(item.package_name)">{{item.package_name}}</a>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-                </div>
-            </div>  
-        </div> -->
+        
         <div class="row" style="margin-top:30px;">
             <div class="col-md-12">
-                <!-- <ul class="nav nav-tabs brand_nav_tabs">
-                  <li class="active"><a data-toggle="tab" href="#home">PERSONAL</a></li>
-                  <li><a data-toggle="tab" href="#menu1">CORPORATE</a></li>
-                  
-                </ul> -->
-                <div class="tab-content" style="padding-top:30px;">
-                  <div id="home" class="tab-pane in active">
-                     <div class="row" >
+                    <div class="row" >
                             <div class="tenet-loader" *ngIf="loading['_packages']" ><img src="./assets/images/monogram.svg"  /></div> 
-                        <div class="col-md-6 package_detail_container" *ngFor="let pckg of _packages">
-                            <h3 class="titles">{{pckg.package_name}}</h3>
+                        <div class="col-md-12 package_detail_container" *ngFor="let pckg of _packages">
                             <div class="information row">
-                                <div class="col-xs-6 package_price">
-                                    <h4><i class="fa fa-rupee"></i> {{pckg.package_finalpr}}</h4>
+                                <div class="col-md-9  col-xs-8 ">
+                                        <h3 class="titles">{{pckg.package_name}}</h3>
+                                        <h4><i class="fa fa-rupee"></i> {{pckg.package_finalpr}}</h4>
+                                        <h5>Parameters Covered: {{pckg.parameter_count}}</h5>
                                 </div>
-                                <div class="col-xs-6 text-right">
-                                        <div style="  width:70px;    padding-left: 7px; margin:0 auto">
+                                <div class="col-md-3 col-xs-4 text-center" style="padding-top:20px;">
+                                        <div style="  width:100px;    padding-left: 7px; margin:0 auto">
                                                 <div class="input-group" style="    border:  0;">
-                                                  <span *ngIf="getTestQuant(pckg.id)>1" class="input-group-addon" style="padding: 0; border:  0; background-color:transparent;  padding-right: 5px; " (click)="testQuantMinus(pckg.id)">                                  - 
+                                                  <span  class="input-group-addon" style="padding: 0; border:  0; background-color:transparent;  padding-right: 5px; " (click)="testQuantMinus(pckg.id)">- 
                                                   </span>
-                                                  <input type="text" class="form-control theme" value="{{getTestQuant(pckg.id)}}" style="    width: 40px;  padding:  0;    text-align:  center;    font-size:  13px;    height:  30px;" readonly="true">
+                                                  <input type="text" class="form-control theme" value="{{getTestQuant(pckg.id)}}" style="    width: 65px;  padding:  0;    text-align:  center;    font-size:  13px;    height:  30px;" readonly="true">
                                                   <span class="input-group-addon" style="   padding: 0; padding-left: 5px;   border: 0;    background-color: transparent;" (click)="testQuantPlus(pckg.id)">                                  +
                                                   </span>
                                                   </div>
                                               </div>
                                    <button *ngIf="!isadded(pckg.id)" class="btn btn-brand btn-sm" (click)="addPackageCart(pckg)" style="background-color: transparent;border: 0;color: #f05b25; box-shadow: none;"><img style="width: 23px; margin-top: -5px;display: inline-block;" src="./assets/images/iconimages/carticon.png"/> ADD TO CART</button>
-                                   <button *ngIf="isadded(pckg.id)" class="btn btn-brand btn-sm brand-text" style="background-color: #f05b25;border: 0;color: #fff; box-shadow: none;"><img style="width: 23px; margin-top: -5px;display: inline-block;" src="./assets/images/iconimages/carticon.png"/> ADDED</button>
+                                  
+                                   <button class="btn btn-brand btn-sm added" *ngIf="isadded(pckg.id)" (click)="goToCart()"><img style="    width: 23px;    margin-top: -5px;    display: inline-block;" src="./assets/images/iconimages/carticon.png"/> Go To Cart</button>
                                    
+                                </div>
+                            </div>
+                            
+                            <div class="information row">
+                                <div class="col-xs-6 package_price">
+                                   
+                                </div>
+                                <div class="col-xs-6 text-right">
+                                        
 
                                 </div>
                             </div>
                            <div class="detail_info bg_light_gray" >
                                 <div class="row">
                                     <div class="col-sm-6">
-                                        <!-- <p class="sub_heading">{{pckg.package_name}}</p> -->
+                                        
                                         <ul class="list-ul-default" >
                                              <li *ngFor="let mem of packageServicesList[pckg.id]">
-                                                {{mem.test_name}}
-                                                <!-- <ul >
-                                                      <li>{{mem.test_name}}</li>
-                                                </ul> -->
-
+                                                <a href="./test-details/{{getNameWOS(mem.test_name)}}">{{mem.test_name}}</a>
+                                               
                                              </li>
-                                            <!-- <li>{{package.package_name}}</li>
-                                            <li>{{mem.package_name}}</li> -->
-                                           
+                                            
                                         </ul>
                                     </div>
                                 </div>
@@ -93,46 +60,8 @@
                         </div>
 
                      </div>
-                  
-                  
-                  </div>
-                  <div id="menu1" class="tab-pane">
-                      
-                      <div class="col-md-6">
-                            <div><p>{{msg}}</p></div> 
-                            <form #contactus="ngForm" (ngSubmit)="contactusSubmit(contactus.value); contactus.resetForm()">
-                                <div class="form-group">
-                                    <input class="form-control theme ng-valid required" ngModel placeholder="Name" name="username" />
-                                </div>
-                                <div class="form-group">
-                                    <input class="form-control theme" ngModel placeholder="Contact No"  name="monileno"/>
-                                </div>
-                                <div class="form-group">
-                                    <input class="form-control theme ng-valid required" ngModel placeholder="Email"  name="email"/>
-                                </div>
-                                
-                                <!-- <div class="form-group">
-                                    <select class="form-control theme" ngModel  name="purpose">
-                                        <option value="1" selected="true">Call Back</option>
-                                        <option value="2">Feedback</option>
-                                        <option value="3">Complaint</option>
-                                    </select>
-                                </div> -->
-                                <div class="form-group">
-                                    <textarea class="form-control theme" ngModel placeholder="Your Message"  name="message"></textarea>
-                                </div>
-                                <div class="form-group text-right">
-                                    <button class="btn btn-brand" type="submit">SUBMIT</button>
-                                </div>
-                            </form>
-                        </div>
-                  </div>
-                </div>
+               
             </div>
-        </div>
-        
-        
-         
-          
+        </div>  
      </div>
 </div>

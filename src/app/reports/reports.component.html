@@ -1,0 +1,80 @@
+<div class="content">
+    <div class="container">
+            <div class="tenet-loader" *ngIf="loading['graph']" ><img src="./assets/images/monogram.svg"  /></div> 
+        <div class="row" style="margin-top:15px;">
+            <div *ngIf="billDetails.length>0" class="col-md-6">
+                    <div  class="form-group"  style="text-align: center">
+                            <label>Select Test</label>
+                            <select  class="form-control theme" name="test" (change)="getParameters($event,billDetails[0].order_no)" >
+                                    <option >Select Test</option>  
+                                <option *ngFor="let test of billDetails"  value="{{test.tid}}" [selected]="test.tid==dt[1]">{{test.test_name}}</option>  
+                              
+                            </select>
+                          </div>
+            </div>
+            <div *ngIf="components?.length>0" class="col-md-6">
+                    <div  class="form-group"  style="text-align: center">
+                            <label>Select Component</label>
+                            <select  class="form-control theme" name="cmp" (change)="middlegraph($event)">
+                                    <option >Select Component</option>  
+                            <option *ngFor="let cmp of components"  value="{{cmp.COMPONENT_ID}}"  [selected]="cmp.COMPONENT_ID==dt[0]">{{cmp.COMPONENT_NAME}}</option>  
+                              
+                            </select>
+                          </div>
+            </div>
+        </div>
+      <div class="col-md-6" style="padding: 0">
+          <div id="chartdiv"></div>
+      </div>
+      <div class="col-md-6" style="padding-top: 30px;">
+            <div class="row">
+                    <div class="col-md-12">
+                            <ul class="list-group" style="margin-top:20px;">
+                                <li class="list-group-item">
+                                    <h6 > BILL :  {{billDetails[0].order_no}}</h6> 
+                                </li>
+                                <li class="list-group-item">
+                                    <h6 > Customer Name :  {{billDetails[0].patient_name}}</h6> 
+                                </li>
+                                <li class="list-group-item">
+                                    <h6 > Age :  {{billDetails[0].patient_age}}</h6> 
+                                </li>
+
+                            </ul>
+                    </div>
+            </div>
+        <div class="row">
+            <div class="col-md-12">
+              <ul class="list-group" style="margin-top:5px;">
+                  <li class="list-group-item">
+                      <h5 ><span class="colorbox-icon pull-left green"></span> Normal Range  {{minv1}}{{units}} - {{maxv1}}{{units}}</h5> 
+                  </li>
+                <li class="list-group-item">
+                    <h5 ><span class="colorbox-icon pull-left red"></span> High Above {{maxv1}}{{units}}</h5> 
+                </li>
+                <li class="list-group-item">
+                    <h5 ><span class="colorbox-icon pull-left orange"></span>Low Below {{minv1}}{{units}}</h5> 
+                </li>
+                
+              </ul>
+            </div>
+            <div class="col-md-12">
+              <h4 style="color: #f15b28;font-weight:700">Tenet Advice</h4>
+              <!-- <div *ngIf="tmp.length==1" id="typed-strings">
+                  <p>Watch this section for a ^500 <b>'GOOD TO KNOW'</b> advice from ^1000 Tenet.<br>We recommend that you perform your tests on ^1000 regular intervals to check this advice.</p>
+                  <p>For now ^1000 you have only done it once. Watch this section when you do it next to see our advice.</p>
+              </div> -->
+              <div  id="typed-strings">
+                <p>Watch this section for a ^500 <b>'GOOD TO KNOW'</b> advice from ^1000 Tenet.<br>We recommend that you perform your tests on ^1000 regular intervals to check this advice.</p>
+              </div>
+              <span id="typed"></span>
+              
+            </div>
+            <div class="col-md-12">
+                <span><a href="javascipt:void(0)" (click)="addTestToCart()">click here</a> to add this test again</span>
+            </div>
+        </div>
+          
+      </div>
+     </div>
+</div>

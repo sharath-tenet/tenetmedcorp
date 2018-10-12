@@ -36,17 +36,13 @@ temp:any=[];
 	    let flag:number = 1;
 	    this.user = localStorage.getItem("user");
         this.user = JSON.parse(this.user);
-      console.log("uid=",this.user.uid,flag);
+   
       this._api.getToken().subscribe( 
         token => { 
 	     this._api.POST('GetTestWishList', {"TokenNo":token,"uid":this.user.uid,"flag":flag}).subscribe(data =>{
 	        this.wishList = JSON.parse(data.json).data;
-	        console.log(this.wishList);
-	        /*this.wishList.forEach(element => {
-              this.wishList.push(element);  
-              });
-	        localStorage.setItem('wishlist',JSON.stringify(this.wishList));*/
-
+	        
+	       
          });
         });
 	  }
@@ -57,7 +53,7 @@ temp:any=[];
 
      getAddTestCart2(tests:any){
       this._bookComponent.getAddTestCart(tests,'test','');
-     // this.route.navigate(['./book']);
+    
     }
 
    deleteWishlistItem(uid:number,tid:number){
@@ -69,7 +65,7 @@ temp:any=[];
               token => { 
             this._api.POST('AddtoWishList', {"TokenNo":token,"uid":uid,"test_id":tid,"loc_id":loc_id,"status":this.status,"is_wishlist":is_wishlist}).subscribe(data =>{
             this.wishList = JSON.parse(data.json).data;
-                //console.log("res=",this.wishList);
+                
              });
             });
    }

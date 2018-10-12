@@ -9,13 +9,7 @@
       <div table="col-md-6">
           <button  class="btn btn-brand" style="float: right;" (click)="AW()">ADD AMOUNT</button>
         <strong>Your Wallet Balance is :  Rs.{{wa.wallet_amount}}</strong>
-       <!--  <table class="table">
-            <tr>
-            <td><h5>Your Wallet Balance is :</h5></td>
-          <td><b>Rs.{{ wa.wallet_amount}}</b></td>
-         </tr> 
-         <tr></tr>
-     </table> -->
+      
       <div *ngIf="addW" class="modal-dialog" role="document">
             <div class="modal-content">
               <form  #af="ngForm" novalidate (ngSubmit)="addAmount(af.value)">
@@ -28,8 +22,6 @@
 
                 <div class="form-group"><label class="control-label">Name :</label><input class="theme form-control" type="text" name="amount" placeholder="Amount" ngModel #amount="ngModel"/></div>
 
-                <!--  <div class="form-group"><label class="control-label">type :</label><input class="theme form-control" type="text" name="amount" placeholder="Amount" ngModel #amount="ngModel"/></div> -->
-               
                 <strong  class="form-text text-success" *ngIf="tmp">Amount added successfully</strong>
 
               </div>

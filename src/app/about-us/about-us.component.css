@@ -25,3 +25,8 @@
 .search_ul li a:hover{
 text-decoration:none;
 }
+
+.search_ul li:hover{
+color:#f05b25;
+background-color:#eee;
+}

@@ -7,11 +7,8 @@ import {NgForm, FormControl,Validators} from '@angular/forms';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/map';
 import { BookComponent } from "../book/book.component";
-
-//import { WindowService } from '../common/window.service';
-//import * as firebase from 'angularfire2';
-//import { AngularFireAuth } from 'angularfire2/auth';
-//import {RecaptchaVerifier} from '@firebase/auth-types';
+import {NotificationsService} from 'angular4-notify';
+import { GoogleAnalyticsEventsService } from "../common/google-analytics-events.service";
 
 declare var swal: any;
 @Component({
@@ -30,8 +27,13 @@ export class HomeComponent implements OnInit {
 
     @ViewChild('someVar') inputEl:ElementRef;
     @ViewChild('save1') save1:ElementRef;
-    public uid:number;
+     @ViewChild('searchString') searchString1:ElementRef;
+     @ViewChild('repsea1') repsea1:ElementRef;
+     @ViewChild('repsea2') repsea2:ElementRef;
+     
 
+    public uid:number;
+    ser_string:any;
   ptype: string="H";
   _packages1: any[];
   temp2: any[];
@@ -41,7 +43,7 @@ export class HomeComponent implements OnInit {
   getpackagecnf: boolean;
 
   searchTerm : FormControl = new FormControl('', [Validators.required, Validators.minLength(3)]);
-  searchResult = [];
+  searchResult:any = [];
   _packages:any=[];
   public filterKey:any;
 
@@ -53,11 +55,12 @@ export class HomeComponent implements OnInit {
   geolocationPosition :object;
   testList: any;
   public _appComponent:any;
-  //_api: any;
+  
   latitude:any;
   longitude:any;
   queryString:any;
-  images:string[]=["sliders/slider_image.png","sliders/slider_image.png","sliders/slider_image.png","sliders/slider_image.png","sliders/slider_image.png","sliders/slider_image.png"]
+  ban_path="sliders";
+  images:string[]=[this.ban_path+"/10.jpg",this.ban_path+"/11.jpg",this.ban_path+"/9.jpg",this.ban_path+"/1.jpg",this.ban_path+"/2.jpg",this.ban_path+"/3.jpg",this.ban_path+"/4.jpg",this.ban_path+"/5.jpg",this.ban_path+"/6.jpg",this.ban_path+"/7.jpg",this.ban_path+"/8.jpg"]
   images1:string[]=["iconimages/homepage_presn_slider/1.png"];
   top_tests:string[]=["Complete Blood Picture (CBP), EDTA Whole Blood","Lipid Profile, Serum","Liver Function Test (LFT), Serum","Thyroid Antibodies (TG & TPO), Serum","Thyroid Profile (T3,T4,TSH), Serum","1, 25-Dihydroxy Vitamin D, Serum","25 - Hydroxy Vitamin D, Serum","Urea, Serum","Creatinine, Serum","Triple Marker, Serum","Magnesium, Serum"
                       ,"Complete Urine Examination (CUE), Spot Urine","Glucose Fasting (FBS),  Sodium Flouride Plasma","Glycosylated Hemoglobin (HbA1C), EDTA Whole Blood","Uric Acid, Serum","Thyroglobulin (Tg), Serum","Blood Urea Nitrogen (BUN), Serum","Prolactin, Serum","Prothrombin Time With INR, Sodium Citrate Whole Blood","HIV 1 & 2 Antibodies, Serum","Culture And Sensitivity (Aerobic), Urine"];
@@ -66,7 +69,6 @@ export class HomeComponent implements OnInit {
   _pckg:any=[];
   tmp:any=[];
   tokenSet:boolean=false;
-
   sotp:boolean=false;
   fotp:boolean =false
   phneNo:any;
@@ -74,14 +76,31 @@ export class HomeComponent implements OnInit {
   otps:boolean = false;
   msg:boolean=false;
   mobilenoExists:boolean=false;
+  testrimonial:boolean=false; //this is to hide and show static testrimonials
 
-
-   constructor(private _api:ApiService,private router :Router,_appComponent :AppComponent) { 
-      // console.log("Get Banners here!");
-       //this._api=_api;
+  //for search functionality
+ private condition_id:any;
+ private speciality_id:any;
+ private category_id:any;
+ private searchString:string;
+ private sortBy:any; //1-name,2-price,3-popularity 
+ private test_type:any; //1-filter,2-package
+ private pincode:number=0;
+ private sort_order:any=1; //1-ASC,2-DESC,Default Asending 
+ private alphaSearch="";
+ organ_id: any=null;
+   constructor(private _api:ApiService,private router :Router,public gaes:GoogleAnalyticsEventsService,_appComponent :AppComponent,private el: ElementRef) { 
+   
        this._appComponent=_appComponent;
         this.tokenSet=this._appComponent.isLoggedIn;
-       
+       if(this._appComponent.isMobile()){
+         this.ban_path="sliders/mobile";
+         let tempbans=[];
+         this.images.forEach(element => {
+           tempbans.push(element.replace("sliders", this.ban_path));
+         });
+         this.images=tempbans;
+       }
         this.queryString;
         
         this.searchTerm.valueChanges
@@ -94,11 +113,13 @@ export class HomeComponent implements OnInit {
         }
        
         if(term.length >=3){
-          this._api.getToken().subscribe( 
+      
+     /*     this._api.getToken().subscribe( 
             token => { 
-        this._api.POST('GetServices', {TokenNo: token,pincode:'' ,test_name:data,test_code:'',test_type:'',condition_id:'',speciality_id:'',sort_by:'',sort_order:'',AlphaSearch:'',user_id:'',is_home_collection:"",organ_id:""}).subscribe(data =>{
+        this._api.POST('GetServices',{TokenNo: token,"pincode":"","test_name":data,"test_code":"","test_type":"","condition_id":"","speciality_id":"","sort_by":"","sort_order":"","alphaSearch":"","user_id":"","is_home_collection":"","organ_id":"","city_name":this._appComponent.getCityName()}).subscribe(data =>{
                         if(data.status==1){
-                          this.searchResult=JSON.parse(data.json).data;
+                          this.searchResult=(JSON.parse(data.json).data);
+                          console.log('searchResult',this.searchResult);
                         }else{
                           this.searchResult=[];
                         }
@@ -108,11 +129,40 @@ export class HomeComponent implements OnInit {
                     
      this._api.getToken().subscribe( 
                         token => { 
-         this._api.POST('GetPackages',{TokenNo: token,"pincode":"","package_name":data,"package_code":"","sort_by":"","sort_order":"","alphaSearch":"","type":"H"}).subscribe(data =>{
+         this._api.POST('GetPackages',{TokenNo: token,"pincode":"","package_name":data,"package_code":"","sort_by":"","sort_order":"","alphaSearch":"","type":"H",city_name:this._appComponent.getCityName()}).subscribe(data =>{
                   if(data.status==1){
-
                     this._packagesSearchResult=JSON.parse(data.json).data;
-                    //this.testsList=[];
+                  }else{
+                    this._packagesSearchResult=[];
+                  }
+                  this.mpckgshow=true;
+               });
+              });*/
+    this.sortBy="";
+    this.speciality_id="";
+    this.condition_id="";
+    this.organ_id="";
+    this.test_type="";
+    this.alphaSearch="";    
+    this._api.getToken().subscribe(
+      token => {
+       
+    this._api.POST('GetServices', {TokenNo: token,pincode: this.pincode,test_name:data,test_code:'',test_type:this.test_type,condition_id:this.condition_id,speciality_id:this.speciality_id,sort_by:this.sortBy,sort_order:this.sort_order,alphaSearch:this.alphaSearch,user_id:'',is_home_collection:"",organ_id:this.organ_id,city_name:this._appComponent.getCityName()}).subscribe(data =>{
+
+      if(data.status==1){
+     this.searchResult=(JSON.parse(data.json).data);
+      }else{
+       this.searchResult=[];
+      }
+
+     });
+    });
+
+                 this._api.getToken().subscribe( 
+                        token => { 
+         this._api.POST('GetPackages',{TokenNo: token,"pincode":"","package_name":data,"package_code":"","sort_by":"","sort_order":"","alphaSearch":"","type":"H",city_name:this._appComponent.getCityName()}).subscribe(data =>{
+                  if(data.status==1){
+                    this._packagesSearchResult=JSON.parse(data.json).data;
                   }else{
                     this._packagesSearchResult=[];
                   }
@@ -129,14 +179,7 @@ export class HomeComponent implements OnInit {
     window.navigator.geolocation.getCurrentPosition(
         position => {
           this.geolocationPosition = position;
-         // this.latitude= position.coords.latitude;
-         // this.longitude= position.coords.longitude;
-         
-         this._appComponent.getPostalCode(this.parselatlang());
-        //console.log(position);
-        //localStorage.setItem('lat', this.latitude);
-        //localStorage.setItem('long', this.longitude);
-          //console.log("gp",this.geolocationPosition);      
+         this._appComponent.getPostalCode(this.parselatlang());    
         },
         error => {
             switch (error.code) {
@@ -155,18 +198,10 @@ export class HomeComponent implements OnInit {
 };
  }
   ngOnInit() {
-    // this.message = this._stateService.getMessage();
-    this.getlocation();
-    // console.log(this.geolocationPosition);
-    //get address by lat lang
-    
+   //this.getlocation();
     localStorage.setItem('showCart',"false");
     this.getPackages();
     window.scrollTo(0, 0);
-    // this.windowRef = this.win.windowRef
-    // this.windowRef.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container');
-    // this.windowRef.recaptchaVerifier.render()
-    
   }
   parselatlang(){
    let a= this.getCordinates();
@@ -176,6 +211,13 @@ export class HomeComponent implements OnInit {
    return res;
   }
 
+   getOTP(frm,vald){
+    this._appComponent.checkRepo=true;
+    this.gaes.emitEvent("click", "get_reports", "button", 1);
+   this._appComponent.toLogin();
+  }
+ 
+
    autoTab(event:any){
       if ( event.target.value.length >= event.target.maxLength && event.target.nextElementSibling ) 
        event.target.nextElementSibling.focus(); 
@@ -184,7 +226,7 @@ export class HomeComponent implements OnInit {
 
   reset(form:NgForm){
     form.resetForm();
-    //this.fotp=false; 
+    
   }
     reset1(form:NgForm){
     form.resetForm();
@@ -193,25 +235,58 @@ export class HomeComponent implements OnInit {
     
   }
 
-
+ goToCart(){
+    this._appComponent.goToCart();
+  }
 
   getCordinates(){
       return this.geolocationPosition;
   }
   getBookAnAppointment(){
-   
-     this.router.navigate(['./book']);
+     
+     this.router.navigate(['./book/tests']);
   }
-  searchBasedOnString(str:any){
+  abspath(href) {
+    var link = document.createElement("a");
+    link.href = href;
+    return link.href;
+}
+  bannerHandling(img){
+    let kimg=img;
+    if(this.ban_path+'/6.jpg'===img){
+      this.getRepStatus();
+    }else{
+      img="./assets/images/"+img;
+      
+      img=this.abspath(img);
+      this.gaes.emitEvent("click", "banner", img, 1);
+      if(this.ban_path+'/11.jpg'===kimg){
+        this.redir("profile-details/Hypertension_Profile");
+      }else{
+        this.getBookAnAppointment();
+      }
+      
+    }
+  }
+  getBookAnAppointmentslip(){
+    this.gaes.emitEvent("click", "book_a_test", "button", 1);
+    this.getBookAnAppointment();
+  }
 
+   searchBasedOnString(str:any){
+    
      if(str != undefined){
-        this.router.navigate(['./book', {searchString:str}]);
+        this.router.navigate(['./book/tests', {searchString:str}]);
       }else{
         return false;
       }
     
   }
   movescaro(obj:any,dir:any){
+    
+    if(obj.carouselClasses[3]=="packcaro"){
+      this.gaes.emitEvent("click", "package_move", dir, 1);
+    }
      if(dir=="left"){
         obj.previous();
      }else if(dir=="right"){
@@ -225,8 +300,7 @@ export class HomeComponent implements OnInit {
 
   eventHandler(event) {
   
- //console.log(event, event.keyCode, event.keyIdentifier);
-   console.log(event.key);
+
    }
    getPackages(){
     this.mpckgshow=false;
@@ -234,7 +308,7 @@ export class HomeComponent implements OnInit {
      this._packages=[];
     this._api.getToken().subscribe(
       token => {
-     this._api.POST('GetPackages',{TokenNo: token,"pincode":"","package_name":"","package_code":"","sort_by":"","sort_order":"","alphaSearch":"","type":"H"}).subscribe(data =>{
+     this._api.POST('GetPackages',{TokenNo: token,"pincode":"","package_name":"","package_code":"","sort_by":"","sort_order":"","alphaSearch":"","type":"H",city_name:this._appComponent.getCityName()}).subscribe(data =>{
       if(data.status==1){
         let p=JSON.parse(data.json).data;
         p.forEach(element => {
@@ -242,7 +316,7 @@ export class HomeComponent implements OnInit {
             this._packages.push(element);
           }
         });
-        //this.testsList=[];
+      
         this.loading['packages']=false;
   
       }else{
@@ -250,7 +324,7 @@ export class HomeComponent implements OnInit {
         this._packages=[];
         this.loading['packages']=false;
       }
-      //console.log(this._packages);
+      
       return this._packages;
     
      });
@@ -259,6 +333,7 @@ export class HomeComponent implements OnInit {
 
    //add pckg cart from here
    getAddPackageCart(pckg:any){
+    this.gaes.emitEvent("click", "home_package_add_to_cart", pckg.package_name, 1);
    this._pckg=[];
    let pshare = JSON.parse(localStorage.getItem('packages')); 
     if(pshare){
@@ -267,7 +342,7 @@ export class HomeComponent implements OnInit {
         this.tmp.forEach(element => {
                   this._pckg.push(element);  
               });
-    //console.log('indexOfpckgs',this.IndexOf(pckg));
+
        if(this.IndexOf(pckg) < 0){
            pckg.quant=1;
         this._pckg.push(pckg);
@@ -275,7 +350,6 @@ export class HomeComponent implements OnInit {
         let i=this.IndexOf(pckg);
         let t=this._pckg[i].quant;
         t=t+1;
-       
         this._pckg[i].quant=t;
        }
     }else{
@@ -284,6 +358,7 @@ export class HomeComponent implements OnInit {
       this._pckg.push(pckg);
     }
     localStorage.setItem('packages',JSON.stringify(this._pckg));
+    this._appComponent.getNotify(pckg.package_name+" has been added to your cart.");
     this._appComponent.setCart();
 
   }
@@ -305,17 +380,13 @@ export class HomeComponent implements OnInit {
     if(this.IndexOf(pckg)>=0){
       b=this._pckg[this.IndexOf(pckg)].quant;
     }
-    //console.log('b=',b);
+  
     return b;
    }
 
     IndexOf(p){
         for (var i = 0; i < this._pckg.length; i++) {
-         /* let a=JSON.stringify(this._pckg[i]);
-          let b=JSON.stringify(p);
-            if (a===b) {
-                return i;
-            }*/
+        
 
             let a=this._pckg[i];
             let b=p;
@@ -335,7 +406,7 @@ export class HomeComponent implements OnInit {
       
     }
     loginSubmit(form: NgForm,isValid: boolean){
-      //console.log(form.value, isValid);
+      
     
       let data={
           "TokenNo":"",  
@@ -343,19 +414,7 @@ export class HomeComponent implements OnInit {
           "password":form.value.password1
           };
        
-        /*  if(rm==true){
-           var date = new Date();
-           var midnight = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
-           //Cookies.set('visits', number, { expires: midnight });
-    
-            this._cookieService.put(newLocal, username, {expires:midnight});
-    
-            this._cookieService.put('PASSWORD', password, {expires:midnight});
-    
-            this._cookieService.put('RM', "true", {expires:midnight});
-          }else{
-            this._cookieService.removeAll();
-          }*/
+        
           if(isValid){
             this._api.getToken().subscribe( 
             token => {
@@ -366,19 +425,17 @@ export class HomeComponent implements OnInit {
                       swal("<small>Invalid Authentication.</small>");
                       form.resetForm(); 
                     }else{
-                        //console.log('res',res);
+                       
                         if(res[0].user_token != null){
                           localStorage.setItem('token',res[0].user_token);
                           localStorage.setItem('user',JSON.stringify(res[0]));
-                          //get temp cart data
-                         // this.getCartData();
-                          //this.redir('order-history');
+                        
                          this.router.navigate(['./account/order-history']);
-                                console.log("logged in successfully");
-                                //swal("<small>Logged in successfully</small>");
+                               
+                                
                         }else{
-                          console.log("invalid authentication");
-                          //swal("<small>Invalid Authentication.</small>");
+                        
+                          
                           form.resetForm(); 
                         }
                     }
@@ -389,7 +446,7 @@ export class HomeComponent implements OnInit {
             })
     
           }else{
-              console.log("");
+              
           }
     
       }
@@ -397,9 +454,9 @@ export class HomeComponent implements OnInit {
         window.location.href="./"+val;
       }
       isadded(tid:number):boolean{
-      //  console.log(tid);
+     
         let stest= JSON.parse(localStorage.getItem('tests')); 
-       //console.log(stest);
+      
         let a=false;
         if(stest){
           stest.forEach(element => {
@@ -430,8 +487,7 @@ export class HomeComponent implements OnInit {
       return a;
     }
     addPackageCart(pckg:any){
-      // this.bookComponent.getAddPackageCart(pckg);
-     /*this.router.navigate(['./book', {searchString:str}]);*/
+     
      this.getAddTestCart(pckg,"pckg");
     }
     myIndexOf(o) {
@@ -450,10 +506,7 @@ export class HomeComponent implements OnInit {
       }
     getAddTestCart(test:any,attrib:any,event:any=''){
       
-    // console.log(event.target.classList.add('added'));
-     //localStorage.setItem('btncls',event.target.classList.add('added'));
-     //event.target.textContent = "ADDED";
-      //console.log(test);
+   
       if(attrib=='pckg'){
          let test1 = test;
          test = {};
@@ -491,59 +544,45 @@ export class HomeComponent implements OnInit {
           test.quant=1;
           this._tempTest.push(test);
         }
-        //console.log(this._tempTest);
-        localStorage.setItem('tests',JSON.stringify(this._tempTest));
-        this._appComponent.setCart();
       
+        localStorage.setItem('tests',JSON.stringify(this._tempTest));
+        this._appComponent.getNotify(test.test_name+" has been added to your cart.");
+        this._appComponent.setCart();
     }
-    select(item,type:any){
-      this.filterKey = new String(item);
-      this.searchResult = [];
-       //this._packagesSearchResult=[];
-       this._packages1=[];
-      if(type=="test"){
-        var re=/ /gi;
-        
-        this.filterKey=this.filterKey.replace(re,"_"); 
-        this.filterKey=this.filterKey.replace("(","__,_"); 
-        this.filterKey=this.filterKey.replace(")","_,__"); 
-       window.location.href="./test-details/"+this.filterKey;
-      }else if(type="package"){
-        var re=/ /gi;
-        
-        this.filterKey=this.filterKey.replace(re,"_"); 
-        this.filterKey=this.filterKey.replace("(","__,_"); 
-        this.filterKey=this.filterKey.replace(")","_,__"); 
-        let base_url="";
-       if( this.ptype=="H"){
-        base_url="package-details";
-       }else if(this.ptype=="P"){
-        base_url="profile-details";
-       }
-       window.location.href="./"+base_url+"/"+this.filterKey; 
+    //SELCTION ITEM METHOD.
+   select(item,type:any){
+    this.filterKey = new String(item);
+   
 
-      }
-     // this.filteredItems = [];
-  }
-    /*package add,quant by sharath end*/
+    var re=/ /gi;
+    let fk;
+    fk=this.filterKey.replace(re,"_"); 
+    fk=fk.replace("(","__,_"); 
+    fk=fk.replace(")","_,__"); 
+    //this.searchResult = [];
+    // this._packages=[];
+    if(type=="test"){
+      window.location.href="./test-details/"+fk;
+    }else if(type="package"){
+      this.gaes.emitEvent("click", "home_package_click", fk, 1);
+      window.location.href="./package-details/"+fk;
+    }
+  
+}
  
 
  getForgotPassword(form: NgForm,isValid: boolean){
-  console.log('formValues',form.value);
-console.log(isValid);
+
 if(isValid){
-
-
     this._api.getToken().subscribe( 
       token => {
           let data ={
             'TokenNo':token,
             'mobile':form.value.Mobile
           }
-
           this._api.POST('GetForgotPassword', data).subscribe(data =>{
              let response=(JSON.parse(data.json).data);
-                 console.log("response",response);
+                
                  if(response == undefined){
                       form.resetForm();
                       this.fotp = true;
@@ -555,7 +594,7 @@ if(isValid){
                         form.resetForm();
                         this.phneNo = response[0].mobile;
                         this.forget_password_modal.nativeElement.click();
-                        //swal("<small>OTP sent successfully</small>");
+                       
                         this.uid = response[0].uid;
 
                       this.otpM.nativeElement.setAttribute("data-target", "#otp_modal1");
@@ -563,8 +602,7 @@ if(isValid){
                       this.otpM.nativeElement.click();
                        this.sotp = false;
                     }else{
-                     //window.alert("failed to send OTP");
-                     //swal("<small>Failed to send OTP</small>");
+                     
                      this.fotp = true;
                      form.resetForm();
                     }
@@ -580,7 +618,7 @@ if(isValid){
   }
 
   resendOTP(mobile:number){
-    alert(mobile);
+    
 
     this._api.getToken().subscribe( 
       token => {
@@ -591,7 +629,7 @@ if(isValid){
 
           this._api.POST('GetForgotPassword', data).subscribe(data =>{
              let response=(JSON.parse(data.json).data);
-                 console.log("resendResp",response);
+                
 
                  if(response == undefined){
                       //form.resetForm();
@@ -627,13 +665,13 @@ if(isValid){
                             "user_id":uid,
                             "password":form.value.pwd1,
                               }
-                           console.log('data',data);
+                          
                         
                            this._api.POST('UpdatePasswordByOTP', data).subscribe(data =>{
                             let resp =(JSON.parse(data.json).data);
-                            console.log("resp",resp);
+                            
                             if(resp==undefined){
-                              //swal("<small>Invalid OTP entered</small>");
+                              
                            
                               this.ivotp =true;
                               this.msg = false;
@@ -646,7 +684,7 @@ if(isValid){
                               form.resetForm();
                               this.otp_modal1.nativeElement.click();
 
-                             // this.router.navigate(['./account']);
+                             
                             }
 
                            })
@@ -656,9 +694,27 @@ if(isValid){
           } 
 
         }
-          // console.log('bool',isValid);
-           //console.log('upbotp',data);
+          
  }
+ getSerBarPos(){
+
+  const scrollPosition = window.pageYOffset
+  if(scrollPosition>100){
+return false;
+  }else{
+    return true;
+  }
+   
+ }
+
+ getRepStatus(){
+   if(this.tokenSet){
+    this.repsea1.nativeElement.click();
+   }else{
+    this.repsea2.nativeElement.click();
+   }
+ }
+
 
   
 }

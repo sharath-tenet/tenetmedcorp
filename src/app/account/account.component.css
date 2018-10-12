@@ -18,3 +18,12 @@
 	color:#f05b25;
 	text-decoration:none;
 }
+
+.profile_table>tbody{
+	vertical-align: top !important;
+}
+.ohrowhead h5{
+font-weight: 700;
+
+}
+	

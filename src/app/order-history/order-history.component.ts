@@ -43,7 +43,7 @@ export class OrderHistoryComponent implements OnInit {
         token => {
       this._api.POST('GetFinalizedOrderHistory', {TokenNo: token,'patientid':this.user.uid,'mobileno':''}).subscribe(data =>{
         this.myFinalizedOrders=JSON.parse(data.json).data;
-        console.log(this.myFinalizedOrders);
+        
        if(this.myFinalizedOrders==undefined){
          this.myFinalizedOrders=[];
         this.loading['getBills']=false;   
@@ -64,12 +64,9 @@ export class OrderHistoryComponent implements OnInit {
         // i++;
       });
       retArray=retArray.sort();
-      console.log(retArray);
       return retArray;
     }
   getBillDetails(bill_no){
-    //// 
-   // console.log(bill_no);
    this.loading['billDetails']=true;
     this.billDetails=[];
     this._api.getToken().subscribe( 
@@ -105,16 +102,13 @@ export class OrderHistoryComponent implements OnInit {
     //  this.addCancelAmountTowallet(this.tbill_no);
     //     });
     // }
- 
-  
+
   }
   addCancelAmountTowallet(tbill_no){
     //update wallet here
-
     this.getBillDetails(tbill_no);
   }
   addMore(bill_no){
-    // console.log();
     swal("Sorry this service is currently unavailable,Please contact our customer care!!! \n9900099000");
     return;
     // localStorage.setItem("modify_bill",bill_no);
@@ -131,12 +125,9 @@ export class OrderHistoryComponent implements OnInit {
      let str=file[0].message;
      if(str.substring(str.length - 1, str.length)===','){
       str=str.substring(0, str.length - 1); 
-     }
-     console.log(str);
+     } 
       this.previewReport(str);
       this.loading['reportDownload']=false;
-   // console.log(this.billDetails);
-   
       });
     });
   
