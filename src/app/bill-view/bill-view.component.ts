@@ -24,7 +24,7 @@ this.loading['billDetails']=false;
 this.ismobile=this.app.isMobile();
 this.server_url=this._api.other_url;
    }
-//this is the first function loaded
+
   ngOnInit() {
     this.bill_no=this.router.snapshot.paramMap.get('bill');
    
